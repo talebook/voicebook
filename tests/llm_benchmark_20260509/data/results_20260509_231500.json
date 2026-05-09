@@ -1,0 +1,65 @@
+[
+  {
+    "model": "qwen2.5-coder:0.5b",
+    "elapsed": 2.0,
+    "tokens": 75,
+    "tps": 37.5,
+    "output_length": 195,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"character\": \"未知\",\n    \"relationship\": \"主角\"\n  }\n]\n```"
+  },
+  {
+    "model": "tinyllama:latest",
+    "elapsed": 2.78,
+    "tokens": 213,
+    "tps": 76.5,
+    "output_length": 1100,
+    "success": false,
+    "output_preview": "I don't understand. Could you please provide more context or clarify what you'd like me to help with? I'm a helpful AI assistant..."
+  },
+  {
+    "model": "qwen2.5-coder:1.5b",
+    "elapsed": 2.96,
+    "tokens": 199,
+    "tps": 67.1,
+    "output_length": 514,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"character\": \"未知\",\n    \"relationship\": \"主角\"\n  }\n]\n```"
+  },
+  {
+    "model": "qwen2.5:0.5b",
+    "elapsed": 1.94,
+    "tokens": 75,
+    "tps": 38.7,
+    "output_length": 195,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"未知\",\n    \"type\": \"generation\",\n    \"elapsed\": 1.94,\n    \"tokens\": 75,\n    \"tps\": 38.7,\n    \"output_length\": 195,\n    \"success\": true,\n    \"output_preview\": \"```json\\n[\\n  {\\n    \\\"name\\\": \\\"陆江仙\\\",\\n    \\\"age\\\": \\\"未知\\\",\\n    \\\"appearance\\\": \\\"未知\\\",\\n    \\\"character\\\": \\\"未知\\\",\\n    \\\"relationship\\\": \\\"主角\\\"\\n  }\\n]\\n```\"\n  }\n]"
+  },
+  {
+    "model": "llama3.2:1b",
+    "elapsed": 3.74,
+    "tokens": 277,
+    "tps": 74.1,
+    "output_length": 720,
+    "success": false,
+    "output_preview": "I apologize, but I don't have enough information to accurately identify specific characters from the text..."
+  },
+  {
+    "model": "qwen3:0.6b",
+    "elapsed": 4.39,
+    "tokens": 189,
+    "tps": 43.1,
+    "output_length": 491,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"约30岁\",\n    \"appearance\": \"中等身材\",\n    \"character\": \"沉稳内敛\",\n    \"relationship\": \"主角\"\n  }\n]\n```"
+  },
+  {
+    "model": "qwen3.5:2b",
+    "elapsed": 9.32,
+    "tokens": 615,
+    "tps": 66.0,
+    "output_length": 1602,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"约30岁\",\n    \"appearance\": \"身材中等\",\n    \"character\": \"沉稳内敛，有修仙天赋\",\n    \"relationship\": \"主角\"\n  }\n]\n```"
+  }
+]

@@ -1,0 +1,22 @@
+[2026-05-09 23:15:23] LLM Benchmark 测试开始
+[2026-05-09 23:15:23] Ollama 服务正常
+[2026-05-09 23:15:23] 发现 9 个模型: embeddinggemma:latest, qwen2.5-coder:0.5b, tinyllama:latest, qwen2.5-coder:1.5b, qwen2.5:0.5b, llama3.2:1b, qwen3:0.6b, qwen3.5:2b, nomic-embed-text:latest
+[2026-05-09 23:15:25] 开始测试模型: embeddinggemma:latest
+[2026-05-09 23:15:25]   ❌ 失败: 405 Client Error: Method Not Allowed for url: http://localhost:11434/api/generate
+[2026-05-09 23:15:26] 开始测试模型: qwen2.5-coder:0.5b
+[2026-05-09 23:15:28]   ✅ 完成: 耗时 2.00s, 速度 37.5 t/s
+[2026-05-09 23:15:29] 开始测试模型: tinyllama:latest
+[2026-05-09 23:15:32]   ✅ 完成: 耗时 2.78s, 速度 76.5 t/s
+[2026-05-09 23:15:33] 开始测试模型: qwen2.5-coder:1.5b
+[2026-05-09 23:15:36]   ✅ 完成: 耗时 2.96s, 速度 67.1 t/s
+[2026-05-09 23:15:37] 开始测试模型: qwen2.5:0.5b
+[2026-05-09 23:15:39]   ✅ 完成: 耗时 1.94s, 速度 38.7 t/s
+[2026-05-09 23:15:40] 开始测试模型: llama3.2:1b
+[2026-05-09 23:15:44]   ✅ 完成: 耗时 3.74s, 速度 74.1 t/s
+[2026-05-09 23:15:44] 开始测试模型: qwen3:0.6b
+[2026-05-09 23:15:49]   ✅ 完成: 耗时 4.39s, 速度 43.1 t/s
+[2026-05-09 23:15:50] 开始测试模型: qwen3.5:2b
+[2026-05-09 23:15:59]   ✅ 完成: 耗时 9.32s, 速度 66.0 t/s
+[2026-05-09 23:16:00] 开始测试模型: nomic-embed-text:latest
+[2026-05-09 23:16:00]   ❌ 失败: 405 Client Error: Method Not Allowed for url: http://localhost:11434/api/generate
+[2026-05-09 23:16:01] 日志已保存: logs/benchmark_log.txt

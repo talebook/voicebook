@@ -1,0 +1,126 @@
+{
+  "model": "qwen3:0.6b",
+  "think_mode": false,
+  "book_file": "/Users/bytedance/code/book2audio/book.txt",
+  "book_size": 3982087,
+  "chunk_count": 31,
+  "success_count": 31,
+  "total_elapsed": 304.42985105514526,
+  "total_tokens": 17419,
+  "avg_tps": 57.21843616723603,
+  "characters_found": 28,
+  "characters": [
+    {
+      "name": "陆江仙",
+      "description": ""
+    },
+    {
+      "name": "苏婉",
+      "description": ""
+    },
+    {
+      "name": "林昭",
+      "description": ""
+    },
+    {
+      "name": "他",
+      "description": ""
+    },
+    {
+      "name": "李木田",
+      "description": ""
+    },
+    {
+      "name": "李项平",
+      "description": ""
+    },
+    {
+      "name": "田芸",
+      "description": ""
+    },
+    {
+      "name": "李长湖",
+      "description": ""
+    },
+    {
+      "name": "李通崖",
+      "description": ""
+    },
+    {
+      "name": "李尺泾",
+      "description": ""
+    },
+    {
+      "name": "韩文许",
+      "description": ""
+    },
+    {
+      "name": "陈二牛",
+      "description": ""
+    },
+    {
+      "name": "田守水",
+      "description": ""
+    },
+    {
+      "name": "任屏儿",
+      "description": ""
+    },
+    {
+      "name": "李叶盛",
+      "description": ""
+    },
+    {
+      "name": "徐老汉",
+      "description": ""
+    },
+    {
+      "name": "李叶生",
+      "description": ""
+    },
+    {
+      "name": "柳林峰",
+      "description": ""
+    },
+    {
+      "name": "李玄宣",
+      "description": ""
+    },
+    {
+      "name": "司元白",
+      "description": ""
+    },
+    {
+      "name": "袁湍",
+      "description": ""
+    },
+    {
+      "name": "李承福",
+      "description": ""
+    },
+    {
+      "name": "许文山",
+      "description": ""
+    },
+    {
+      "name": "李秋阳",
+      "description": ""
+    },
+    {
+      "name": "柳柔绚",
+      "description": ""
+    },
+    {
+      "name": "萧元思",
+      "description": ""
+    },
+    {
+      "name": "万元凯",
+      "description": ""
+    },
+    {
+      "name": "林婉",
+      "description": ""
+    }
+  ]
+}

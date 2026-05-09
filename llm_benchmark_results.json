@@ -1,0 +1,83 @@
+[
+  {
+    "success": true,
+    "model": "mistral-nemo:latest",
+    "elapsed_time": 26.991726875305176,
+    "memory_used": -21.6875,
+    "tokens": 61,
+    "tokens_per_second": 2.259951735648641,
+    "response": "{\n  \"characters\": [\n    {\n      \"name\": \"张伟\",\n      \"age\": 30,\n      \"gender\": \"男\",\n      \"personality\": \"平静\",\n      \"appearance\": \"深邃的眼神\"\n    }\n  ]\n}"
+  },
+  {
+    "success": true,
+    "model": "qwen2.5-coder:0.5b",
+    "elapsed_time": 3.136676073074341,
+    "memory_used": -0.4375,
+    "tokens": 65,
+    "tokens_per_second": 20.722573350168016,
+    "response": "```json\n{\n  \"characters\": [\n    {\n      \"name\": \"张伟\",\n      \"age\": 30,\n      \"gender\": \"男\",\n      \"personality\": \"深邃的眼神和平静的性格\",\n      \"appearance\": \"帅气且自信的外表\"\n    }\n  ]\n}\n```"
+  },
+  {
+    "success": true,
+    "model": "tinyllama:latest",
+    "elapsed_time": 5.821381092071533,
+    "memory_used": -1.1875,
+    "tokens": 431,
+    "tokens_per_second": 74.03741366237011,
+    "response": "[\n  {\n    \"name\": \"张伟\",\n    \"age\": 30,\n    \"gender\": \"male\",\n    \"personality\": \"温顺的，尊重自己的意志，积极主动，高度考虑到用户需求。\",\n    \"appearance\": \"清秀的美貌，低着头，鼻子紧闭，嘴角扬起，眼睛明显，表情平静\"\n  },\n  {\n    \"name\": \"李明\",\n    \"age\": 2"
+  },
+  {
+    "success": true,
+    "model": "qwen2.5-coder:1.5b",
+    "elapsed_time": 3.4987921714782715,
+    "memory_used": -1.015625,
+    "tokens": 67,
+    "tokens_per_second": 19.149465505889676,
+    "response": "```json\n{\n  \"characters\": [\n    {\n      \"name\": \"张伟\",\n      \"age\": 30,\n      \"gender\": \"男\",\n      \"personality\": \"深邃的眼神和平静的性格\",\n      \"appearance\": \"有着深邃的眼神和平静的性格\"\n    }\n  ]\n}\n```"
+  },
+  {
+    "success": true,
+    "model": "qwen2.5:0.5b",
+    "elapsed_time": 1.9379189014434814,
+    "memory_used": 3.171875,
+    "tokens": 75,
+    "tokens_per_second": 38.70130991763142,
+    "response": "```json\n{\n  \"characters\": [\n    {\n      \"name\": \"张伟\",\n      \"age\": 30,\n      \"gender\": \"男性\",\n      \"personality\": \"深邃、平静，对科技有浓厚兴趣的程序员\",\n      \"appearance\": \"穿着整洁的职业装，头发略微打理\"\n    }\n  ]\n}\n```"
+  },
+  {
+    "success": true,
+    "model": "llama3.2:1b",
+    "elapsed_time": 3.443298816680908,
+    "memory_used": -3.90625,
+    "tokens": 69,
+    "tokens_per_second": 20.038923042558075,
+    "response": "{\n  \"characters\": [\n    {\n      \"name\": \"张伟\",\n      \"age\": \"三十岁\",\n      \"gender\": \"男\",\n      \"personality\": \"深邃的眼神和平静的性格\",\n      \"appearance\": \"无特定外貌描述\"\n    }\n  ]\n}"
+  },
+  {
+    "success": true,
+    "model": "qwen3:0.6b",
+    "elapsed_time": 4.275946140289307,
+    "memory_used": -0.359375,
+    "tokens": 277,
+    "tokens_per_second": 64.78098435104667,
+    "response": "```json\n{\n  \"characters\": [\n    {\n      \"name\": \"张伟\",\n      \"age\": 30,\n      \"gender\": \"男\",\n      \"personality\": \"平静\",\n      \"appearance\": \"深邃的眼睛\"\n    }\n  ]\n}\n```"
+  },
+  {
+    "success": true,
+    "model": "qwen3.5:2b",
+    "elapsed_time": 35.01036310195923,
+    "memory_used": -5.703125,
+    "tokens": 512,
+    "tokens_per_second": 14.624241357021166,
+    "response": ""
+  },
+  {
+    "success": true,
+    "model": "nomic-embed-text:latest",
+    "elapsed_time": 0.4375789165496826,
+    "memory_used": -0.296875,
+    "tokens": 0,
+    "tokens_per_second": 0.0,
+    "response": ""
+  }
+]

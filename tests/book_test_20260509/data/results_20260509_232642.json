@@ -1,0 +1,29 @@
+[
+  {
+    "model": "embeddinggemma:latest",
+    "type": "embedding",
+    "elapsed": 204.02,
+    "success": false,
+    "detail": "向量维度: 0"
+  },
+  {
+    "model": "qwen2.5:0.5b",
+    "type": "generation",
+    "elapsed": 4.81,
+    "tokens": 95,
+    "tps": 19.8,
+    "output_length": 265,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"character\": \"未知\",\n    \"relationship\": \"主角\"\n  },\n  {\n    \"name\": \"田间\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"character\": \"未知\",\n    \"relationship\": \"未知\"\n  },\n  {\n    \"name\": \"刀光剑影\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"type\": \"generation\",\n    \"elapsed\": 4.81,\n    \"tokens\": 95,\n    \"tps\": 19.8,\n    \"output_length\": 265,\n    \"success\": true,\n    \"output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"character\": \"未知\",\n    \"relationship\": \"主角\"\n  },\n  {\n    \"name\": \"田间\",\n    \"age\": \"未知\",\n    \"appearance\": \"未知\",\n    \"type\": \"generation\",\n    \"elapsed\": 4.81,\n    \"tokens\": 95,\n    \"tps\": 19.8,\n    \"output_length\": 265,\n    \"success\": true,\n    \"output_progress\": \"\"\n  }\n]"
+  },
+  {
+    "model": "qwen3:0.6b",
+    "type": "generation",
+    "elapsed": 15.69,
+    "tokens": 666,
+    "tps": 42.4,
+    "output_length": 917,
+    "success": true,
+    "output_preview": "```json\n[\n  {\n    \"name\": \"陆江仙\",\n    \"age\": \"30\",\n    \"appearance\": \"中等身材，穿着古风服饰\",\n    \"character\": \"沉稳内敛，擅长剑术\",\n    \"relationship\": \"与主角陆江仙为同一人\"\n  }\n]\n```"
+  }
+]

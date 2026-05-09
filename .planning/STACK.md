@@ -6,7 +6,7 @@
 |------|---------|----------|
 | **运行时** | Python | 3.10+ |
 | **LLM** | Qwen3-0.6B (Ollama) | 0.6B参数，~600MB内存 |
-| **TTS** | CosyVoice-300M / Edge TTS | 本地部署/云API |
+| **TTS** | kokoro-onnx / Edge TTS | 本地部署/云API |
 | **Web框架** | FastAPI | 扩展现有服务 |
 | **容器化** | Docker + Docker Compose | 完整部署方案 |
 | **音频处理** | pydub, soundfile | 音频拼接与转换 |
@@ -76,16 +76,16 @@ def call_llm(prompt: str, base_url: str = "http://localhost:11434"):
 
 ### 3.1 推荐方案
 
-**首选**: CosyVoice-300M (阿里通义实验室开源)
+**首选**: kokoro-onnx (轻量级本地TTS)
 
 | 特性 | 值 |
 |------|-----|
-| 参数量 | 300M |
-| 中文支持 | ⭐⭐⭐⭐⭐ 原生 |
-| 音色克隆 | 支持（3秒样本） |
-| 情感控制 | 支持 |
-| 内存需求 | ~1GB |
-| 部署 | 本地 |
+| 模型大小 | ~310MB |
+| 量化后 | ~80MB |
+| 多语言支持 | 54+音色 |
+| 内存需求 | 低 |
+| 部署 | 完全本地 |
+| GitHub | thewh1teagle/kokoro-onnx |
 
 **快速原型**: Edge TTS (微软)
 
@@ -96,18 +96,30 @@ def call_llm(prompt: str, base_url: str = "http://localhost:11434"):
 | 网络要求 | 需要 |
 | 优势 | 无需本地部署 |
 
-### 3.2 CosyVoice 安装
+**备选**: CosyVoice (需要Docker)
+
+| 特性 | 值 |
+|------|-----|
+| 中文支持 | ⭐⭐⭐⭐⭐ 原生 |
+| 音色克隆 | 支持（3秒样本） |
+| 内存需求 | ~1GB |
+| 部署 | Docker |
+
+### 3.2 kokoro-onnx 安装
 
 ```bash
-# pip 安装
-pip install cosyvoice
-
-# 或 ModelScope
-pip install modelscope
+pip install kokoro-onnx soundfile
 
 # 下载模型
-from cosyvoice import CosyVoice
-cosyvoice = CosyVoice('cosyvoice-300m')
+curl -L -o kokoro-v1.0.onnx "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx"
+curl -L -o voices-v1.0.bin "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin"
+
+# 使用
+python
+>>> from kokoro_onnx import Kokoro
+>>> kokoro = Kokoro('kokoro-v1.0.onnx', 'voices-v1.0.bin')
+>>> voices = kokoro.get_voices()
+>>> samples, sr = kokoro.create("你好", voice=voices[0])
 ```
 
 ### 3.3 Edge TTS 安装
