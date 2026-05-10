@@ -17,7 +17,7 @@ services:
               count: all
               capabilities: [gpu]
 
-  # FastAPI 服务
+  # FastAPI 角色画像分析服务
   api:
     build:
       context: .
@@ -34,6 +34,49 @@ services:
       - ./app:/app
       - ./data:/data
     restart: unless-stopped
+
+  # CosyVoice2 TTS 服务（情感语音合成）
+  #
+  # 使用 CosyVoice2-0.5B 模型，通过 instruct2 模式支持：
+  #   - 着急、轻松、低沉、激动、愤怒、悲伤等 12 种情感语气
+  #   - 中文男/女、英文男/女、粤语女等多种音色
+  #   - HTTP API 端点：/api/inference/instruct2
+  #
+  # 首次启动会自动下载模型（~1GB），之后从挂载目录加载
+  cosyvoice:
+    image: registry.cn-hangzhou.aliyuncs.com/funaudiollm/cosyvoice2:latest
+    container_name: novel-cosyvoice
+    ports:
+      - "50000:50000"
+    volumes:
+      # 模型缓存目录，避免每次重启重新下载
+      - ./pretrained_models:/opt/CosyVoice/pretrained_models
+    environment:
+      - MODEL_DIR=iic/CosyVoice2-0.5B
+      - PORT=50000
+    command: >
+      bash -c "
+        cd /opt/CosyVoice &&
+        python runtime/python/fastapi/server.py
+          --port 50000
+          --model_dir pretrained_models/CosyVoice2-0.5B
+          --load_jit True
+          --load_trt False
+      "
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
 networks:
   default:
