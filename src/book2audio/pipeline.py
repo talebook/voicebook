@@ -142,6 +142,9 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
         raise SystemExit(f"未找到指定章节（全书共 {len(all_chapters)} 章）")
     print(f"共 {len(all_chapters)} 章，本次合成 {len(chapters)} 章: {chapters[0].title} .. {chapters[-1].title}")
 
+    report_mode = output.suffix == ".md"
+    if report_mode:
+        multi_voice = True
     quotes_by_ch, voices = {}, None
     if multi_voice:
         from .attribution import Attributor
@@ -159,6 +162,12 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
         for n, (v, rate, pitch) in sorted(voices.items()):
             p = profiles[n]
             print(f"  {n}: {p.gender}/{p.age_stage}{f'/{p.age}岁' if p.age else ''} → {v.replace('zh-CN-', '')} {rate} {pitch}")
+
+    if report_mode:
+        from .report import write_report
+        write_report(input_txt.stem, chapters, quotes_by_ch, profiles, voices, output)
+        print(f"完成: {output}")
+        return
 
     work_dir = Path(tempfile.mkdtemp(prefix="book2audio_"))
     try:

@@ -29,13 +29,14 @@ NAME_STOPWORDS = {
     "口中", "大声", "小声", "低声", "高声", "连声", "齐声", "失声", "出声", "轻声", "沉声",
     "厉声", "柔声", "朗声", "一声", "说完", "听完", "点头", "摇头", "笑着", "哭着", "似乎",
     "仿佛", "彷佛", "不禁", "不由", "暗暗", "暗自", "喃喃", "自己", "众人", "有人", "no",
+    "不知", "谁知", "哪知", "岂知", "只见", "只听", "便是", "就是", "正是", "于此",
 }
 
 
 def plausible_name(cand: str) -> bool:
     return (cand not in NAME_STOPWORDS
             and not cand.endswith(("地", "得", "的", "着", "了"))
-            and not any(w in cand for w in ("这", "那", "什", "怎")))
+            and not any(w in cand for w in "这那什怎他她它谁"))
 
 R2_BEFORE = re.compile(rf"({NAME})[^“”]{{0,12}}?(?:{SPEECH_VERBS})[^“”]{{0,4}}[:：]?\s*$")
 SUBJ_LEAD = re.compile(rf"^({NAME})")
