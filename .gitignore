@@ -224,3 +224,7 @@ models/
 pretrained_models/
 temp_cosyvoice/
 venv/
+
+# 测试语料（版权文本节选，仅本地）
+tests/samples/*.txt
+tests/samples/reports/

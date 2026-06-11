@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
-SPEECH_VERBS = "说|道|笑|喊|叫|骂|问|答|哭|嚷|吼|呵斥|嘀咕|低语|感叹|叹|回|应|想|思忖|寻思|喃喃|自语|念"
+SPEECH_VERBS = ("说|道|笑|喊|叫|骂|问|答|哭|嚷|吼|呵斥|嘀咕|低语|感叹|叹|回|应|想|思忖|寻思|喃喃|自语|念"
+                "|說|問|罵|嘆|應|喚|講")  # 繁体变体（繁体书源）
 # 拟声词引文（“咣当！”）不是对白
 SFX_WORDS = "咣当|哗啦|轰隆|咔嚓|卡察|扑通|噗通|叮当|哐当|吱呀|呼啦|咕噜|沙沙|轰|砰|嗖|啪|咚|嘭|哗"
 SFX_RE = re.compile(rf"^(?:{SFX_WORDS})+[！？。…—\s]*$")
@@ -121,6 +122,14 @@ class Attributor:
             frequent_ext = {c for c in set(ext) if ext.count(c) >= 2}
             return len(frequent_ext) >= 2 and len(ext) >= 0.9 * len(re.findall(re.escape(n), text))
         self.names |= {n for n in cand if not fragment(n)}
+
+        # 单人戏兜底：全文没有任何专名角色（如《老人与海》的"老人"），接纳主导泛称
+        if not self.names:
+            generics = [("老人", "老者", "老頭", "老汉", "男孩", "女孩", "少年", "少女", "孩子")]
+            hits = {g: len(re.findall(g, text)) for g in generics[0]}
+            top = max(hits, key=hits.get)
+            if hits[top] >= 5:
+                self.names.add(top)
 
     def to_name(self, cand: str) -> Optional[str]:
         """候选串映射到已知角色名（互为子串即认为同一角色，如"长湖"→"李长湖"）。"""
@@ -329,4 +338,11 @@ class Attributor:
             speaker, method = self.rule_fallback(paras, q, recent2)
             if speaker:
                 q.speaker, q.method = speaker, method
+
+        # R8 单人场景：全文唯一角色时，未归属对白都是他的（独角戏/内心独白）
+        if len(self.names) == 1:
+            only = next(iter(self.names))
+            for q in quotes:
+                if q.kind == "dialogue" and not q.speaker:
+                    q.speaker, q.method = only, "R8"
         return quotes
