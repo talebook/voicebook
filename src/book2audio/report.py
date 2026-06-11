@@ -21,8 +21,9 @@ def write_report(book_name: str, chapters: List[Chapter], quotes_by_ch: Dict,
         lines.append(f"| {n} | {p.gender} | {age} | {v.replace('zh-CN-', '')} {pitch} | {ev} |")
     lines.append("")
 
-    method_label = {"R1": "规则·后随", "R2": "规则·前导", "R3": "规则·邻段", "R4": "规则·轮替",
-                    "CSI": "模型", "sfx": "拟声", "unknown": "未识别"}
+    method_label = {"R1": "规则·后随", "R1b": "规则·后随主语", "R2": "规则·前导",
+                    "R3": "规则·邻段", "R4": "规则·轮替", "R5": "规则·冒号引导",
+                    "R6": "规则·呼唤前瞻", "CSI": "模型", "sfx": "拟声", "unknown": "未识别"}
     for ch in chapters:
         lines += [f"## {ch.title}", ""]
         quotes = quotes_by_ch[ch.num]

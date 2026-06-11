@@ -40,6 +40,8 @@ def plausible_name(cand: str) -> bool:
 
 R2_BEFORE = re.compile(rf"({NAME})[^“”]{{0,12}}?(?:{SPEECH_VERBS})[^“”]{{0,4}}[:：]?\s*$")
 SUBJ_LEAD = re.compile(rf"^({NAME})")
+# 呼唤句："项平哥！" / "阿爹！" / "对了，爹。"（可带短前导语气词）
+VOCATIVE_RE = re.compile(r"^[一-龥]{0,3}[，、]?\s*阿?[一-龥]{0,3}[哥姐妹弟叔婶爷奶爹娘伯][！？。…—]*$")
 
 
 @dataclass
@@ -122,10 +124,24 @@ class Attributor:
         m = R2_BEFORE.search(before)
         if m and self.to_name(m.group(1)):
             return self.to_name(m.group(1)), "R2"
+        # R5: 引文独立成段且上一段以冒号收尾（"X喊道："↵ 引文）→ 取上段主语
+        if not before.strip() and not after.strip() and q.para_idx > 0:
+            prev = paras[q.para_idx - 1]
+            if prev.rstrip().endswith(("：", ":")):
+                m = SUBJ_LEAD.match(prev)
+                name = self.to_name(m.group(1)) if m else None
+                if name and not self.is_addressee(name, q.text):
+                    return name, "R5"
         return None, ""
 
     def rule_fallback(self, paras: List[str], q: Quote, recent: List[str]):
         para = paras[q.para_idx]
+        # R1b: 引号后紧跟 名字+动作（无说话动词，如"阿爹！"李项平仰着头望着李木田）
+        m = re.match(rf"\s*({NAME})", para[q.span[1]:])
+        if m:
+            name = self.to_name(m.group(1))
+            if name and not self.is_addressee(name, q.text):
+                return name, "R1b"
         # R3: 引文独立成段 → 邻段旁白主语（排除被称呼者）
         if not para[:q.span[0]].strip() and not para[q.span[1]:].strip():
             for j in (q.para_idx + 1, q.para_idx - 1):
@@ -134,6 +150,13 @@ class Attributor:
                     name = self.to_name(m.group(1)) if m else None
                     if name and not self.is_addressee(name, q.text):
                         return name, "R3"
+        # R6: 呼唤句前瞻——说话人通常在后文现身（"项平哥！"→排除受话人→后文最先出场的角色）
+        if VOCATIVE_RE.match(q.text):
+            for j in range(q.para_idx + 1, min(len(paras), q.para_idx + 9)):
+                hits = [(paras[j].index(n), n) for n in self.names
+                        if n in paras[j] and not self.is_addressee(n, q.text)]
+                if hits:
+                    return min(hits)[1], "R6"
         # R4: 双人轮替（最近窗口内恰好两人对话时，取与上一位不同者）
         two = set(recent[-3:])
         if len(two) == 2:
@@ -234,4 +257,13 @@ class Attributor:
             q.speaker, q.method = speaker, method or "unknown"
             if speaker:
                 recent.append(speaker)
+
+        # 第二遍：CSI 动态发现的新角色（如对白中才现身的人物）可能改善低置信归属
+        for qi, q in enumerate(quotes):
+            if q.kind == "sfx" or q.method not in ("R6", "R4", "unknown"):
+                continue
+            recent2 = [x.speaker for x in quotes[:qi] if x.speaker]
+            speaker, method = self.rule_fallback(paras, q, recent2)
+            if speaker:
+                q.speaker, q.method = speaker, method
         return quotes
