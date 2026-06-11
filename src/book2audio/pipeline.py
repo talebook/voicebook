@@ -36,7 +36,7 @@ async def _synth_one(text: str, voice: str, out_path: Path, sem: asyncio.Semapho
 
 def _multivoice_parts(chapter: Chapter, quotes, voices):
     """按说话人归属结果构造 (text, (voice, rate, pitch)) 列表。"""
-    from .profile import NARRATOR
+    from .casting import NARRATOR
 
     by_para = {}
     for q in quotes:
@@ -133,8 +133,42 @@ def assemble_mp4(chapters: List[Chapter], chapter_files: List[Path], output: Pat
     )
 
 
+def synth_all_cosyvoice(chapters, quotes_by_ch, cosy_voices, narrator, work_dir: Path):
+    """CosyVoice 路径：全书片段一次性批量合成（均摊模型加载），返回各章音频文件。"""
+    from .tts import CosyVoiceEngine
+
+    engine = CosyVoiceEngine()
+    chapter_segs = {}
+    for ch in chapters:
+        parts = _multivoice_parts(ch, quotes_by_ch[ch.num], cosy_voices)
+        seg_dir = work_dir / f"ch{ch.num:04d}"
+        seg_dir.mkdir(parents=True, exist_ok=True)
+        segs = []
+        for i, (text, voice) in enumerate(parts):
+            # cosy 音色是 (wav, text) 二元组；旁白占位（edge 三元组）回退到旁白参考音
+            wav, prompt_text = voice if (isinstance(voice, tuple) and len(voice) == 2) else narrator
+            out = seg_dir / f"{i:05d}.wav"
+            engine._batch.append({"text": text, "prompt_wav": wav,
+                                  "prompt_text": prompt_text, "out": str(out)})
+            segs.append(out)
+        chapter_segs[ch.num] = segs
+    print(f"CosyVoice 批量合成 {sum(len(s) for s in chapter_segs.values())} 个片段（CPU较慢，请耐心）...")
+    engine.flush()
+
+    chapter_files = []
+    for ch in chapters:
+        list_file = work_dir / f"ch{ch.num:04d}/list.txt"
+        list_file.write_text("".join(f"file '{f.resolve()}'\n" for f in chapter_segs[ch.num]))
+        out = work_dir / f"chapter_{ch.num:04d}.wav"
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
+                        "-i", str(list_file), "-c", "copy", str(out)], check=True)
+        chapter_files.append(out)
+    return chapter_files
+
+
 def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = False,
-        multi_voice: bool = False, csi_model_dir: Path = Path("models/csi-v1")):
+        multi_voice: bool = False, csi_model_dir: Path = Path("models/csi-v1"),
+        engine: str = "edge"):
     text = input_txt.read_text(encoding="utf-8")
     all_chapters = split_chapters(text)
     chapters = [c for c in all_chapters if c.num in chapter_range]
@@ -148,7 +182,7 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
     quotes_by_ch, voices = {}, None
     if multi_voice:
         from .attribution import Attributor
-        from .profile import assign_voices, build_profiles
+        from .casting import assign_voices, build_profiles
         attributor = Attributor(csi_model_dir=csi_model_dir if csi_model_dir.exists() else None)
         selected = "\n".join(c.content for c in chapters)
         attributor.build_names(selected)
@@ -159,11 +193,20 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
         # 只给实际开口的角色建画像/分音色（注册表保持宽松，仅用于归属映射）
         speakers = {q.speaker for qs in quotes_by_ch.values() for q in qs if q.speaker}
         profiles = build_profiles(selected, speakers)
-        voices = assign_voices(profiles)
-        print("角色音色分配:")
-        for n, (v, rate, pitch) in sorted(voices.items()):
-            p = profiles[n]
-            print(f"  {n}: {p.gender}/{p.age_stage}{f'/{p.age}岁' if p.age else ''} → {v.replace('zh-CN-', '')} {rate} {pitch}")
+        if engine == "cosyvoice":
+            from .casting import assign_cosy_voices
+            bank = json.loads(Path("voicebank/bank.json").read_text())
+            voices = assign_cosy_voices(profiles, bank)
+            print("角色音色分配 (cosyvoice 参考音):")
+            for n, (wav, _) in sorted(voices.items()):
+                p = profiles[n]
+                print(f"  {n}: {p.gender}/{p.age_stage} → {Path(wav).stem}")
+        else:
+            voices = assign_voices(profiles)
+            print("角色音色分配:")
+            for n, (v, rate, pitch) in sorted(voices.items()):
+                p = profiles[n]
+                print(f"  {n}: {p.gender}/{p.age_stage}{f'/{p.age}岁' if p.age else ''} → {v.replace('zh-CN-', '')} {rate} {pitch}")
 
     if report_mode:
         from .report import write_report
@@ -173,10 +216,18 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
 
     work_dir = Path(tempfile.mkdtemp(prefix="book2audio_"))
     try:
-        chapter_files = []
-        for ch in chapters:
-            print(f"[{ch.num}/{chapters[-1].num}] 合成 {ch.title} ({len(ch.content)} 字)...")
-            chapter_files.append(asyncio.run(synth_chapter(ch, work_dir, quotes_by_ch.get(ch.num), voices)))
+        if engine == "cosyvoice":
+            if not multi_voice:
+                raise SystemExit("cosyvoice 引擎当前仅支持 --multi-voice 模式")
+            bank = json.loads(Path("voicebank/bank.json").read_text())
+            nar = next(e for e in bank["voices"] if e["id"] == bank["narrator"])
+            chapter_files = synth_all_cosyvoice(chapters, quotes_by_ch, voices,
+                                                (nar["wav"], nar["text"]), work_dir)
+        else:
+            chapter_files = []
+            for ch in chapters:
+                print(f"[{ch.num}/{chapters[-1].num}] 合成 {ch.title} ({len(ch.content)} 字)...")
+                chapter_files.append(asyncio.run(synth_chapter(ch, work_dir, quotes_by_ch.get(ch.num), voices)))
         print("拼接并编码 MP4...")
         assemble_mp4(chapters, chapter_files, output, work_dir)
         print(f"完成: {output}")

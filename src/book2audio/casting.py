@@ -152,6 +152,18 @@ VOICE_BUCKETS = {
 DEFAULT_BUCKET = ("zh-CN-YunxiNeural", "+0%", "+0Hz")  # 性别未知
 
 
+def assign_cosy_voices(profiles: Dict[str, CharacterProfile], bank: dict) -> Dict[str, tuple]:
+    """每个角色 → (参考音频wav, 转写text)。按 (gender, age_stage) 匹配音色库。"""
+    voices = {}
+    entries = bank["voices"]
+    for name, p in profiles.items():
+        gender = p.gender if p.gender != "unknown" else "male"
+        match = next((e for e in entries if e["gender"] == gender and p.age_stage in e["stages"]),
+                     next((e for e in entries if e["gender"] == gender), entries[0]))
+        voices[name] = (match["wav"], match["text"])
+    return voices
+
+
 def assign_voices(profiles: Dict[str, CharacterProfile]) -> Dict[str, tuple]:
     """每个角色 → (voice, rate, pitch)。同桶角色加确定性 pitch 偏移以示区分。"""
     bucket_used: Dict[tuple, int] = {}

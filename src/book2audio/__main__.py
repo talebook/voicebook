@@ -19,9 +19,11 @@ def main():
     p.add_argument("--keep-temp", action="store_true", help="保留中间音频文件")
     p.add_argument("--multi-voice", action="store_true",
                    help="按角色画像分配音色（说话人识别+L3画像，需 models/csi-v1 可获得最佳归属）")
+    p.add_argument("--engine", default="edge", choices=["edge", "cosyvoice"],
+                   help="TTS引擎：edge(快/云) 或 cosyvoice(本地零样本克隆，CPU较慢)")
     args = p.parse_args()
     run(args.input, args.output, parse_range(args.chapters), args.keep_temp,
-        multi_voice=args.multi_voice)
+        multi_voice=args.multi_voice, engine=args.engine)
 
 
 if __name__ == "__main__":

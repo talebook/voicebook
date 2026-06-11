@@ -1,0 +1,10 @@
+{
+  "_doc": "CosyVoice zero-shot 参考音色库。每条: id / wav(参考音频) / text(其精确转写) / gender / stages(适用年龄段)。当前参考音为 edge-tts 引导生成(转写精确)；量产请替换为真人录音(5-10s, 干净无底噪)以获得真正的真人感。",
+  "voices": [
+    {"id": "male_young",   "wav": "voicebank/male_young.wav",   "text": "我们沿着河岸一路走下去，阳光洒在水面上，碎成了一片一片的金子。", "gender": "male",   "stages": ["童年", "少年", "青年"]},
+    {"id": "male_mid",     "wav": "voicebank/male_mid.wav",     "text": "山间的清晨总是来得很早，薄雾还未散尽，远处的钟声已经响起来了。", "gender": "male",   "stages": ["中年"]},
+    {"id": "male_old",     "wav": "voicebank/male_old.wav",     "text": "这条路我走了大半辈子，每一块石板的脾气，我都摸得清清楚楚。",   "gender": "male",   "stages": ["老年"]},
+    {"id": "female_young", "wav": "voicebank/female_young.wav", "text": "院子里的桂花开了，香气一阵一阵的，把整个秋天都染甜了。",     "gender": "female", "stages": ["童年", "少年", "青年", "中年", "老年"]}
+  ],
+  "narrator": "male_mid"
+}

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from book2audio.attribution import Attributor  # noqa: E402
 from book2audio.parser import split_chapters  # noqa: E402
-from book2audio.profile import assign_voices, build_profiles  # noqa: E402
+from book2audio.casting import assign_voices, build_profiles  # noqa: E402
 from book2audio.report import write_report  # noqa: E402
 
 SAMPLES = Path(__file__).parent
