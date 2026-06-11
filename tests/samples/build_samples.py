@@ -34,12 +34,23 @@ def epub_paragraphs(path: Path):
         raw = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", raw, flags=re.S | re.I)
         raw = re.sub(r"</?(p|br|div|h[1-6]|li|tr)[^>]*>", "\n", raw, flags=re.I)
         text = html.unescape(re.sub(r"<[^>]+>", "", raw))
+        # 合并硬换行：不以句末标点结尾的行与下一行同段（部分epub把段落渲染成多行）
+        merged, buf = [], ""
+        for line in (s.strip() for s in text.splitlines()):
+            if not line:
+                continue
+            buf += line
+            if buf[-1] in "。！？”…：；」』":
+                merged.append(buf)
+                buf = ""
+        if buf:
+            merged.append(buf)
         # 去掉章节标题行（样本自带合成章节头，内部标题会干扰章节切分）和连续重复行
         paras, prev = [], None
-        for p in (s.strip() for s in text.splitlines()):
-            if p and p != prev and not CHAPTER_LINE.match(p):
+        for p in merged:
+            if p != prev and not CHAPTER_LINE.match(p):
                 paras.append(p)
-            prev = p or prev
+            prev = p
         if paras:
             out.append((i, paras))
     return out

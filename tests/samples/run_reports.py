@@ -29,7 +29,8 @@ def main():
         chapters = split_chapters(text)
         ch = chapters[0]
         quotes = att.attribute(ch.content)
-        profiles = build_profiles(ch.content, att.names)
+        speakers = {q.speaker for q in quotes if q.speaker}
+        profiles = build_profiles(ch.content, speakers)
         voices = assign_voices(profiles)
         write_report(f.stem, chapters, {ch.num: quotes}, profiles, voices,
                      REPORTS / f"{f.stem}.md")

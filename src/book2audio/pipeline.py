@@ -156,7 +156,9 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
         for ch in chapters:
             print(f"识别 {ch.title} 说话人...")
             quotes_by_ch[ch.num] = attributor.attribute(ch.content)
-        profiles = build_profiles(selected, attributor.names)
+        # 只给实际开口的角色建画像/分音色（注册表保持宽松，仅用于归属映射）
+        speakers = {q.speaker for qs in quotes_by_ch.values() for q in qs if q.speaker}
+        profiles = build_profiles(selected, speakers)
         voices = assign_voices(profiles)
         print("角色音色分配:")
         for n, (v, rate, pitch) in sorted(voices.items()):
