@@ -38,6 +38,12 @@ def plausible_name(cand: str) -> bool:
             and not cand.endswith(("地", "得", "的", "着", "了"))
             and not any(w in cand for w in "这那什怎他她它谁"))
 
+
+# 常见姓氏：用于过滤 jieba-NER 通道的噪声（"小河/修仙"等误判）
+SURNAMES = ("李王张刘陈杨黄赵周吴徐孙马朱胡郭何高林罗郑梁谢宋唐许韩冯邓曹彭曾肖田董袁潘于蒋蔡余杜"
+            "叶程苏魏吕丁任沈姚卢姜崔钟谭陆汪范金石廖贾夏韦傅方白邹孟熊秦邱江尹薛闫段雷侯龙史陶"
+            "黎贺顾毛郝龚邵万钱严覃武戴莫孔向汤欧阳司马诸葛")
+
 R2_BEFORE = re.compile(rf"({NAME})[^“”]{{0,12}}?(?:{SPEECH_VERBS})[^“”]{{0,4}}[:：]?\s*$")
 SUBJ_LEAD = re.compile(rf"^({NAME})")
 # 呼唤句："项平哥！" / "阿爹！" / "对了，爹。"（可带短前导语气词）
@@ -62,7 +68,28 @@ class Attributor:
 
     # ---------- 人名清单 ----------
     def build_names(self, text: str):
+        """双通道：①名字+说话动词共现（高精度） ②jieba-NER（高召回，姓氏过滤）"""
         verb_counts, counts = {}, {}
+        # 通道2: jieba 词性标注 nr
+        import jieba.posseg as pseg
+        ner_counts: dict = {}
+        for w, flag in pseg.cut(text):
+            if flag == "nr" and 2 <= len(w) <= 3:
+                ner_counts[w] = ner_counts.get(w, 0) + 1
+        for n, c in ner_counts.items():
+            if c >= 2 and n[0] in SURNAMES and plausible_name(n):
+                # 截断修复：若原文中该候选≥80%场合后面跟同一个字，则补全（"李尺"→"李尺泾"）
+                while len(n) < 4:
+                    nxt = [m for m in re.findall(rf"{re.escape(n)}([一-龥])", text)]
+                    if nxt and nxt.count(max(set(nxt), key=nxt.count)) >= 0.8 * len(re.findall(re.escape(n), text)):
+                        ext = max(set(nxt), key=nxt.count)
+                        if ext in "的地得了着说道哥妹姐弟":  # 跟的是功能字/称谓则停止
+                            break
+                        n = n + ext
+                    else:
+                        break
+                counts[n] = counts.get(n, 0) + c
+                verb_counts[n] = verb_counts.get(n, 0) + 1  # NER 身份即证据
         for n_len in (2, 3):
             for m in re.finditer(rf"(?=([一-龥]{{{n_len}}})(?:{SPEECH_VERBS}))", text):
                 n = m.group(1)
