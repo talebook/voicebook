@@ -151,6 +151,32 @@ VOICE_BUCKETS = {
 }
 DEFAULT_BUCKET = ("zh-CN-YunxiNeural", "+0%", "+0Hz")  # 性别未知
 
+AGE_STAGES = ("童年", "少年", "青年", "中年", "老年")
+
+# 状态 → edge 韵律微调 (语速%差, 音高Hz差)；与年龄音色叠加
+STATE_PROSODY = {
+    "虚弱": (-12, -8), "愤怒": (+12, +12), "冷淡": (-4, -6),
+    "低语": (-8, -8), "悲伤": (-10, -6), "急切": (+15, +4),
+}
+# 状态 → cosyvoice instruct 文本（worker 暂未接 instruct，预留）
+STATE_INSTRUCT = {
+    "虚弱": "用虚弱无力的语气", "愤怒": "用愤怒的语气", "冷淡": "用冷淡的语气",
+    "低语": "用很小的声音轻声", "悲伤": "用悲伤的语气", "急切": "用急切快速的语气",
+}
+
+
+def _bump(token: str, suffix: str, delta: int) -> str:
+    return f"{int(token.rstrip(suffix)) + delta:+d}{suffix}"
+
+
+def apply_state(spec: tuple, state: str) -> tuple:
+    """把发声状态叠加到音色规格上。edge(3元组)调韵律；cosy(2元组)暂原样返回(留待instruct)。"""
+    if not state or not isinstance(spec, tuple) or len(spec) != 3:
+        return spec
+    voice, rate, pitch = spec
+    dr, dp = STATE_PROSODY.get(state, (0, 0))
+    return (voice, _bump(rate, "%", dr), _bump(pitch, "Hz", dp))
+
 
 def assign_cosy_voices(profiles: Dict[str, CharacterProfile], bank: dict) -> Dict[str, tuple]:
     """每个角色 → (参考音频wav, 转写text)。按 (gender, age_stage) 匹配音色库。"""

@@ -53,8 +53,8 @@ def _merge_adjacent(parts):
 
 
 def _multivoice_parts(chapter: Chapter, quotes, voices):
-    """识别结果 -> (text, voicespec) 段列表。旁白/拟声/未识别用旁白音，对白用角色音。"""
-    from .casting import NARRATOR
+    """识别结果 -> (text, voicespec) 段列表。旁白/拟声/未识别用旁白音，对白用角色音（叠加状态）。"""
+    from .casting import NARRATOR, apply_state
 
     by_para = {}
     for q in quotes:
@@ -70,19 +70,20 @@ def _multivoice_parts(chapter: Chapter, quotes, voices):
             if q.kind == "sfx" or not q.speaker:
                 parts.append((para[q.span[0]:q.span[1]], NARRATOR))
             else:
-                parts.append((q.text, voices.get(q.speaker, (DIALOGUE_VOICE, "+0%", "+0Hz"))))
+                spec = voices.get(q.speaker, (DIALOGUE_VOICE, "+0%", "+0Hz"))
+                parts.append((q.text, apply_state(spec, q.state) if q.state else spec))
             pos = q.span[1]
         if para[pos:].strip():
             parts.append((para[pos:], NARRATOR))
     return _merge_adjacent(parts)
 
 
-def _script_parts(title: str, segments, voices, narrator_spec):
-    """配音脚本段 -> (text, voicespec) 段列表（与 _multivoice_parts 输出同构）。"""
+def _script_parts(title: str, segments, resolve, narrator_spec):
+    """配音脚本段 -> (text, voicespec) 段列表（与 _multivoice_parts 输出同构）。
+    resolve(tag) 把 旁白/音/?/角色名/角色名@变体 解析为音色规格。"""
     parts = [(title, narrator_spec)]
     for tag, text in segments:
-        spec = narrator_spec if tag in ("旁白", "音", "?") else voices.get(tag, narrator_spec)
-        parts.append((text, spec))
+        parts.append((text, resolve(tag)))
     return _merge_adjacent(parts)
 
 
@@ -200,7 +201,7 @@ def _synthesize(parts_by_ch, titles, output, engine, book_title, keep_temp):
 
 def run_from_script(script_path: Path, output: Path, engine: str = "edge", keep_temp: bool = False):
     """从人工校正后的配音脚本直接合成，跳过识别。"""
-    from .casting import CharacterProfile
+    from .casting import AGE_STAGES, CharacterProfile, apply_state
     from .script import parse_script
 
     cast, chapters = parse_script(script_path)
@@ -217,9 +218,25 @@ def run_from_script(script_path: Path, output: Path, engine: str = "edge", keep_
             else:
                 voices[n] = (override, "+0%", "+0Hz")
 
+    def resolve(tag):
+        if tag in ("旁白", "音", "?"):
+            return narrator_spec
+        if tag in voices:                      # 精确命中（含 角色名@变体 的角色表行）
+            return voices[tag]
+        name, _, variant = tag.partition("@")
+        base = voices.get(name, narrator_spec)
+        if not variant:
+            return base
+        if variant in AGE_STAGES and name in cast:   # 快捷年龄段切换 → 重选音色
+            g = cast[name][0]
+            prof = {name: CharacterProfile(name=name, gender=g if g != "unknown" else "male",
+                                           age_stage=variant)}
+            return _resolve_voices(prof, engine)[0][name]
+        return apply_state(base, variant)            # 否则按状态叠加韵律
+
     parts_by_ch, titles = {}, []
     for i, (title, segs) in enumerate(chapters, 1):
-        parts_by_ch[i] = _script_parts(title, segs, voices, narrator_spec)
+        parts_by_ch[i] = _script_parts(title, segs, resolve, narrator_spec)
         titles.append(title)
     print(f"从脚本合成 {len(chapters)} 章，{len(cast)} 个角色，引擎 {engine}")
     _synthesize(parts_by_ch, titles, output, engine, script_path.stem, keep_temp)

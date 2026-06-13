@@ -58,6 +58,17 @@ SUBJ_LEAD = re.compile(rf"^({NAME})")
 VOCATIVE_RE = re.compile(r"^[一-龥]{0,3}[，、]?\s*阿?[一-龥]{0,3}[哥姐妹弟叔婶爷奶爹娘伯][！？。…—]*$")
 
 
+# 情绪/状态线索：邻近旁白的"虚弱地说/怒喝/低声道"等 → 该句对白的发声状态
+STATE_CUES = {
+    "虚弱": "虚弱|无力|气若游丝|有气无力|奄奄|喘息|颤声|颤抖|挣扎着|气喘",
+    "愤怒": "怒|愤|厉声|咆哮|呵斥|怒喝|怒吼|喝道|咬牙|暴喝",
+    "冷淡": "冷冷|冷淡|淡淡|淡然|漠然|冷然|冷声|嗤笑|不屑",
+    "低语": "低声|低语|喃喃|小声|轻声|耳语|呢喃|附耳",
+    "悲伤": "悲|哽咽|啜泣|含泪|凄然|哭着|泣|颤抖着哭",
+    "急切": "急忙|连忙|急道|忙道|焦急|慌忙|急切|忙不迭|惊呼",
+}
+
+
 @dataclass
 class Quote:
     text: str            # 引文内容（不含引号）
@@ -66,6 +77,7 @@ class Quote:
     speaker: Optional[str] = None
     method: str = ""     # R1/R2/CSI/R3/R4/sfx/unknown
     kind: str = "dialogue"   # dialogue | sfx（拟声词，按旁白处理）
+    state: Optional[str] = None  # 虚弱/愤怒/冷淡/低语/悲伤/急切（None=平稳）
 
 
 @dataclass
@@ -190,6 +202,18 @@ class Attributor:
         if score >= self.CSI_NEW_NAME and re.fullmatch(NAME, span) and plausible_name(span):
             self.names.add(span)
             return span
+        return None
+
+    @staticmethod
+    def detect_state(paras, q) -> Optional[str]:
+        """从引文邻近旁白（同段引号前后 + 独立成段时的上一段尾）识别发声状态。"""
+        para = paras[q.para_idx]
+        ctx = para[max(0, q.span[0] - 14):q.span[0]] + para[q.span[1]:q.span[1] + 14]
+        if not para[:q.span[0]].strip() and not para[q.span[1]:].strip() and q.para_idx > 0:
+            ctx += paras[q.para_idx - 1][-16:]
+        for state, cues in STATE_CUES.items():
+            if re.search(cues, ctx):
+                return state
         return None
 
     @staticmethod
@@ -361,6 +385,7 @@ class Attributor:
             if not speaker:
                 speaker, method = self.rule_fallback(paras, q, recent)
             q.speaker, q.method = speaker, method or "unknown"
+            q.state = self.detect_state(paras, q)
             if speaker:
                 recent.append(speaker)
 

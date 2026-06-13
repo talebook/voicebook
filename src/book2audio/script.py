@@ -6,15 +6,18 @@
 格式：
     ## 角色表
     李项平 | male | 少年 |              # 末列"音色覆盖"留空=按性别/年龄自动选；填则强制
-    田芸   | female | 少年 | real_female
+    李长湖 | male | 少年 |              # 基准音色
+    李长湖@老年 | male | 老年 |         # 变体：同角色不同年龄/状态，单独一行(@后缀)
 
     ## 第一章 初入
-    [旁白] 陆江仙做了一个很长很长的梦……
+    无标签的整行就是旁白，直接写正文即可。
     [陆江仙] 将《太阴吐纳练气诀》交出
+    [陆江仙@虚弱] 咳……扶我起来            # @状态：虚弱/愤怒/冷淡/低语/悲伤/急切(自动识别,可改)
+    [李长湖@老年] 我老了啊……             # @年龄段：童年/少年/青年/中年/老年(切换音色)
     [音] 咣当！                          # 音效/拟声，旁白嗓音读
     [?] 我好像……挂了？                   # 未识别，人工把 ? 改成角色名
 
-标签：[旁白]=旁白 [音]=拟声 [?]=未识别 [角色名]=该角色对白
+标签：无标签=旁白 [音]=拟声 [?]=未识别 [角色名]=对白 [角色名@变体]=该角色的年龄/状态变体
 """
 
 import re
@@ -43,7 +46,8 @@ def _segments(chapter: Chapter, quotes) -> List[Tuple[str, str]]:
             if q.kind == "sfx":
                 segs.append(("音", q.text))
             elif q.speaker:
-                segs.append((q.speaker, q.text))
+                tag = f"{q.speaker}@{q.state}" if q.state else q.speaker
+                segs.append((tag, q.text))
             else:
                 segs.append(("?", q.text))
             pos = q.span[1]
@@ -58,8 +62,9 @@ def write_script(book_name: str, chapters: List[Chapter], quotes_by_ch: Dict,
     lines = [
         f"# {book_name} 配音脚本（中间格式，可编辑后回灌合成）",
         "# 用法：改完此文件后  uv run python -m book2audio --from-script 本文件 -o out.mp4 [--engine edge|cosyvoice]",
-        "# 标签：[角色名]=对白  [旁白]=旁白  [音]=拟声音效  [?]=未识别(请改成角色名)",
-        "# 改音色：编辑下方角色表的 性别/年龄段（自动选音），或在末列直接写音色覆盖(edge音色名 或 voicebank id)",
+        "# 标签：无标签整行=旁白  [角色名]=对白  [音]=拟声  [?]=未识别(请改成角色名)",
+        "#       [角色名@状态]=虚弱/愤怒/冷淡/低语/悲伤/急切(自动识别,可改)  [角色名@年龄段]=童年/少年/青年/中年/老年(切音色)",
+        "# 改音色：编辑下方角色表 性别/年龄段，或末列写音色覆盖；同角色多年龄→单独加 角色名@老年 行",
         "",
         "## 角色表",
         "# 角色 | 性别 | 年龄段 | 音色覆盖（留空=自动）",
@@ -76,7 +81,7 @@ def write_script(book_name: str, chapters: List[Chapter], quotes_by_ch: Dict,
     for ch in chapters:
         lines += [f"## {ch.title}", ""]
         for tag, text in _segments(ch, quotes_by_ch[ch.num]):
-            lines.append(f"[{tag}] {text}")
+            lines.append(text if tag == "旁白" else f"[{tag}] {text}")
         lines.append("")
 
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -114,7 +119,11 @@ def parse_script(path: Path):
             if name:
                 cast[name] = (gender, stage, override)
             continue
-        m = TAG_RE.match(line.strip())
-        if m and chapters:
-            chapters[-1][1].append((m.group(1).strip(), m.group(2)))
+        if section == "chapter" and chapters:
+            body = line.strip()
+            m = TAG_RE.match(body)
+            if m and len(m.group(1)) <= 20:  # [标签] 对白/音效；标签过长视为正文中的方括号
+                chapters[-1][1].append((m.group(1).strip(), m.group(2)))
+            else:                            # 无标签整行 = 旁白
+                chapters[-1][1].append(("旁白", body))
     return cast, chapters

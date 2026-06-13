@@ -33,6 +33,8 @@ uv run python -m book2audio -i book/xuanjian.txt -c 1-3 -o report.md
 # 配音脚本（中间格式，可编辑后回灌）：先导出 → 人工改错行/角色表 → 再合成
 uv run python -m book2audio -i book/xuanjian.txt -c 1-3 -o draft.script
 uv run python -m book2audio --from-script draft.script -o out.mp4 --engine edge
+#   脚本里：无标签行=旁白；[角色名]=对白；[角色名@虚弱/愤怒/...]=状态(自动识别,调韵律)；
+#          [角色名@老年]=年龄段切音色；同角色多年龄在角色表加 "角色名@老年" 行
 # CosyVoice3 本地零样本克隆（真人感更强；Mac CPU RTF≈9.5 很慢，适合远程GPU）
 uv run python -m book2audio -i book.txt -c 1 -o out.mp4 --multi-voice --engine cosyvoice
 ```
