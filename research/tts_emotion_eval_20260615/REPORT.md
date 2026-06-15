@@ -19,6 +19,7 @@ Samples are available in `playlist.html`.
 | CosyVoice3-0.5B instruct | `real_male` prompt | Instruct prompt + speed |
 | Edge TTS | `zh-CN-YunxiNeural` | rate + pitch + volume |
 | Kokoro ONNX | `zm_yunxi` | speed only; this run used `lang="cmn"` through the local kokoro-onnx/espeak path and is not a valid Chinese-quality sample |
+| IndexTTS2 | not generated in this folder | speaker prompt + emotion audio prompt / emotion vector / emotion text; see `../indextts_bilibili_eval_20260615/REPORT.md` |
 
 ## Sample Matrix
 
@@ -35,6 +36,8 @@ For character dialogue with explicit states, continue with CosyVoice3 as the pri
 Use Edge TTS as the fast baseline. It is quick and stable once network access is available, but the emotion control is indirect. Rate, pitch, and volume can imply weak/angry/whisper, but they do not reliably change performance style.
 
 Do not use the current Kokoro samples to judge Chinese quality. The playback result is not natural Mandarin; this is likely caused by the local kokoro-onnx G2P path used in this script. A fair Kokoro retest should use the official Kokoro pipeline with `lang_code="z"` and `misaki[zh]`, or pre-phonemize with Misaki before calling ONNX.
+
+IndexTTS2 from Bilibili is probably the strongest technical candidate for this exact use case, but it was not generated in this workspace. It needs the official repository, checkpoints, and a practical PyTorch runtime. The local machine reports no CUDA and no MPS through PyTorch, and `git-lfs` is unavailable, so the same-text audio benchmark is deferred to a dedicated IndexTTS2 setup.
 
 ## Per-State Notes
 

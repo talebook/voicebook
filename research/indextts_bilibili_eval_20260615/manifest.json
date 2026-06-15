@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-06-15",
+  "engine": "IndexTTS2",
+  "status": "not_generated",
+  "reason": "Official IndexTTS2 repo/checkpoints are not installed in this workspace; git-lfs is unavailable; local torch reports cuda=false and mps=false.",
+  "target_states": {
+    "weak": "我没事……别停下，先把药箱拿过来。",
+    "angry": "够了！你还想瞒我到什么时候？",
+    "whisper": "别出声……门外有人。"
+  },
+  "samples": []
+}
