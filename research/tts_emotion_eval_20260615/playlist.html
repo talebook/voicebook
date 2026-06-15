@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voicebook TTS Emotion Samples</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 32px; color: #202124; }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { margin-top: 32px; }
+    .meta, .note { color: #5f6368; }
+    .line { font-size: 18px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border-bottom: 1px solid #dadce0; padding: 10px 8px; text-align: left; vertical-align: middle; }
+    audio { width: min(480px, 100%); }
+    code { white-space: pre-wrap; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Voicebook TTS Emotion Samples</h1>
+  <p class="meta">Generated at 2026-06-15 16:56:48 +0800. Compare each row by state.</p>
+  
+    <section>
+      <h2>虚弱</h2>
+      <p class="line">我没事……别停下，先把药箱拿过来。</p>
+      <p class="note">CosyVoice3 没有官方“虚弱”指令，这里用慢速和低能量文本近似。</p>
+      <table>
+        <thead><tr><th>Engine</th><th>Sample</th><th>Controls</th></tr></thead>
+        <tbody>
+        <tr>
+          <td>CosyVoice3-0.5B instruct / real_male prompt</td>
+          <td><audio controls preload="metadata" src="samples/weak_cosyvoice3_real_male.wav"></audio></td>
+          <td><code>{"speed": 0.78, "instruct": "You are a helpful assistant. 请用尽可能慢地语速说一句话。<|endofprompt|>", "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"}</code></td>
+        </tr>
+        <tr>
+          <td>Edge TTS / zh-CN-YunxiNeural</td>
+          <td><audio controls preload="metadata" src="samples/weak_edge_yunxi.mp3"></audio></td>
+          <td><code>{"rate": "-28%", "pitch": "-8Hz", "volume": "-22%"}</code></td>
+        </tr>
+        <tr>
+          <td>Kokoro ONNX / zm_yunxi</td>
+          <td><audio controls preload="metadata" src="samples/weak_kokoro_zm_yunxi.wav"></audio></td>
+          <td><code>{"speed": 0.78, "lang": "cmn"}</code></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>愤怒</h2>
+      <p class="line">够了！你还想瞒我到什么时候？</p>
+      <p class="note">CosyVoice3 使用官方 anger instruct prompt。</p>
+      <table>
+        <thead><tr><th>Engine</th><th>Sample</th><th>Controls</th></tr></thead>
+        <tbody>
+        <tr>
+          <td>CosyVoice3-0.5B instruct / real_male prompt</td>
+          <td><audio controls preload="metadata" src="samples/angry_cosyvoice3_real_male.wav"></audio></td>
+          <td><code>{"speed": 1.08, "instruct": "You are a helpful assistant. 请非常生气地说一句话。<|endofprompt|>", "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"}</code></td>
+        </tr>
+        <tr>
+          <td>Edge TTS / zh-CN-YunxiNeural</td>
+          <td><audio controls preload="metadata" src="samples/angry_edge_yunxi.mp3"></audio></td>
+          <td><code>{"rate": "+18%", "pitch": "+28Hz", "volume": "+18%"}</code></td>
+        </tr>
+        <tr>
+          <td>Kokoro ONNX / zm_yunxi</td>
+          <td><audio controls preload="metadata" src="samples/angry_kokoro_zm_yunxi.wav"></audio></td>
+          <td><code>{"speed": 1.12, "lang": "cmn"}</code></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>低语</h2>
+      <p class="line">别出声……门外有人。</p>
+      <p class="note">CosyVoice3 使用官方 soft voice instruct prompt。</p>
+      <table>
+        <thead><tr><th>Engine</th><th>Sample</th><th>Controls</th></tr></thead>
+        <tbody>
+        <tr>
+          <td>CosyVoice3-0.5B instruct / real_male prompt</td>
+          <td><audio controls preload="metadata" src="samples/whisper_cosyvoice3_real_male.wav"></audio></td>
+          <td><code>{"speed": 0.88, "instruct": "You are a helpful assistant. Please say a sentence in a very soft voice.<|endofprompt|>", "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"}</code></td>
+        </tr>
+        <tr>
+          <td>Edge TTS / zh-CN-YunxiNeural</td>
+          <td><audio controls preload="metadata" src="samples/whisper_edge_yunxi.mp3"></audio></td>
+          <td><code>{"rate": "-20%", "pitch": "-18Hz", "volume": "-35%"}</code></td>
+        </tr>
+        <tr>
+          <td>Kokoro ONNX / zm_yunxi</td>
+          <td><audio controls preload="metadata" src="samples/whisper_kokoro_zm_yunxi.wav"></audio></td>
+          <td><code>{"speed": 0.84, "lang": "cmn"}</code></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+</body>
+</html>

@@ -1,0 +1,168 @@
+{
+  "created_at": "2026-06-15 16:10:56 +0800",
+  "states": {
+    "weak": {
+      "label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "note": "CosyVoice3 没有官方“虚弱”指令，这里用慢速和低能量文本近似。"
+    },
+    "angry": {
+      "label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "note": "CosyVoice3 使用官方 anger instruct prompt。"
+    },
+    "whisper": {
+      "label": "低语",
+      "text": "别出声……门外有人。",
+      "note": "CosyVoice3 使用官方 soft voice instruct prompt。"
+    }
+  },
+  "samples": [
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3-0.5B instruct / real_male prompt",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/angry_cosyvoice3_real_male.wav",
+      "format": "wav",
+      "controls": {
+        "speed": 1.08,
+        "instruct": "You are a helpful assistant. 请非常生气地说一句话。<|endofprompt|>",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"
+      },
+      "audio_duration_seconds": 2.48,
+      "seconds_to_generate": 41.67,
+      "bytes": 238160
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS / zh-CN-YunxiNeural",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/angry_edge_yunxi.mp3",
+      "format": "mp3",
+      "controls": {
+        "rate": "+18%",
+        "pitch": "+28Hz",
+        "volume": "+18%"
+      },
+      "seconds_to_generate": 1.28,
+      "bytes": 18576
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro ONNX / zm_yunxi",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/angry_kokoro_zm_yunxi.wav",
+      "format": "wav",
+      "controls": {
+        "speed": 1.12,
+        "lang": "cmn"
+      },
+      "seconds_to_generate": 1.12,
+      "bytes": 117804
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3-0.5B instruct / real_male prompt",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/weak_cosyvoice3_real_male.wav",
+      "format": "wav",
+      "controls": {
+        "speed": 0.78,
+        "instruct": "You are a helpful assistant. 请用尽可能慢地语速说一句话。<|endofprompt|>",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"
+      },
+      "audio_duration_seconds": 7.42,
+      "seconds_to_generate": 65.32,
+      "bytes": 712400
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS / zh-CN-YunxiNeural",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/weak_edge_yunxi.mp3",
+      "format": "mp3",
+      "controls": {
+        "rate": "-28%",
+        "pitch": "-8Hz",
+        "volume": "-22%"
+      },
+      "seconds_to_generate": 1.61,
+      "bytes": 31248
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro ONNX / zm_yunxi",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/weak_kokoro_zm_yunxi.wav",
+      "format": "wav",
+      "controls": {
+        "speed": 0.78,
+        "lang": "cmn"
+      },
+      "seconds_to_generate": 4.59,
+      "bytes": 191532
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3-0.5B instruct / real_male prompt",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/whisper_cosyvoice3_real_male.wav",
+      "format": "wav",
+      "controls": {
+        "speed": 0.88,
+        "instruct": "You are a helpful assistant. Please say a sentence in a very soft voice.<|endofprompt|>",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"
+      },
+      "audio_duration_seconds": 2.36,
+      "seconds_to_generate": 35.94,
+      "bytes": 226640
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS / zh-CN-YunxiNeural",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/whisper_edge_yunxi.mp3",
+      "format": "mp3",
+      "controls": {
+        "rate": "-20%",
+        "pitch": "-18Hz",
+        "volume": "-35%"
+      },
+      "seconds_to_generate": 1.46,
+      "bytes": 20592
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro ONNX / zm_yunxi",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/whisper_kokoro_zm_yunxi.wav",
+      "format": "wav",
+      "controls": {
+        "speed": 0.84,
+        "lang": "cmn"
+      },
+      "seconds_to_generate": 1.16,
+      "bytes": 97324
+    }
+  ],
+  "failures": [],
+  "updated_at": "2026-06-15 16:56:48 +0800"
+}
