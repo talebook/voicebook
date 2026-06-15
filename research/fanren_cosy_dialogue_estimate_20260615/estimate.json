@@ -1,0 +1,286 @@
+{
+  "book": "book/fanren.epub",
+  "chapter_files": 2502,
+  "total_han_chars": 6634162,
+  "dialogue_count": 43188,
+  "dialogue_han_chars": 1647452,
+  "dialogue_share_by_chars": 0.24832857563622956,
+  "dialogue_length": {
+    "mean": 38.1460590904881,
+    "median": 25.0,
+    "p90": 87.0,
+    "max": 2000
+  },
+  "cosy_benchmark": {
+    "samples": [
+      {
+        "file": "samples/cosy_female_angry.wav",
+        "chars": 12,
+        "audio_duration_seconds": 3.24,
+        "seconds_to_generate": 46.59,
+        "rtf": 14.37962962962963,
+        "seconds_per_char": 3.8825000000000003
+      },
+      {
+        "file": "samples/cosy_female_weak.wav",
+        "chars": 13,
+        "audio_duration_seconds": 3.6,
+        "seconds_to_generate": 52.94,
+        "rtf": 14.705555555555554,
+        "seconds_per_char": 4.072307692307692
+      },
+      {
+        "file": "samples/cosy_female_whisper.wav",
+        "chars": 7,
+        "audio_duration_seconds": 1.56,
+        "seconds_to_generate": 14.26,
+        "rtf": 9.14102564102564,
+        "seconds_per_char": 2.037142857142857
+      },
+      {
+        "file": "samples/cosy_male_angry.wav",
+        "chars": 12,
+        "audio_duration_seconds": 3.4,
+        "seconds_to_generate": 26.53,
+        "rtf": 7.802941176470589,
+        "seconds_per_char": 2.2108333333333334
+      },
+      {
+        "file": "samples/cosy_male_weak.wav",
+        "chars": 13,
+        "audio_duration_seconds": 3.64,
+        "seconds_to_generate": 37.01,
+        "rtf": 10.167582417582416,
+        "seconds_per_char": 2.8469230769230767
+      },
+      {
+        "file": "samples/cosy_male_whisper.wav",
+        "chars": 7,
+        "audio_duration_seconds": 1.4,
+        "seconds_to_generate": 25.26,
+        "rtf": 18.042857142857144,
+        "seconds_per_char": 3.608571428571429
+      },
+      {
+        "file": "samples/weak_cosyvoice3_instruct_only.wav",
+        "chars": 13,
+        "audio_duration_seconds": 3.64,
+        "seconds_to_generate": 31.09,
+        "rtf": 8.54120879120879,
+        "seconds_per_char": 2.3915384615384614
+      },
+      {
+        "file": "samples/angry_cosyvoice3_instruct_only.wav",
+        "chars": 12,
+        "audio_duration_seconds": 3.4,
+        "seconds_to_generate": 35.91,
+        "rtf": 10.561764705882352,
+        "seconds_per_char": 2.9924999999999997
+      },
+      {
+        "file": "samples/whisper_cosyvoice3_instruct_only.wav",
+        "chars": 7,
+        "audio_duration_seconds": 1.4,
+        "seconds_to_generate": 24.85,
+        "rtf": 17.750000000000004,
+        "seconds_per_char": 3.5500000000000003
+      },
+      {
+        "file": "samples/angry_cosyvoice3_real_male.wav",
+        "chars": 12,
+        "audio_duration_seconds": 2.48,
+        "seconds_to_generate": 41.67,
+        "rtf": 16.80241935483871,
+        "seconds_per_char": 3.4725
+      },
+      {
+        "file": "samples/weak_cosyvoice3_real_male.wav",
+        "chars": 13,
+        "audio_duration_seconds": 7.42,
+        "seconds_to_generate": 65.32,
+        "rtf": 8.803234501347708,
+        "seconds_per_char": 5.024615384615384
+      },
+      {
+        "file": "samples/whisper_cosyvoice3_real_male.wav",
+        "chars": 7,
+        "audio_duration_seconds": 2.36,
+        "seconds_to_generate": 35.94,
+        "rtf": 15.228813559322035,
+        "seconds_per_char": 5.134285714285714
+      }
+    ],
+    "count": 12,
+    "median_rtf": 12.47069716775599,
+    "mean_rtf": 12.66058603964338,
+    "median_seconds_per_char": 3.5112500000000004,
+    "mean_seconds_per_char": 3.435309829059829
+  },
+  "estimate": {
+    "optimistic": {
+      "audio_seconds": 316817.6923076923,
+      "rtf": 9.0,
+      "wall_seconds": 2851359.230769231
+    },
+    "expected": {
+      "audio_seconds": 343219.1666666667,
+      "rtf": 11.5,
+      "wall_seconds": 3947020.416666667
+    },
+    "pessimistic": {
+      "audio_seconds": 392250.47619047615,
+      "rtf": 14.0,
+      "wall_seconds": 5491506.666666666
+    },
+    "observed_seconds_per_char_expected": {
+      "seconds_per_char": 3.435309829059829,
+      "wall_seconds": 5659508.048504273
+    },
+    "observed_seconds_per_char_median": {
+      "seconds_per_char": 3.5112500000000004,
+      "wall_seconds": 5784615.835000001
+    }
+  },
+  "chapter_stats_top_dialogue_chars": [
+    {
+      "file": "OEBPS/Text/chapter2468.html",
+      "chapter": 2468,
+      "han_chars": 11058,
+      "dialogue_count": 42,
+      "dialogue_han_chars": 5414
+    },
+    {
+      "file": "OEBPS/Text/chapter2472.html",
+      "chapter": 2472,
+      "han_chars": 8640,
+      "dialogue_count": 62,
+      "dialogue_han_chars": 3519
+    },
+    {
+      "file": "OEBPS/Text/chapter2470.html",
+      "chapter": 2470,
+      "han_chars": 12702,
+      "dialogue_count": 89,
+      "dialogue_han_chars": 3060
+    },
+    {
+      "file": "OEBPS/Text/chapter2480.html",
+      "chapter": 2480,
+      "han_chars": 16468,
+      "dialogue_count": 79,
+      "dialogue_han_chars": 2349
+    },
+    {
+      "file": "OEBPS/Text/chapter2250.html",
+      "chapter": 2250,
+      "han_chars": 2772,
+      "dialogue_count": 25,
+      "dialogue_han_chars": 2275
+    },
+    {
+      "file": "OEBPS/Text/chapter2221.html",
+      "chapter": 2221,
+      "han_chars": 2777,
+      "dialogue_count": 31,
+      "dialogue_han_chars": 2221
+    },
+    {
+      "file": "OEBPS/Text/chapter1363.html",
+      "chapter": 1363,
+      "han_chars": 2796,
+      "dialogue_count": 23,
+      "dialogue_han_chars": 2204
+    },
+    {
+      "file": "OEBPS/Text/chapter802.html",
+      "chapter": 802,
+      "han_chars": 2746,
+      "dialogue_count": 23,
+      "dialogue_han_chars": 2143
+    },
+    {
+      "file": "OEBPS/Text/chapter867.html",
+      "chapter": 867,
+      "han_chars": 2828,
+      "dialogue_count": 24,
+      "dialogue_han_chars": 2137
+    },
+    {
+      "file": "OEBPS/Text/chapter2015.html",
+      "chapter": 2015,
+      "han_chars": 2696,
+      "dialogue_count": 31,
+      "dialogue_han_chars": 2124
+    },
+    {
+      "file": "OEBPS/Text/chapter1598.html",
+      "chapter": 1598,
+      "han_chars": 2826,
+      "dialogue_count": 32,
+      "dialogue_han_chars": 2116
+    },
+    {
+      "file": "OEBPS/Text/chapter912.html",
+      "chapter": 912,
+      "han_chars": 2796,
+      "dialogue_count": 28,
+      "dialogue_han_chars": 2115
+    },
+    {
+      "file": "OEBPS/Text/chapter795.html",
+      "chapter": 795,
+      "han_chars": 2868,
+      "dialogue_count": 27,
+      "dialogue_han_chars": 2109
+    },
+    {
+      "file": "OEBPS/Text/chapter2341.html",
+      "chapter": 2341,
+      "han_chars": 2746,
+      "dialogue_count": 35,
+      "dialogue_han_chars": 2072
+    },
+    {
+      "file": "OEBPS/Text/chapter803.html",
+      "chapter": 803,
+      "han_chars": 2720,
+      "dialogue_count": 23,
+      "dialogue_han_chars": 2055
+    },
+    {
+      "file": "OEBPS/Text/chapter2405.html",
+      "chapter": 2405,
+      "han_chars": 2719,
+      "dialogue_count": 41,
+      "dialogue_han_chars": 2035
+    },
+    {
+      "file": "OEBPS/Text/chapter2102.html",
+      "chapter": 2102,
+      "han_chars": 2744,
+      "dialogue_count": 20,
+      "dialogue_han_chars": 2024
+    },
+    {
+      "file": "OEBPS/Text/chapter2131.html",
+      "chapter": 2131,
+      "han_chars": 2726,
+      "dialogue_count": 25,
+      "dialogue_han_chars": 2015
+    },
+    {
+      "file": "OEBPS/Text/chapter1844.html",
+      "chapter": 1844,
+      "han_chars": 2792,
+      "dialogue_count": 21,
+      "dialogue_han_chars": 2005
+    },
+    {
+      "file": "OEBPS/Text/chapter2049.html",
+      "chapter": 2049,
+      "han_chars": 2806,
+      "dialogue_count": 4,
+      "dialogue_han_chars": 1995
+    }
+  ]
+}
