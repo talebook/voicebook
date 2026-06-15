@@ -53,7 +53,7 @@
     },
     {
       "engine": "kokoro",
-      "engine_label": "Kokoro ONNX / zm_yunxi",
+      "engine_label": "Kokoro ONNX / zm_yunxi (cmn/espeak baseline, invalid for Chinese quality)",
       "state": "angry",
       "state_label": "愤怒",
       "text": "够了！你还想瞒我到什么时候？",
@@ -101,7 +101,7 @@
     },
     {
       "engine": "kokoro",
-      "engine_label": "Kokoro ONNX / zm_yunxi",
+      "engine_label": "Kokoro ONNX / zm_yunxi (cmn/espeak baseline, invalid for Chinese quality)",
       "state": "weak",
       "state_label": "虚弱",
       "text": "我没事……别停下，先把药箱拿过来。",
@@ -149,7 +149,7 @@
     },
     {
       "engine": "kokoro",
-      "engine_label": "Kokoro ONNX / zm_yunxi",
+      "engine_label": "Kokoro ONNX / zm_yunxi (cmn/espeak baseline, invalid for Chinese quality)",
       "state": "whisper",
       "state_label": "低语",
       "text": "别出声……门外有人。",

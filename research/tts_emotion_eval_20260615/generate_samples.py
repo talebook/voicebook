@@ -68,7 +68,7 @@ STATES = {
 
 ENGINE_LABELS = {
     "edge": "Edge TTS / zh-CN-YunxiNeural",
-    "kokoro": "Kokoro ONNX / zm_yunxi",
+    "kokoro": "Kokoro ONNX / zm_yunxi (cmn/espeak baseline, invalid for Chinese quality)",
     "cosy": "CosyVoice3-0.5B instruct / real_male prompt",
 }
 
