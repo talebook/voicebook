@@ -1,0 +1,122 @@
+{
+  "created_at": "2026-06-15 20:32:06 +0800",
+  "updated_at": "2026-06-15 20:32:06 +0800",
+  "engine": "Kokoro v1.1 zh official KPipeline",
+  "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+  "device": "cpu",
+  "controls": {
+    "lang_code": "z",
+    "en_callable": true,
+    "speed_callable": "official make_zh.py pattern"
+  },
+  "samples": [
+    {
+      "state": "weak",
+      "state_label": "虚弱",
+      "voice": "zf_001",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "phonemes": "我3/ㄇㄟ2ㄕ十4……ㄅㄝ2/ㄊ应2ㄒ压4, ㄒ言1/ㄅㄚ3/要4ㄒ阳1/ㄋㄚ2/ㄍ我4ㄌㄞ5.",
+      "file": "samples/weak_kokoro_official_zf_001.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zf_001",
+        "speed": "speed_callable",
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "lang_code": "z"
+      },
+      "audio_duration_seconds": 3.92,
+      "seconds_to_generate": 3.55,
+      "bytes": 188444
+    },
+    {
+      "state": "angry",
+      "state_label": "愤怒",
+      "voice": "zf_001",
+      "text": "够了！你还想瞒我到什么时候？",
+      "phonemes": "ㄍㄡ4/ㄌㄜ5! ㄋㄧ3/ㄏㄞ2/ㄒ阳3/ㄇㄢ2/我3/ㄉㄠ4/ㄕㄣ2ㄇㄜ5/ㄕ十2ㄏㄡ5?",
+      "file": "samples/angry_kokoro_official_zf_001.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zf_001",
+        "speed": "speed_callable",
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "lang_code": "z"
+      },
+      "audio_duration_seconds": 3.23,
+      "seconds_to_generate": 0.73,
+      "bytes": 154844
+    },
+    {
+      "state": "whisper",
+      "state_label": "低语",
+      "voice": "zf_001",
+      "text": "别出声……门外有人。",
+      "phonemes": "ㄅㄝ2/ㄔㄨ1ㄕㄥ1……ㄇㄣ2外4/又3ㄖㄣ2.",
+      "file": "samples/whisper_kokoro_official_zf_001.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zf_001",
+        "speed": "speed_callable",
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "lang_code": "z"
+      },
+      "audio_duration_seconds": 2.52,
+      "seconds_to_generate": 0.53,
+      "bytes": 121244
+    },
+    {
+      "state": "weak",
+      "state_label": "虚弱",
+      "voice": "zm_010",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "phonemes": "我3/ㄇㄟ2ㄕ十4……ㄅㄝ2/ㄊ应2ㄒ压4, ㄒ言1/ㄅㄚ3/要4ㄒ阳1/ㄋㄚ2/ㄍ我4ㄌㄞ5.",
+      "file": "samples/weak_kokoro_official_zm_010.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zm_010",
+        "speed": "speed_callable",
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "lang_code": "z"
+      },
+      "audio_duration_seconds": 3.85,
+      "seconds_to_generate": 2.18,
+      "bytes": 184844
+    },
+    {
+      "state": "angry",
+      "state_label": "愤怒",
+      "voice": "zm_010",
+      "text": "够了！你还想瞒我到什么时候？",
+      "phonemes": "ㄍㄡ4/ㄌㄜ5! ㄋㄧ3/ㄏㄞ2/ㄒ阳3/ㄇㄢ2/我3/ㄉㄠ4/ㄕㄣ2ㄇㄜ5/ㄕ十2ㄏㄡ5?",
+      "file": "samples/angry_kokoro_official_zm_010.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zm_010",
+        "speed": "speed_callable",
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "lang_code": "z"
+      },
+      "audio_duration_seconds": 3.27,
+      "seconds_to_generate": 0.55,
+      "bytes": 157244
+    },
+    {
+      "state": "whisper",
+      "state_label": "低语",
+      "voice": "zm_010",
+      "text": "别出声……门外有人。",
+      "phonemes": "ㄅㄝ2/ㄔㄨ1ㄕㄥ1……ㄇㄣ2外4/又3ㄖㄣ2.",
+      "file": "samples/whisper_kokoro_official_zm_010.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zm_010",
+        "speed": "speed_callable",
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "lang_code": "z"
+      },
+      "audio_duration_seconds": 2.65,
+      "seconds_to_generate": 0.56,
+      "bytes": 127244
+    }
+  ]
+}

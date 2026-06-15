@@ -50,7 +50,9 @@ Practical options:
 
 ## Recommendation
 
-Use this v1.1 test only to decide whether Kokoro's Mandarin quality is acceptable after the correct G2P path. Do not plan the Cosy-to-Kokoro voice-pack conversion unless we find or build a Kokoro training/export pipeline.
+Do not use this ONNX-direct test as the final Kokoro v1.1 Mandarin quality baseline. A follow-up run in `../kokoro_v11_official_eval_20260615` uses the official `hexgrad/Kokoro-82M-v1.1-zh` `KPipeline` path and is a better match for the HF demo.
+
+Do not plan the Cosy-to-Kokoro voice-pack conversion unless we find or build a Kokoro training/export pipeline.
 
 For the original idea, the technically sound version is:
 
