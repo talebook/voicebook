@@ -1,0 +1,51 @@
+{
+  "created_at": "2026-06-15 17:24:26 +0800",
+  "updated_at": "2026-06-15 17:24:26 +0800",
+  "engine": "CosyVoice3-0.5B instruct / real_male prompt",
+  "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav",
+  "note": "No speed parameter is passed to inference_instruct2; CosyVoice3 uses its default speed=1.0.",
+  "samples": [
+    {
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/weak_cosyvoice3_instruct_only.wav",
+      "format": "wav",
+      "controls": {
+        "instruct": "You are a helpful assistant. 请用虚弱、气息不足、带一点停顿的状态说这句话。<|endofprompt|>",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"
+      },
+      "audio_duration_seconds": 3.64,
+      "seconds_to_generate": 31.09,
+      "bytes": 349520
+    },
+    {
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/angry_cosyvoice3_instruct_only.wav",
+      "format": "wav",
+      "controls": {
+        "instruct": "You are a helpful assistant. 请用愤怒、压抑不住情绪的语气说这句话。<|endofprompt|>",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"
+      },
+      "audio_duration_seconds": 3.4,
+      "seconds_to_generate": 35.91,
+      "bytes": 326480
+    },
+    {
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/whisper_cosyvoice3_instruct_only.wav",
+      "format": "wav",
+      "controls": {
+        "instruct": "You are a helpful assistant. 请压低声音，用低声耳语、紧张克制的语气说这句话。<|endofprompt|>",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav"
+      },
+      "audio_duration_seconds": 1.4,
+      "seconds_to_generate": 24.85,
+      "bytes": 134480
+    }
+  ]
+}
