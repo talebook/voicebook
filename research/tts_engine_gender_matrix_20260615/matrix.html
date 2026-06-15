@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTS Engine Gender-State Matrix</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 28px; color: #202124; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    .meta { color: #5f6368; margin-bottom: 18px; }
+    table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+    th, td { border: 1px solid #dadce0; padding: 10px; vertical-align: top; }
+    thead th { background: #f8f9fa; position: sticky; top: 0; z-index: 1; }
+    tbody th { width: 140px; background: #fbfbfc; }
+    audio { width: 100%; min-width: 180px; }
+    .line { color: #5f6368; font-size: 13px; font-weight: 400; margin-top: 4px; }
+    .missing { color: #b3261e; }
+  </style>
+</head>
+<body>
+  <h1>TTS Engine Gender-State Matrix</h1>
+  <div class="meta">Generated at 2026-06-15 20:45:56 +0800. Rows are engine + gender; columns are dialogue states.</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Engine</th>
+        <th>Gender</th>
+        <th>虚弱<div class="line">我没事……别停下，先把药箱拿过来。</div></th><th>愤怒<div class="line">够了！你还想瞒我到什么时候？</div></th><th>低语<div class="line">别出声……门外有人。</div></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <th>Kokoro official KPipeline</th>
+          <th>男</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_male_weak.wav" src="samples/kokoro_male_weak.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_male_angry.wav" src="samples/kokoro_male_angry.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_male_whisper.wav" src="samples/kokoro_male_whisper.wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>Kokoro official KPipeline</th>
+          <th>女</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_female_weak.wav" src="samples/kokoro_female_weak.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_female_angry.wav" src="samples/kokoro_female_angry.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_female_whisper.wav" src="samples/kokoro_female_whisper.wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>Kokoro ONNX v1.1 zh</th>
+          <th>男</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_onnx_male_weak.wav" src="samples/kokoro_onnx_male_weak.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_onnx_male_angry.wav" src="samples/kokoro_onnx_male_angry.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_onnx_male_whisper.wav" src="samples/kokoro_onnx_male_whisper.wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>Kokoro ONNX v1.1 zh</th>
+          <th>女</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_onnx_female_weak.wav" src="samples/kokoro_onnx_female_weak.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_onnx_female_angry.wav" src="samples/kokoro_onnx_female_angry.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/kokoro_onnx_female_whisper.wav" src="samples/kokoro_onnx_female_whisper.wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>CosyVoice3 instruct</th>
+          <th>男</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/cosy_male_weak.wav" src="samples/cosy_male_weak.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/cosy_male_angry.wav" src="samples/cosy_male_angry.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/cosy_male_whisper.wav" src="samples/cosy_male_whisper.wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>CosyVoice3 instruct</th>
+          <th>女</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/cosy_female_weak.wav" src="samples/cosy_female_weak.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/cosy_female_angry.wav" src="samples/cosy_female_angry.wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/cosy_female_whisper.wav" src="samples/cosy_female_whisper.wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>Edge TTS</th>
+          <th>男</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/edge_male_weak.mp3" src="samples/edge_male_weak.mp3"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/edge_male_angry.mp3" src="samples/edge_male_angry.mp3"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/edge_male_whisper.mp3" src="samples/edge_male_whisper.mp3"></audio>
+          </td>
+        </tr>
+        <tr>
+          <th>Edge TTS</th>
+          <th>女</th>
+          
+          <td>
+            <audio controls preload="metadata" title="samples/edge_female_weak.mp3" src="samples/edge_female_weak.mp3"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/edge_female_angry.mp3" src="samples/edge_female_angry.mp3"></audio>
+          </td>
+          <td>
+            <audio controls preload="metadata" title="samples/edge_female_whisper.mp3" src="samples/edge_female_whisper.mp3"></audio>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+</body>
+</html>

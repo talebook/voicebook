@@ -1,0 +1,503 @@
+{
+  "created_at": "2026-06-15 20:39:36 +0800",
+  "updated_at": "2026-06-15 20:45:56 +0800",
+  "states": {
+    "weak": {
+      "label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。"
+    },
+    "angry": {
+      "label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？"
+    },
+    "whisper": {
+      "label": "低语",
+      "text": "别出声……门外有人。"
+    }
+  },
+  "genders": {
+    "male": {
+      "label": "男"
+    },
+    "female": {
+      "label": "女"
+    }
+  },
+  "samples": [
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3 instruct",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/cosy_female_angry.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "real_female",
+        "prompt_wav": "temp_cosyvoice/asset/zero_shot_prompt.wav",
+        "instruct": "You are a helpful assistant. 请用愤怒、压抑不住情绪的语气说这句话。<|endofprompt|>"
+      },
+      "audio_duration_seconds": 3.24,
+      "seconds_to_generate": 46.59,
+      "bytes": 311120
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3 instruct",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/cosy_female_weak.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "real_female",
+        "prompt_wav": "temp_cosyvoice/asset/zero_shot_prompt.wav",
+        "instruct": "You are a helpful assistant. 请用虚弱、气息不足、带一点停顿的状态说这句话。<|endofprompt|>"
+      },
+      "audio_duration_seconds": 3.6,
+      "seconds_to_generate": 52.94,
+      "bytes": 345680
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3 instruct",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/cosy_female_whisper.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "real_female",
+        "prompt_wav": "temp_cosyvoice/asset/zero_shot_prompt.wav",
+        "instruct": "You are a helpful assistant. 请压低声音，用低声耳语、紧张克制的语气说这句话。<|endofprompt|>"
+      },
+      "audio_duration_seconds": 1.56,
+      "seconds_to_generate": 14.26,
+      "bytes": 149840
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3 instruct",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/cosy_male_angry.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "real_male",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav",
+        "instruct": "You are a helpful assistant. 请用愤怒、压抑不住情绪的语气说这句话。<|endofprompt|>"
+      },
+      "audio_duration_seconds": 3.4,
+      "seconds_to_generate": 26.53,
+      "bytes": 326480
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3 instruct",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/cosy_male_weak.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "real_male",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav",
+        "instruct": "You are a helpful assistant. 请用虚弱、气息不足、带一点停顿的状态说这句话。<|endofprompt|>"
+      },
+      "audio_duration_seconds": 3.64,
+      "seconds_to_generate": 37.01,
+      "bytes": 349520
+    },
+    {
+      "engine": "cosy",
+      "engine_label": "CosyVoice3 instruct",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/cosy_male_whisper.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "real_male",
+        "prompt_wav": "temp_cosyvoice/asset/cross_lingual_prompt.wav",
+        "instruct": "You are a helpful assistant. 请压低声音，用低声耳语、紧张克制的语气说这句话。<|endofprompt|>"
+      },
+      "audio_duration_seconds": 1.4,
+      "seconds_to_generate": 25.26,
+      "bytes": 134480
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/edge_female_angry.mp3",
+      "format": "mp3",
+      "controls": {
+        "voice": "zh-CN-XiaoxiaoNeural",
+        "rate": "+18%",
+        "pitch": "+28Hz",
+        "volume": "+18%"
+      },
+      "seconds_to_generate": 1.28,
+      "bytes": 17280
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/edge_female_weak.mp3",
+      "format": "mp3",
+      "controls": {
+        "voice": "zh-CN-XiaoxiaoNeural",
+        "rate": "-28%",
+        "pitch": "-8Hz",
+        "volume": "-22%"
+      },
+      "seconds_to_generate": 1.73,
+      "bytes": 31248
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/edge_female_whisper.mp3",
+      "format": "mp3",
+      "controls": {
+        "voice": "zh-CN-XiaoxiaoNeural",
+        "rate": "-20%",
+        "pitch": "-18Hz",
+        "volume": "-35%"
+      },
+      "seconds_to_generate": 1.75,
+      "bytes": 18144
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/edge_male_angry.mp3",
+      "format": "mp3",
+      "controls": {
+        "voice": "zh-CN-YunxiNeural",
+        "rate": "+18%",
+        "pitch": "+28Hz",
+        "volume": "+18%"
+      },
+      "seconds_to_generate": 1.51,
+      "bytes": 18576
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/edge_male_weak.mp3",
+      "format": "mp3",
+      "controls": {
+        "voice": "zh-CN-YunxiNeural",
+        "rate": "-28%",
+        "pitch": "-8Hz",
+        "volume": "-22%"
+      },
+      "seconds_to_generate": 1.57,
+      "bytes": 31248
+    },
+    {
+      "engine": "edge",
+      "engine_label": "Edge TTS",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/edge_male_whisper.mp3",
+      "format": "mp3",
+      "controls": {
+        "voice": "zh-CN-YunxiNeural",
+        "rate": "-20%",
+        "pitch": "-18Hz",
+        "volume": "-35%"
+      },
+      "seconds_to_generate": 1.53,
+      "bytes": 20592
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro official KPipeline",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/kokoro_female_angry.wav",
+      "format": "wav",
+      "controls": {
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "voice": "zf_001",
+        "lang_code": "z",
+        "speed": "official speed_callable"
+      },
+      "audio_duration_seconds": 3.23,
+      "seconds_to_generate": 0.59,
+      "bytes": 154844
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro official KPipeline",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/kokoro_female_weak.wav",
+      "format": "wav",
+      "controls": {
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "voice": "zf_001",
+        "lang_code": "z",
+        "speed": "official speed_callable"
+      },
+      "audio_duration_seconds": 3.92,
+      "seconds_to_generate": 1.25,
+      "bytes": 188444
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro official KPipeline",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/kokoro_female_whisper.wav",
+      "format": "wav",
+      "controls": {
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "voice": "zf_001",
+        "lang_code": "z",
+        "speed": "official speed_callable"
+      },
+      "audio_duration_seconds": 2.52,
+      "seconds_to_generate": 0.49,
+      "bytes": 121244
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro official KPipeline",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/kokoro_male_angry.wav",
+      "format": "wav",
+      "controls": {
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "voice": "zm_010",
+        "lang_code": "z",
+        "speed": "official speed_callable"
+      },
+      "audio_duration_seconds": 3.27,
+      "seconds_to_generate": 0.65,
+      "bytes": 157244
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro official KPipeline",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/kokoro_male_weak.wav",
+      "format": "wav",
+      "controls": {
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "voice": "zm_010",
+        "lang_code": "z",
+        "speed": "official speed_callable"
+      },
+      "audio_duration_seconds": 3.85,
+      "seconds_to_generate": 2.27,
+      "bytes": 184844
+    },
+    {
+      "engine": "kokoro",
+      "engine_label": "Kokoro official KPipeline",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/kokoro_male_whisper.wav",
+      "format": "wav",
+      "controls": {
+        "repo_id": "hexgrad/Kokoro-82M-v1.1-zh",
+        "voice": "zm_010",
+        "lang_code": "z",
+        "speed": "official speed_callable"
+      },
+      "audio_duration_seconds": 2.65,
+      "seconds_to_generate": 0.48,
+      "bytes": 127244
+    },
+    {
+      "engine": "kokoro_onnx",
+      "engine_label": "Kokoro ONNX v1.1 zh",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/kokoro_onnx_female_angry.wav",
+      "format": "wav",
+      "controls": {
+        "model": "models/kokoro-v1.1-zh.onnx",
+        "voices": "models/voices-v1.1-zh.bin",
+        "voice": "zf_001",
+        "g2p": "misaki.zh.ZHG2P(version=None)",
+        "speed": 1.0
+      },
+      "audio_duration_seconds": 3.24,
+      "seconds_to_generate": 0.97,
+      "bytes": 155692
+    },
+    {
+      "engine": "kokoro_onnx",
+      "engine_label": "Kokoro ONNX v1.1 zh",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/kokoro_onnx_female_weak.wav",
+      "format": "wav",
+      "controls": {
+        "model": "models/kokoro-v1.1-zh.onnx",
+        "voices": "models/voices-v1.1-zh.bin",
+        "voice": "zf_001",
+        "g2p": "misaki.zh.ZHG2P(version=None)",
+        "speed": 1.0
+      },
+      "audio_duration_seconds": 3.82,
+      "seconds_to_generate": 1.18,
+      "bytes": 183340
+    },
+    {
+      "engine": "kokoro_onnx",
+      "engine_label": "Kokoro ONNX v1.1 zh",
+      "gender": "female",
+      "gender_label": "女",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/kokoro_onnx_female_whisper.wav",
+      "format": "wav",
+      "controls": {
+        "model": "models/kokoro-v1.1-zh.onnx",
+        "voices": "models/voices-v1.1-zh.bin",
+        "voice": "zf_001",
+        "g2p": "misaki.zh.ZHG2P(version=None)",
+        "speed": 1.0
+      },
+      "audio_duration_seconds": 2.3,
+      "seconds_to_generate": 0.74,
+      "bytes": 110636
+    },
+    {
+      "engine": "kokoro_onnx",
+      "engine_label": "Kokoro ONNX v1.1 zh",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "file": "samples/kokoro_onnx_male_angry.wav",
+      "format": "wav",
+      "controls": {
+        "model": "models/kokoro-v1.1-zh.onnx",
+        "voices": "models/voices-v1.1-zh.bin",
+        "voice": "zm_010",
+        "g2p": "misaki.zh.ZHG2P(version=None)",
+        "speed": 1.0
+      },
+      "audio_duration_seconds": 3.16,
+      "seconds_to_generate": 1.59,
+      "bytes": 151596
+    },
+    {
+      "engine": "kokoro_onnx",
+      "engine_label": "Kokoro ONNX v1.1 zh",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "file": "samples/kokoro_onnx_male_weak.wav",
+      "format": "wav",
+      "controls": {
+        "model": "models/kokoro-v1.1-zh.onnx",
+        "voices": "models/voices-v1.1-zh.bin",
+        "voice": "zm_010",
+        "g2p": "misaki.zh.ZHG2P(version=None)",
+        "speed": 1.0
+      },
+      "audio_duration_seconds": 3.73,
+      "seconds_to_generate": 1.2,
+      "bytes": 179244
+    },
+    {
+      "engine": "kokoro_onnx",
+      "engine_label": "Kokoro ONNX v1.1 zh",
+      "gender": "male",
+      "gender_label": "男",
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "file": "samples/kokoro_onnx_male_whisper.wav",
+      "format": "wav",
+      "controls": {
+        "model": "models/kokoro-v1.1-zh.onnx",
+        "voices": "models/voices-v1.1-zh.bin",
+        "voice": "zm_010",
+        "g2p": "misaki.zh.ZHG2P(version=None)",
+        "speed": 1.0
+      },
+      "audio_duration_seconds": 2.3,
+      "seconds_to_generate": 0.98,
+      "bytes": 110636
+    }
+  ],
+  "failures": []
+}
