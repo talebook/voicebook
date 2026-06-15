@@ -1,0 +1,72 @@
+{
+  "created_at": "2026-06-15 20:10:55 +0800",
+  "updated_at": "2026-06-15 20:10:55 +0800",
+  "engine": "Kokoro ONNX zh v1.1",
+  "model": "models/kokoro-v1.1-zh.onnx",
+  "voices": "models/voices-v1.1-zh.bin",
+  "g2p": "misaki.zh.ZHG2P(version=None)",
+  "voice_summary": {
+    "total_voices": 103,
+    "zh_voices": 100,
+    "selected_voice": "zm_010",
+    "selected_voice_shape": [
+      510,
+      1,
+      256
+    ],
+    "selected_voice_dtype": "float32",
+    "voice_tensor_shape_example": [
+      510,
+      1,
+      256
+    ]
+  },
+  "note": "Kokoro has no instruct/emotion prompt path here; state labels only identify the input lines.",
+  "samples": [
+    {
+      "state": "weak",
+      "state_label": "虚弱",
+      "text": "我没事……别停下，先把药箱拿过来。",
+      "phonemes": "wo↓ mei↗ʂɨ↘……pje↗ tʰi↗ŋɕja↘, ɕjɛ→n pa↓ jau↘ɕja→ŋ na↗ kwo↘lai↗.",
+      "file": "samples/weak_kokoro_v11_zm_010.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zm_010",
+        "speed": 1.0,
+        "is_phonemes": true
+      },
+      "seconds_to_generate": 1.27,
+      "bytes": 179244
+    },
+    {
+      "state": "angry",
+      "state_label": "愤怒",
+      "text": "够了！你还想瞒我到什么时候？",
+      "phonemes": "kou↘ lɤ! ni↓ xai↗ ɕja↓ŋ ma↗n wo↓ tau↘ ʂə↗nmɤ ʂɨ↗xou↘?",
+      "file": "samples/angry_kokoro_v11_zm_010.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zm_010",
+        "speed": 1.0,
+        "is_phonemes": true
+      },
+      "seconds_to_generate": 1.17,
+      "bytes": 157740
+    },
+    {
+      "state": "whisper",
+      "state_label": "低语",
+      "text": "别出声……门外有人。",
+      "phonemes": "pje↗ꭧʰu→ ʂə→ŋ……mə↗nwai↘ jou↓ɻə↗n.",
+      "file": "samples/whisper_kokoro_v11_zm_010.wav",
+      "format": "wav",
+      "controls": {
+        "voice": "zm_010",
+        "speed": 1.0,
+        "is_phonemes": true
+      },
+      "seconds_to_generate": 0.79,
+      "bytes": 110636
+    }
+  ]
+}
