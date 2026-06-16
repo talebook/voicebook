@@ -1,0 +1,306 @@
+{
+  "created_at": "2026-06-16",
+  "book": "book/fanren.epub",
+  "chapter_files": 2502,
+  "paragraphs": 147644,
+  "total_han_chars": 6634162,
+  "dialogue_count": 43188,
+  "dialogue_han_chars": 1647452,
+  "dialogue_share_by_chars": 0.24832857563622956,
+  "dialogue_length": {
+    "mean": 38.1460590904881,
+    "median": 25.0,
+    "p90": 87,
+    "max": 2000
+  },
+  "edge_benchmark": {
+    "samples": [
+      {
+        "source": "research/tts_engine_gender_matrix_20260615/manifest.json",
+        "file": "samples/edge_female_angry.mp3",
+        "chars": 12,
+        "seconds_to_generate": 1.28,
+        "seconds_per_char": 0.10666666666666667,
+        "bytes": 17280,
+        "audio_duration_seconds": 2.88,
+        "rtf": 0.4444444444444445,
+        "chars_per_audio_second": 4.166666666666667
+      },
+      {
+        "source": "research/tts_engine_gender_matrix_20260615/manifest.json",
+        "file": "samples/edge_female_weak.mp3",
+        "chars": 13,
+        "seconds_to_generate": 1.73,
+        "seconds_per_char": 0.13307692307692306,
+        "bytes": 31248,
+        "audio_duration_seconds": 5.208,
+        "rtf": 0.3321812596006144,
+        "chars_per_audio_second": 2.49615975422427
+      },
+      {
+        "source": "research/tts_engine_gender_matrix_20260615/manifest.json",
+        "file": "samples/edge_female_whisper.mp3",
+        "chars": 7,
+        "seconds_to_generate": 1.75,
+        "seconds_per_char": 0.25,
+        "bytes": 18144,
+        "audio_duration_seconds": 3.024,
+        "rtf": 0.5787037037037037,
+        "chars_per_audio_second": 2.314814814814815
+      },
+      {
+        "source": "research/tts_engine_gender_matrix_20260615/manifest.json",
+        "file": "samples/edge_male_angry.mp3",
+        "chars": 12,
+        "seconds_to_generate": 1.51,
+        "seconds_per_char": 0.12583333333333332,
+        "bytes": 18576,
+        "audio_duration_seconds": 3.096,
+        "rtf": 0.4877260981912145,
+        "chars_per_audio_second": 3.875968992248062
+      },
+      {
+        "source": "research/tts_engine_gender_matrix_20260615/manifest.json",
+        "file": "samples/edge_male_weak.mp3",
+        "chars": 13,
+        "seconds_to_generate": 1.57,
+        "seconds_per_char": 0.12076923076923077,
+        "bytes": 31248,
+        "audio_duration_seconds": 5.208,
+        "rtf": 0.3014592933947773,
+        "chars_per_audio_second": 2.49615975422427
+      },
+      {
+        "source": "research/tts_engine_gender_matrix_20260615/manifest.json",
+        "file": "samples/edge_male_whisper.mp3",
+        "chars": 7,
+        "seconds_to_generate": 1.53,
+        "seconds_per_char": 0.21857142857142858,
+        "bytes": 20592,
+        "audio_duration_seconds": 3.432,
+        "rtf": 0.44580419580419584,
+        "chars_per_audio_second": 2.0396270396270397
+      },
+      {
+        "source": "research/tts_emotion_eval_20260615/manifest.json",
+        "file": "samples/angry_edge_yunxi.mp3",
+        "chars": 12,
+        "seconds_to_generate": 1.28,
+        "seconds_per_char": 0.10666666666666667,
+        "bytes": 18576,
+        "audio_duration_seconds": 3.096,
+        "rtf": 0.4134366925064599,
+        "chars_per_audio_second": 3.875968992248062
+      },
+      {
+        "source": "research/tts_emotion_eval_20260615/manifest.json",
+        "file": "samples/weak_edge_yunxi.mp3",
+        "chars": 13,
+        "seconds_to_generate": 1.61,
+        "seconds_per_char": 0.12384615384615386,
+        "bytes": 31248,
+        "audio_duration_seconds": 5.208,
+        "rtf": 0.30913978494623656,
+        "chars_per_audio_second": 2.49615975422427
+      },
+      {
+        "source": "research/tts_emotion_eval_20260615/manifest.json",
+        "file": "samples/whisper_edge_yunxi.mp3",
+        "chars": 7,
+        "seconds_to_generate": 1.46,
+        "seconds_per_char": 0.20857142857142857,
+        "bytes": 20592,
+        "audio_duration_seconds": 3.432,
+        "rtf": 0.4254079254079254,
+        "chars_per_audio_second": 2.0396270396270397
+      }
+    ],
+    "count": 9,
+    "request_seconds": {
+      "mean": 1.5244444444444445,
+      "median": 1.53,
+      "p90": 1.75,
+      "min": 1.28,
+      "max": 1.75
+    },
+    "rtf": {
+      "mean": 0.4153670442221747,
+      "median": 0.4254079254079254,
+      "p90": 0.5787037037037037
+    },
+    "chars_per_audio_second": {
+      "mean": 2.866794756433833,
+      "median": 2.49615975422427
+    }
+  },
+  "estimation_profiles": {
+    "optimistic": {
+      "speech_chars_per_second": 4.8,
+      "rtf": 0.28,
+      "request_overhead_seconds": 0.65
+    },
+    "expected": {
+      "speech_chars_per_second": 4.2,
+      "rtf": 0.4254079254079254,
+      "request_overhead_seconds": 0.85
+    },
+    "conservative": {
+      "speech_chars_per_second": 2.49615975422427,
+      "rtf": 0.5787037037037037,
+      "request_overhead_seconds": 1.15
+    }
+  },
+  "concurrency": 4,
+  "estimates": {
+    "dialogue_only_each_quote": {
+      "segment_stats": {
+        "segments": 43188,
+        "han_chars": 1647452,
+        "mean_han_chars": 38.1460590904881,
+        "median_han_chars": 25.0,
+        "p90_han_chars": 87,
+        "max_han_chars": 2000
+      },
+      "request_only_lower_bound": {
+        "serial_seconds": 66077.64,
+        "serial_human": "18.4h",
+        "concurrency_4_seconds": 17954.55,
+        "concurrency_4_human": "5.0h"
+      },
+      "runtime": {
+        "optimistic": {
+          "serial_seconds": 124173.57,
+          "serial_human": "1.4d",
+          "concurrency_4_seconds": 34015.24,
+          "concurrency_4_human": "9.4h"
+        },
+        "expected": {
+          "serial_seconds": 203576.26,
+          "serial_human": "2.4d",
+          "concurrency_4_seconds": 56078.7,
+          "concurrency_4_human": "15.6h"
+        },
+        "conservative": {
+          "serial_seconds": 431607.53,
+          "serial_human": "5.0d",
+          "concurrency_4_seconds": 120084.91,
+          "concurrency_4_human": "1.4d"
+        }
+      }
+    },
+    "project_default_two_voice": {
+      "segment_stats": {
+        "segments": 85491,
+        "han_chars": 6634162,
+        "mean_han_chars": 77.6007065071177,
+        "median_han_chars": 28,
+        "p90_han_chars": 179,
+        "max_han_chars": 13748
+      },
+      "request_only_lower_bound": {
+        "serial_seconds": 130801.23,
+        "serial_human": "1.5d",
+        "concurrency_4_seconds": 33713.55,
+        "concurrency_4_human": "9.4h"
+      },
+      "runtime": {
+        "optimistic": {
+          "serial_seconds": 442561.93,
+          "serial_human": "5.1d",
+          "concurrency_4_seconds": 135547.58,
+          "concurrency_4_human": "1.6d"
+        },
+        "expected": {
+          "serial_seconds": 744625.71,
+          "serial_human": "8.6d",
+          "concurrency_4_seconds": 230365.51,
+          "concurrency_4_human": "2.7d"
+        },
+        "conservative": {
+          "serial_seconds": 1636362.89,
+          "serial_human": "18.9d",
+          "concurrency_4_seconds": 513311.91,
+          "concurrency_4_human": "5.9d"
+        }
+      }
+    },
+    "granular_multivoice_upper_bound": {
+      "segment_stats": {
+        "segments": 192842,
+        "han_chars": 6634162,
+        "mean_han_chars": 34.4020597172815,
+        "median_han_chars": 28.0,
+        "p90_han_chars": 67,
+        "max_han_chars": 766
+      },
+      "request_only_lower_bound": {
+        "serial_seconds": 295048.26,
+        "serial_human": "3.4d",
+        "concurrency_4_seconds": 75219.39,
+        "concurrency_4_human": "20.9h"
+      },
+      "runtime": {
+        "optimistic": {
+          "serial_seconds": 512340.08,
+          "serial_human": "5.9d",
+          "concurrency_4_seconds": 128826.01,
+          "concurrency_4_human": "1.5d"
+        },
+        "expected": {
+          "serial_seconds": 835874.06,
+          "serial_human": "9.7d",
+          "concurrency_4_seconds": 209997.93,
+          "concurrency_4_human": "2.4d"
+        },
+        "conservative": {
+          "serial_seconds": 1759816.54,
+          "serial_human": "20.4d",
+          "concurrency_4_seconds": 441577.68,
+          "concurrency_4_human": "5.1d"
+        }
+      }
+    },
+    "single_narrator_chunk_900_han": {
+      "segment_stats": {
+        "segments": 11738,
+        "han_chars": 6634162,
+        "mean_han_chars": 565.1867439086727,
+        "median_han_chars": 837.0,
+        "p90_han_chars": 892,
+        "max_han_chars": 900
+      },
+      "request_only_lower_bound": {
+        "serial_seconds": 17959.14,
+        "serial_human": "5.0h",
+        "concurrency_4_seconds": 6539.22,
+        "concurrency_4_human": "1.8h"
+      },
+      "runtime": {
+        "optimistic": {
+          "serial_seconds": 394622.48,
+          "serial_human": "4.6d",
+          "concurrency_4_seconds": 131414.89,
+          "concurrency_4_human": "1.5d"
+        },
+        "expected": {
+          "serial_seconds": 681935.66,
+          "serial_human": "7.9d",
+          "concurrency_4_seconds": 227475.96,
+          "concurrency_4_human": "2.6d"
+        },
+        "conservative": {
+          "serial_seconds": 1551546.94,
+          "serial_human": "18.0d",
+          "concurrency_4_seconds": 518650.72,
+          "concurrency_4_human": "6.0d"
+        }
+      }
+    }
+  },
+  "notes": [
+    "EdgeTTS is a cloud service; wall time varies with network latency and throttling.",
+    "project_default_two_voice follows src/book2audio/parser.py-style narration/dialogue merging.",
+    "granular_multivoice_upper_bound splits every paragraph around every quote before same-speaker merging.",
+    "single_narrator_chunk_900_han estimates a single-narrator audiobook with large text chunks."
+  ]
+}
