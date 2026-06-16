@@ -1,0 +1,132 @@
+{
+  "created_at": "2026-06-16",
+  "scope": "voicebook TTS and audiobook generation research",
+  "summary_report": "research/tts_research_summary_20260616/REPORT.md",
+  "current_decision": {
+    "preview_and_bulk_draft": "EdgeTTS",
+    "expressive_dialogue_refinement": "CosyVoice3",
+    "kokoro_quality_baseline": "Use official hexgrad/Kokoro-82M-v1.1-zh KPipeline, not ONNX-direct samples",
+    "high_quality_candidate": "IndexTTS2 on a CUDA-capable remote worker",
+    "not_supported_now": [
+      "Official IndexTTS2 ONNX inference path",
+      "Kokoro few-shot wav-to-voice-pack conversion with public inference packages"
+    ]
+  },
+  "key_estimates": {
+    "fanren_book": {
+      "han_chars": 6634162,
+      "dialogue_count": 43188,
+      "dialogue_han_chars": 1647452
+    },
+    "full_book": {
+      "cosy_dialogue_only_local_cpu": "45-67 days",
+      "edge_dialogue_only_concurrency_4": "15.6h expected, 1-1.5d conservative",
+      "edge_full_book_concurrency_4": "2.7d expected, 5-6d conservative"
+    },
+    "single_normal_chapter": {
+      "cosy_full_chapter_local_cpu": "about 1.8h",
+      "edge_full_chapter_concurrency_4": "about 1.3m",
+      "cosy_dialogue_only": "20-25m",
+      "edge_dialogue_only": "about 20s"
+    }
+  },
+  "artifacts": [
+    {
+      "id": "tech_reselect_20260610",
+      "category": "architecture",
+      "title": "技术选型重审",
+      "report": "research/tech_reselect_20260610/REPORT.md",
+      "finding": "Use rules + CSI for speaker attribution; move from old CosyVoice-300M-SFT to CosyVoice3 with IndexTTS2/cloud backends reserved."
+    },
+    {
+      "id": "competitor_study_20260612",
+      "category": "competitor",
+      "title": "有声书生态竞品研究",
+      "report": "research/competitor_study_20260612/REPORT.md",
+      "finding": "Automatic per-dialogue multi-character generation remains a gap; Audiobookshelf/M4B/subtitles are important ecosystem targets."
+    },
+    {
+      "id": "tts_landscape_20260612",
+      "category": "model_landscape",
+      "title": "TTS 模型全景",
+      "report": "research/tts_landscape_20260612/REPORT.md",
+      "finding": "Quality: IndexTTS2/cloud at top, CosyVoice3 strong local candidate, Edge fastest baseline, Kokoro Mandarin weaker."
+    },
+    {
+      "id": "tts_emotion_eval_20260615",
+      "category": "audio_eval",
+      "title": "虚弱/愤怒/低语初版样例",
+      "report": "research/tts_emotion_eval_20260615/REPORT.md",
+      "playlist": "research/tts_emotion_eval_20260615/playlist.html",
+      "manifest": "research/tts_emotion_eval_20260615/manifest.json",
+      "finding": "CosyVoice3 best immediate emotion control; Edge fast but indirect; old Kokoro sample invalid for Mandarin quality."
+    },
+    {
+      "id": "cosy_instruct_only_eval_20260615",
+      "category": "audio_eval",
+      "title": "CosyVoice3 instruct-only emotion samples",
+      "report": "research/cosy_instruct_only_eval_20260615/REPORT.md",
+      "playlist": "research/cosy_instruct_only_eval_20260615/playlist.html",
+      "manifest": "research/cosy_instruct_only_eval_20260615/manifest.json",
+      "finding": "Samples isolate instruct prompt behavior without explicit speed tuning."
+    },
+    {
+      "id": "indextts_bilibili_eval_20260615",
+      "category": "model_eval",
+      "title": "Bilibili IndexTTS2 feasibility",
+      "report": "research/indextts_bilibili_eval_20260615/REPORT.md",
+      "manifest": "research/indextts_bilibili_eval_20260615/manifest.json",
+      "finding": "IndexTTS2 is a strong candidate but not runnable fairly on this CPU-only workspace; use remote CUDA for next benchmark."
+    },
+    {
+      "id": "kokoro_v11_voice_eval_20260615",
+      "category": "model_eval",
+      "title": "Kokoro v1.1 ONNX and voice-pack check",
+      "report": "research/kokoro_v11_voice_eval_20260615/REPORT.md",
+      "manifest": "research/kokoro_v11_voice_eval_20260615/manifest.json",
+      "finding": "ONNX v1.1 can run with legacy IPA G2P, but public tooling does not expose wav-to-voice-pack training/export."
+    },
+    {
+      "id": "kokoro_v11_official_eval_20260615",
+      "category": "audio_eval",
+      "title": "Kokoro official v1.1 zh pipeline",
+      "report": "research/kokoro_v11_official_eval_20260615/REPORT.md",
+      "playlist": "research/kokoro_v11_official_eval_20260615/playlist.html",
+      "manifest": "research/kokoro_v11_official_eval_20260615/manifest.json",
+      "finding": "Official KPipeline(lang_code='z') is the fair Chinese quality path; ONNX-direct is not equivalent."
+    },
+    {
+      "id": "tts_engine_gender_matrix_20260615",
+      "category": "audio_eval",
+      "title": "Four-engine gender/state playback matrix",
+      "report": "research/tts_engine_gender_matrix_20260615/REPORT.md",
+      "matrix": "research/tts_engine_gender_matrix_20260615/matrix.html",
+      "manifest": "research/tts_engine_gender_matrix_20260615/manifest.json",
+      "finding": "24 samples: Kokoro official, Kokoro ONNX, Cosy instruct, Edge across male/female and weak/angry/whisper."
+    },
+    {
+      "id": "fanren_cosy_dialogue_estimate_20260615",
+      "category": "runtime_estimate",
+      "title": "Fanren CosyVoice dialogue runtime",
+      "report": "research/fanren_cosy_dialogue_estimate_20260615/REPORT.md",
+      "estimate": "research/fanren_cosy_dialogue_estimate_20260615/estimate.json",
+      "finding": "All quoted dialogue with local CPU CosyVoice3 takes about 45-67 days."
+    },
+    {
+      "id": "fanren_edge_runtime_estimate_20260616",
+      "category": "runtime_estimate",
+      "title": "Fanren EdgeTTS full-book runtime",
+      "report": "research/fanren_edge_runtime_estimate_20260616/REPORT.md",
+      "estimate": "research/fanren_edge_runtime_estimate_20260616/estimate.json",
+      "finding": "EdgeTTS full-book draft with concurrency 4 takes about 2.7 days expected, 5-6 days conservative."
+    },
+    {
+      "id": "fanren_single_chapter_tts_estimate_20260616",
+      "category": "runtime_estimate",
+      "title": "Fanren single-chapter Cosy/Edge runtime",
+      "report": "research/fanren_single_chapter_tts_estimate_20260616/REPORT.md",
+      "estimate": "research/fanren_single_chapter_tts_estimate_20260616/estimate.json",
+      "finding": "Normal chapter: Cosy about 1.8h, Edge about 1.3m."
+    }
+  ]
+}
