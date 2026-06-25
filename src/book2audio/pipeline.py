@@ -1,7 +1,7 @@
 """端到端流水线：TXT -> 章节 -> 对白/旁白 -> TTS 合成 -> ffmpeg 拼接为 MP4 有声书
 
 输出模式按 -o 后缀/参数分流：
-  .mp4           合成有声书（--multi-voice 多角色，--engine edge|cosyvoice）
+  .mp4           合成有声书（--multi-voice 多角色，当前支持 --engine edge）
   .md            只读识别报告（人工查看）
   .script        可编辑配音脚本（中间格式，改完用 --from-script 回灌合成）
   --from-script  从配音脚本直接合成，跳过识别（用人工校正后的归属）
@@ -25,6 +25,15 @@ DIALOGUE_VOICE = "zh-CN-YunxiNeural"
 
 CONCURRENCY = 4
 MAX_RETRIES = 3
+SUPPORTED_ENGINES = {"edge"}
+
+
+def _validate_engine(engine: str):
+    if engine not in SUPPORTED_ENGINES:
+        raise SystemExit(
+            f"不支持 TTS 引擎: {engine}。当前主流程只保留 edge；"
+            "本地模型需先在 research/ 单独评估，单模型目标体积约 500MB。"
+        )
 
 
 async def _synth_one(text: str, voice: str, out_path: Path, sem: asyncio.Semaphore,
@@ -201,6 +210,7 @@ def _synthesize(parts_by_ch, titles, output, engine, book_title, keep_temp):
 
 def run_from_script(script_path: Path, output: Path, engine: str = "edge", keep_temp: bool = False):
     """从人工校正后的配音脚本直接合成，跳过识别。"""
+    _validate_engine(engine)
     from .casting import AGE_STAGES, CharacterProfile, apply_state
     from .script import parse_script
 
@@ -245,6 +255,7 @@ def run_from_script(script_path: Path, output: Path, engine: str = "edge", keep_
 def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = False,
         multi_voice: bool = False, csi_model_dir: Path = Path("models/csi-v1"),
         engine: str = "edge"):
+    _validate_engine(engine)
     text = input_txt.read_text(encoding="utf-8")
     all_chapters = split_chapters(text)
     chapters = [c for c in all_chapters if c.num in chapter_range]

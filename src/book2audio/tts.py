@@ -2,8 +2,9 @@
 
 引擎：
   edge      EdgeEngine（云，免费，快，基线）
-  cosyvoice CosyVoiceEngine（本地，真人感更强；通过子进程调用 temp_cosyvoice 隔离环境，
-            依赖与主环境冲突大，因此不做进程内 import）
+
+CosyVoice3 相关代码仅作历史实验保留，不再接入主流程。后续新增本地模型时，
+单模型磁盘体积目标约 500MB。
 """
 
 import asyncio
@@ -17,8 +18,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @dataclass(frozen=True)
 class VoiceSpec:
-    """引擎无关的音色描述。edge 用 voice/rate/pitch；cosyvoice 用 spk 预置音色名。"""
-    voice: str          # edge: zh-CN-XxxNeural; cosyvoice: 预置说话人/参考音频名
+    """引擎无关的音色描述。当前主流程使用 edge 的 voice/rate/pitch。"""
+    voice: str          # edge: zh-CN-XxxNeural
     rate: str = "+0%"
     pitch: str = "+0Hz"
 
@@ -77,6 +78,4 @@ class CosyVoiceEngine:
 def get_engine(name: str):
     if name == "edge":
         return EdgeEngine()
-    if name == "cosyvoice":
-        return CosyVoiceEngine()
-    raise SystemExit(f"未知 TTS 引擎: {name}（可选 edge / cosyvoice）")
+    raise SystemExit(f"未知或已停用的 TTS 引擎: {name}（当前仅支持 edge）")

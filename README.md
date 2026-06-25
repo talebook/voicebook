@@ -35,13 +35,11 @@ uv run python -m book2audio -i book/xuanjian.txt -c 1-3 -o draft.script
 uv run python -m book2audio --from-script draft.script -o out.mp4 --engine edge
 #   脚本里：无标签行=旁白；[角色名]=对白；[角色名@虚弱/愤怒/...]=状态(自动识别,调韵律)；
 #          [角色名@老年]=年龄段切音色；同角色多年龄在角色表加 "角色名@老年" 行
-# CosyVoice3 本地零样本克隆（真人感更强；Mac CPU RTF≈9.5 很慢，适合远程GPU）
-uv run python -m book2audio -i book.txt -c 1 -o out.mp4 --multi-voice --engine cosyvoice
 ```
 
-- 说话人识别：规则层 R1-R8 + CSI RoBERTa（`models/csi-v1`，fp16 650MB），金标 93%
+- 说话人识别：规则层 R1-R8 + CSI RoBERTa（`models/csi-v1`，fp16 约650MB），金标 93%
 - 角色画像：纯规则（性别/年龄/称呼语/辈分），(gender, age_stage) → 音色桶
-- CosyVoice 音色库：`voicebank/bank.json`（参考音频+转写；量产请换真人录音）
+- TTS：当前默认只保留 edge-tts。新增本地模型时单模型磁盘体积目标约 500MB，超过此量级先放 `research/` 单独评估，不进入主流程。
 
 ## 目录结构
 
@@ -58,7 +56,7 @@ tests/              评测记录
 1. ✅ edge-tts 端到端基线
 2. ✅ 程序化说话人识别库：规则 R1-R8 + CSI 模型融合（`research/attribution_proto_20260610/`）
 3. ✅ 角色画像 → 音色自动映射（L3 纯规则）
-4. ✅ CosyVoice3-0.5B 本地引擎（zero-shot 克隆；Mac CPU 慢，量产走远程 GPU）
-5. 真人参考音色库 + 远程 GPU 批量渲染；情绪→TTS 控制（CosyVoice instruct 已预留）
+4. 本地 TTS 只考虑约 500MB 以内模型；大模型保留在调研目录，不进入默认依赖
+5. 真人参考音色库与轻量 TTS 评估；情绪→TTS 控制先基于 edge 韵律参数
 6. 年龄变化音色过渡；指代消解/别名归一（识别的下一个台阶）
 7. 背景音/环境音（P2）

@@ -61,7 +61,7 @@ def write_script(book_name: str, chapters: List[Chapter], quotes_by_ch: Dict,
                  profiles: Dict, voices: Dict, output: Path):
     lines = [
         f"# {book_name} 配音脚本（中间格式，可编辑后回灌合成）",
-        "# 用法：改完此文件后  uv run python -m book2audio --from-script 本文件 -o out.mp4 [--engine edge|cosyvoice]",
+        "# 用法：改完此文件后  uv run python -m book2audio --from-script 本文件 -o out.mp4 [--engine edge]",
         "# 标签：无标签整行=旁白  [角色名]=对白  [音]=拟声  [?]=未识别(请改成角色名)",
         "#       [角色名@状态]=虚弱/愤怒/冷淡/低语/悲伤/急切(自动识别,可改)  [角色名@年龄段]=童年/少年/青年/中年/老年(切音色)",
         "# 改音色：编辑下方角色表 性别/年龄段，或末列写音色覆盖；同角色多年龄→单独加 角色名@老年 行",
