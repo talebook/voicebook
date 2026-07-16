@@ -1,5 +1,7 @@
 # Qwen3TTSAI 小说语音 Demo 与性能报告
 
+[打开单文件 HTML 报告](qwen3ttsai-report.html)
+
 生成时间：2026-07-16T10:54:05+08:00
 
 ## 结果摘要
