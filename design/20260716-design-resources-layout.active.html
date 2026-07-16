@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design 文档与资源目录整理方案</title>
+  <style>
+    :root {
+      --paper: #f7f4ed;
+      --panel: #fffdf8;
+      --ink: #20241f;
+      --muted: #667066;
+      --line: #d8d3c7;
+      --green: #27664c;
+      --green-soft: #e3efe7;
+      --amber: #9a6424;
+      --amber-soft: #f5ead8;
+      --code: #efede6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 56px 20px 80px;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.65 ui-serif, Georgia, "Songti SC", serif;
+    }
+    main { max-width: 920px; margin: 0 auto; }
+    header { border-bottom: 2px solid var(--ink); padding-bottom: 26px; margin-bottom: 34px; }
+    .eyebrow, .status, th { font: 600 11px/1.4 ui-monospace, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .eyebrow { color: var(--green); }
+    h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.1; margin: 12px 0; }
+    .subtitle { max-width: 720px; color: var(--muted); margin: 0; }
+    .meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+    .status { padding: 6px 9px; border: 1px solid var(--amber); color: var(--amber); background: var(--amber-soft); }
+    .status.neutral { border-color: var(--line); color: var(--muted); background: var(--panel); }
+    section { margin: 42px 0; }
+    h2 { font-size: 23px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    h3 { font-size: 17px; margin-top: 24px; }
+    .summary, .decision { border: 1px solid var(--line); background: var(--panel); padding: 20px 22px; }
+    .summary { border-left: 4px solid var(--green); }
+    .decision { margin: 12px 0; }
+    .decision strong { color: var(--green); }
+    code { background: var(--code); padding: 2px 5px; border-radius: 3px; font-size: .9em; }
+    pre { background: #20241f; color: #eff4ec; padding: 20px; overflow-x: auto; font: 13px/1.55 ui-monospace, Menlo, monospace; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); }
+    th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); }
+    ul, ol { padding-left: 23px; }
+    li { margin: 6px 0; }
+    .pending { color: var(--amber); font-weight: 600; }
+    .done { color: var(--green); font-weight: 600; }
+    footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    @media (max-width: 640px) { body { padding: 28px 14px 56px; } table { font-size: 13px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">VOICEBOOK · 10XDEV DESIGN</div>
+      <h1>Design 文档与资源目录整理方案</h1>
+      <p class="subtitle">把 Qwen3TTSAI 调研、评测文档纳入 10xdev 生命周期管理，并为截图、音频、MP4、数据快照和复现脚本建立稳定的本地资源目录。</p>
+      <div class="meta">
+        <span class="status">ACTIVE</span>
+        <span class="status neutral">2026-07-16</span>
+        <span class="status neutral">Scope · Qwen3TTSAI artifacts</span>
+      </div>
+    </header>
+
+    <div class="summary">
+      <strong>一句话方案：</strong>生命周期 HTML 继续直接放在 <code>design/</code>，资源统一放在 <code>design/resources/&lt;feature&gt;/</code>；Qwen 的两个 Markdown 报告合并为一份 ACTIVE HTML，原始数据与媒体保留为可复现资源。
+    </div>
+
+    <section>
+      <h2>01 · 原始需求与边界</h2>
+      <p><strong>原始需求：</strong>“按照 10xdev 整理这些文档位置，并且修改一下 10xdev 的约束，允许 design/resources/ 里存放各类资源（比如截图，本次的 mp4 等）。”</p>
+      <h3>本次范围</h3>
+      <ul>
+        <li>迁移 <code>research/qwen3ttsai_api_20260716/</code> 与 <code>research/qwen3ttsai_eval_20260716/</code> 中的报告和支撑材料。</li>
+        <li>修复评测脚本、HTML 生成器与报告中的旧路径。</li>
+        <li>修改本机已安装的 <code>10xdev</code> 技能规则，允许离线 HTML 引用 <code>design/resources/</code> 下的相对路径资源。</li>
+      </ul>
+      <h3>明确不做</h3>
+      <ul>
+        <li>不迁移仓库中其他历史 <code>research/</code> 评测目录。</li>
+        <li>不重新调用公网 Qwen API，不改动本次已验证的性能数字。</li>
+        <li>不处理用户未跟踪文件 <code>qwen-api-demo.py</code>。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>02 · 已确认决策</h2>
+      <div class="decision"><strong>文档与资源分层。</strong> 只有带生命周期后缀的内部 HTML 放在 <code>design/</code> 根目录；<code>design/resources/</code> 是唯一允许的子目录例外。</div>
+      <div class="decision"><strong>按功能隔离资源。</strong> 本次使用 <code>design/resources/qwen3ttsai/</code>，后续功能使用各自子目录，避免文件名冲突和误删共享材料。</div>
+      <div class="decision"><strong>允许本地依赖。</strong> HTML 可通过相对路径引用截图、音频、视频、PDF、JSON 等资源；仍禁止远程脚本、样式、字体和渲染时网络依赖。</div>
+      <div class="decision"><strong>保留复现能力。</strong> JSON、脚本、音频和 MP4 不内嵌进 Git 历史中的第二份副本；报告直接引用资源，生成器校验 WAV 的 SHA-256。</div>
+    </section>
+
+    <section>
+      <h2>03 · 目标结构</h2>
+      <pre>design/
+├── 20260716-design-resources-layout.active.html
+├── 20260716-qwen3ttsai-integration.active.html
+└── resources/
+    └── qwen3ttsai/
+        ├── api_observation.json
+        ├── voice_catalog.json
+        ├── manifest.json
+        ├── novel_demo.script
+        ├── run_eval.py
+        ├── build_html_report.py
+        ├── voicebook_qwen_novel_demo.mp4
+        └── samples/*.wav</pre>
+      <p>两个旧 Markdown 报告的结论已被 Qwen ACTIVE HTML 覆盖，因此迁移后不保留重复文档。资源文件不带 <code>.active/.wip/.superseded</code> 后缀，其生命周期由引用它的设计文档管理。</p>
+    </section>
+
+    <section>
+      <h2>04 · 迁移映射</h2>
+      <table>
+        <thead><tr><th>来源</th><th>目标</th><th>处理</th></tr></thead>
+        <tbody>
+          <tr><td>API <code>REPORT.md</code></td><td>Qwen ACTIVE HTML</td><td>合并结论、协议、风险</td></tr>
+          <tr><td>评测 <code>REPORT.md</code></td><td>Qwen ACTIVE HTML</td><td>合并性能、选声和复现说明</td></tr>
+          <tr><td><code>qwen3ttsai-report.html</code></td><td><code>design/20260716-qwen3ttsai-integration.active.html</code></td><td>由修复后的生成器重建</td></tr>
+          <tr><td>WAV / MP4 / JSON / script / Python</td><td><code>design/resources/qwen3ttsai/</code></td><td>保持内容，修复相对路径</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>05 · 实施与验证</h2>
+      <ol>
+        <li>迁移文件并清理两个旧 Qwen research 目录。</li>
+        <li>让 <code>build_html_report.py</code>输出 ACTIVE HTML，并改为引用本地媒体资源。</li>
+        <li>让 <code>run_eval.py</code>只更新 manifest 和 HTML，不再生成重复 Markdown。</li>
+        <li>更新 10xdev 的路径、离线资源、迁移和验证约束。</li>
+        <li>运行静态检查、单元测试、HTML 重建和媒体探测。</li>
+      </ol>
+      <h3>2026-07-16 实际结果</h3>
+      <table>
+        <thead><tr><th>验证</th><th>实际命令或证据</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr><td>报告重建</td><td><code>uv ... run python design/resources/qwen3ttsai/build_html_report.py</code></td><td><span class="done">通过</span>；输出 25,706 bytes</td></tr>
+          <tr><td>Qwen 单元测试</td><td><code>uv ... run python -m unittest tests.test_qwen_tts -v</code></td><td><span class="done">5/5 通过</span>；0.012 s</td></tr>
+          <tr><td>媒体格式</td><td><code>file</code> 与 <code>ffprobe</code></td><td><span class="done">通过</span>；5 个 WAV 均为 24 kHz / mono / PCM 16-bit，MP4 为 48.006 s</td></tr>
+          <tr><td>资源完整性</td><td>HTML 生成器逐个校验 manifest SHA-256</td><td><span class="done">通过</span></td></tr>
+          <tr><td>HTML 结构</td><td><code>uv ... run python /private/tmp/voicebook-design-validation/validate.py</code></td><td><span class="done">通过</span>；2 份 ACTIVE HTML、6 个本地媒体引用有效，无 WIP 或远程渲染依赖</td></tr>
+          <tr><td>浏览器渲染</td><td>Playwright Chromium 全页截图：1440×900 与 390×844</td><td><span class="done">通过</span>；桌面与移动端无重叠、裁切，5 个 WAV 与 1 个 MP4 控件正常渲染</td></tr>
+          <tr><td>10xdev 安装</td><td>临时补丁与已安装 <code>SKILL.md</code> 执行 <code>cmp</code></td><td><span class="done">一致</span>；规则包含 MP4 与远程依赖约束</td></tr>
+          <tr><td>pytest 尝试</td><td><code>uv ... run pytest tests/test_qwen_tts.py -q</code></td><td>未执行用例：环境没有 <code>pytest</code> 可执行文件；已由上述 unittest 覆盖同一测试模块</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>06 · 验收条件</h2>
+      <ul>
+        <li><code>research/</code> 下不再存在本次两个 Qwen 目录，报告中不再存在指向旧位置的操作路径；迁移方案保留旧路径作为来源证据。</li>
+        <li>Qwen HTML 可在断网状态下加载，所有音频和 MP4 相对路径存在。</li>
+        <li>HTML 生成器可通过 <code>uv run python</code>重复生成相同布局。</li>
+        <li>仓库中没有残留 <code>.wip.html</code>；两份设计文档均标记 ACTIVE。</li>
+        <li>已安装的 10xdev 明确允许 <code>design/resources/</code>，并继续禁止远程渲染依赖和任意设计子目录。</li>
+      </ul>
+    </section>
+
+    <footer>ACTIVE · Qwen 文档与资源迁移完成 · 真实验证结果已回写。</footer>
+  </main>
+</body>
+</html>

@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Build the self-contained HTML performance report with embedded media."""
+"""Build the offline ACTIVE HTML report with local design resources."""
 
 from __future__ import annotations
 
-import base64
 import hashlib
 import html
 import json
@@ -11,12 +10,9 @@ from pathlib import Path
 
 
 HERE = Path(__file__).resolve().parent
-API_DIR = HERE.parent / "qwen3ttsai_api_20260716"
-OUTPUT = HERE / "qwen3ttsai-report.html"
-
-
-def data_uri(path: Path, mime_type: str) -> str:
-    return f"data:{mime_type};base64,{base64.b64encode(path.read_bytes()).decode('ascii')}"
+DESIGN_DIR = HERE.parents[1]
+OUTPUT = DESIGN_DIR / "20260716-qwen3ttsai-integration.active.html"
+RESOURCE_URL = Path("resources/qwen3ttsai")
 
 
 def esc(value: object) -> str:
@@ -25,8 +21,8 @@ def esc(value: object) -> str:
 
 def main() -> None:
     manifest = json.loads((HERE / "manifest.json").read_text(encoding="utf-8"))
-    api = json.loads((API_DIR / "api_observation.json").read_text(encoding="utf-8"))
-    voices = json.loads((API_DIR / "voice_catalog.json").read_text(encoding="utf-8"))
+    api = json.loads((HERE / "api_observation.json").read_text(encoding="utf-8"))
+    voices = json.loads((HERE / "voice_catalog.json").read_text(encoding="utf-8"))
     results = manifest["results"]
     aggregate = manifest["aggregate"]
 
@@ -55,12 +51,13 @@ def main() -> None:
         actual_hash = hashlib.sha256(media_path.read_bytes()).hexdigest()
         if actual_hash != item["sha256"]:
             raise RuntimeError(f"SHA-256 mismatch: {media_path}")
+        media_src = (RESOURCE_URL / item["output"]).as_posix()
         players.append(
             "<article class='media-card'>"
             f"<div class='media-index'>DEMO {index:02d} · {esc(item['voice'])}</div>"
             f"<h3>{esc(item['role'])}</h3>"
             f"<p class='media-text'>“{esc(item['text'])}”</p>"
-            f"<audio controls preload='metadata' src='{data_uri(media_path, 'audio/wav')}'></audio>"
+            f"<audio controls preload='metadata' src='{esc(media_src)}'></audio>"
             f"<div class='media-meta'>{item['duration_seconds']:.2f}s · {item['bytes'] / 1024:.0f} KiB · {esc(item['source'])}</div>"
             "</article>"
         )
@@ -73,7 +70,9 @@ def main() -> None:
         bar_y += 42
 
     video_path = HERE / "voicebook_qwen_novel_demo.mp4"
-    video_uri = data_uri(video_path, "video/mp4")
+    if not video_path.is_file():
+        raise FileNotFoundError(video_path)
+    video_src = (RESOURCE_URL / video_path.name).as_posix()
 
     document = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -203,16 +202,16 @@ def main() -> None:
       <h1 class="doc-title">Qwen3TTSAI 接入与性能报告</h1>
       <p class="doc-subtitle">从 Web API 协议、角色自动选声到多角色小说成品的完整验证</p>
       <div class="doc-meta">
-        <span>STATUS · VERIFIED</span>
+        <span>STATUS · ACTIVE</span>
         <span>DATE · {esc(manifest['generated_at'])}</span>
         <span>ENGINE · QWEN</span>
-        <span>MEDIA · EMBEDDED</span>
+        <span>MEDIA · LOCAL RESOURCES</span>
       </div>
     </header>
 
     <div class="tldr">
       <div class="tldr-label">TL;DR</div>
-      Voicebook 已接入 qwen3ttsai.com 的公开系统音色接口，并从 <strong>{voices['count']} 个中文音色</strong>中按角色性别、年龄阶段和声音描述自动选声。五个小说片段全部生成成功；并发 2 时用 <strong>{aggregate['batch_wall_seconds']:.3f} 秒</strong>生成 {aggregate['audio_seconds']:.3f} 秒音频，有效 RTF 为 <strong>{aggregate['effective_batch_rtf']:.3f}</strong>。本文件内嵌全部 WAV 与 MP4，可直接播放。
+      Voicebook 已接入 qwen3ttsai.com 的公开系统音色接口，并从 <strong>{voices['count']} 个中文音色</strong>中按角色性别、年龄阶段和声音描述自动选声。五个小说片段全部生成成功；并发 2 时用 <strong>{aggregate['batch_wall_seconds']:.3f} 秒</strong>生成 {aggregate['audio_seconds']:.3f} 秒音频，有效 RTF 为 <strong>{aggregate['effective_batch_rtf']:.3f}</strong>。WAV 与 MP4 统一放在 <code>design/resources/qwen3ttsai/</code>，本报告可随该目录离线播放。
     </div>
 
     <section>
@@ -285,13 +284,13 @@ def main() -> None:
 
     <section>
       <h2><span class="num">04</span>可播放 Demo</h2>
-      <p>以下媒体均以 Base64 data URI 内嵌，因此复制本 HTML 文件即可离线播放，无需保留旁边的音频目录。</p>
+      <p>以下媒体通过相对路径引用 <code>design/resources/qwen3ttsai/</code>。复制或归档时应保留 <code>design/</code> 与其 <code>resources/</code> 子目录的相对结构。</p>
       <div class="media-grid">{''.join(players)}</div>
       <div class="video-shell">
         <div class="media-index">END-TO-END · 2 CHAPTERS · 4 CHARACTERS</div>
         <h3>Voicebook 多角色小说 MP4</h3>
         <p>包含《凡人修仙之仙界篇》和《彼得·潘》两个章节标记，总时长 48.006 秒。</p>
-        <video controls preload="metadata" src="{video_uri}"></video>
+        <video controls preload="metadata" src="{esc(video_src)}"></video>
       </div>
     </section>
 
@@ -304,10 +303,10 @@ def main() -> None:
   --multi-voice --engine qwen</code></pre>
       <h3>复现性能评测与 HTML</h3>
       <pre><code>uv --cache-dir /private/tmp/voicebook-uv-cache run python \\
-  research/qwen3ttsai_eval_20260716/run_eval.py
+  design/resources/qwen3ttsai/run_eval.py
 
 uv --cache-dir /private/tmp/voicebook-uv-cache run python \\
-  research/qwen3ttsai_eval_20260716/build_html_report.py</code></pre>
+  design/resources/qwen3ttsai/build_html_report.py</code></pre>
       <ul>
         <li><strong>自动测试。</strong> 5 项单元测试通过，覆盖请求协议、限流重试、长文本切分和角色选声。</li>
         <li><strong>音频校验。</strong> 五个文件均通过 WAV 头、采样率、声道与 SHA-256 检查。</li>
@@ -319,9 +318,9 @@ uv --cache-dir /private/tmp/voicebook-uv-cache run python \\
     <footer>
       <h4>References</h4>
       <ul>
-        <li>API 观察 · <code>research/qwen3ttsai_api_20260716/api_observation.json</code></li>
-        <li>中文音色目录 · <code>research/qwen3ttsai_api_20260716/voice_catalog.json</code></li>
-        <li>性能原始数据 · <code>research/qwen3ttsai_eval_20260716/manifest.json</code></li>
+        <li>API 观察 · <code>design/resources/qwen3ttsai/api_observation.json</code></li>
+        <li>中文音色目录 · <code>design/resources/qwen3ttsai/voice_catalog.json</code></li>
+        <li>性能原始数据 · <code>design/resources/qwen3ttsai/manifest.json</code></li>
         <li>公共体验页面 · <a href="https://qwen3ttsai.com/zh">qwen3ttsai.com/zh</a></li>
       </ul>
     </footer>

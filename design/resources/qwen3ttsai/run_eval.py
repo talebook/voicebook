@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate novel voice demos and a reproducible qwen3ttsai.com benchmark."""
+"""Generate Qwen novel voice demos, benchmark data, and the ACTIVE HTML report."""
 
 from __future__ import annotations
 
@@ -107,7 +107,8 @@ def synth_one(index: int, sample: dict, assigned: dict) -> dict:
     }
 
 
-def render_report(manifest: dict) -> str:
+def _render_markdown_snapshot(manifest: dict) -> str:
+    """Render a legacy snapshot in memory; 10xdev output is the HTML report."""
     results = manifest["results"]
     aggregate = manifest["aggregate"]
     lines = [
@@ -163,15 +164,15 @@ def render_report(manifest: dict) -> str:
         "",
         "```bash",
         "uv --cache-dir /private/tmp/voicebook-uv-cache run python -m book2audio \\",
-        "  --from-script research/qwen3ttsai_eval_20260716/novel_demo.script \\",
-        "  --output research/qwen3ttsai_eval_20260716/voicebook_qwen_novel_demo.mp4 \\",
+        "  --from-script design/resources/qwen3ttsai/novel_demo.script \\",
+        "  --output design/resources/qwen3ttsai/voicebook_qwen_novel_demo.mp4 \\",
         "  --engine qwen",
         "```",
         "",
         "## 运行方式",
         "",
         "```bash",
-        "uv --cache-dir /private/tmp/voicebook-uv-cache run python research/qwen3ttsai_eval_20260716/run_eval.py",
+        "uv --cache-dir /private/tmp/voicebook-uv-cache run python design/resources/qwen3ttsai/run_eval.py",
         "```",
         "",
         "## 限制",
@@ -232,9 +233,11 @@ def main() -> None:
         "errors": errors,
     }
     (HERE / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-    (HERE / "REPORT.md").write_text(render_report(manifest), encoding="utf-8")
     if errors:
         raise SystemExit(f"{len(errors)} demo(s) failed")
+    from build_html_report import main as build_html_report
+
+    build_html_report()
 
 
 if __name__ == "__main__":
