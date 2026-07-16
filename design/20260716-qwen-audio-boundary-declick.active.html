@@ -23,6 +23,10 @@
     .summary,.callout { padding:19px 22px; border:1px solid var(--line); background:var(--panel); }
     .summary { border-left:4px solid var(--green); }
     .callout.warn { border-left:4px solid var(--amber); background:var(--amber-soft); }
+    a { color:var(--green); font-weight:600; }
+    .play-link { display:inline-block; margin-top:12px; }
+    .player { padding:19px 22px; border:1px solid var(--line); background:var(--panel); }
+    .player video { display:block; width:100%; margin:16px 0 12px; background:#111; }
     table { width:100%; border-collapse:collapse; background:var(--panel); font-size:14px; }
     th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
     th { color:var(--muted); }
@@ -45,7 +49,7 @@
     <div class="meta"><span class="badge">ACTIVE</span><span class="badge neutral">2026-07-16</span><span class="badge neutral">Qwen · WAV · MP4</span></div>
   </header>
 
-  <div class="summary"><strong>结论：</strong>Qwen API 返回的每个 PCM WAV 都含有相同的起始满幅瞬态。当前流水线用 <code>-c copy</code> 把它原样带进章节，因此每个新片段边界都会听到爆音。修复在 Qwen WAV 落盘后施加 10ms 半余弦淡入与 5ms 半余弦淡出，再执行现有拼接和 AAC 编码。</div>
+  <div class="summary"><strong>结论：</strong>Qwen API 返回的每个 PCM WAV 都含有相同的起始满幅瞬态。当前流水线用 <code>-c copy</code> 把它原样带进章节，因此每个新片段边界都会听到爆音。修复在 Qwen WAV 落盘后施加 10ms 半余弦淡入与 5ms 半余弦淡出，再执行现有拼接和 AAC 编码。<br><a class="play-link" href="#playback">播放修复后的完整版 MP4 ↓</a></div>
 
   <section>
     <h2>01 · 原始诉求与验收目标</h2>
@@ -131,6 +135,18 @@
       <li>Pages 结构检查通过：3 份 ACTIVE HTML、6 个本地媒体引用有效；Chromium 桌面与移动视口无重叠或裁切，新 MP4 播放器显示 47 秒媒体。</li>
       <li>未进行人工扬声器听音；以用户所述“啪”声对应的近满幅瞬态、回归夹具和全片 PCM 扫描作为可重复验收信号。</li>
     </ul>
+  </section>
+
+  <section id="playback">
+    <h2>08 · 修复后完整版播放</h2>
+    <div class="player">
+      <h3>Voicebook 多角色小说 MP4</h3>
+      <p>已应用片段边缘平滑的 47.126 秒完整版，可直接在页面内播放并检查角色切换处。</p>
+      <video controls preload="metadata" src="resources/qwen3ttsai/voicebook_qwen_novel_demo.mp4">
+        浏览器不支持内嵌视频，请使用下方链接打开 MP4。
+      </video>
+      <a href="resources/qwen3ttsai/voicebook_qwen_novel_demo.mp4">直接打开或下载 MP4</a>
+    </div>
   </section>
 
   <footer>ACTIVE · Qwen 音频片段边界去爆音已实现，新 MP4 与真实验证结果已回写。</footer>
