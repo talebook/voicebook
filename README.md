@@ -2,6 +2,11 @@
 
 将小说 TXT 转化为多角色有声书：识别对白/旁白与说话人，按角色匹配音色合成语音，输出带章节标记的 MP4 有声书。
 
+## 文档入口
+
+- [设计文档索引](design/)
+- [Qwen3TTSAI 接入与性能报告](design/20260716-qwen3ttsai-integration.active.html)
+
 ## 快速开始
 
 ```bash
@@ -48,6 +53,7 @@ uv run python -m book2audio --from-script draft.script -o out.mp4 --engine qwen
 ```
 src/book2audio/     流水线源码（parser / pipeline / CLI）
 book/               小说素材
+design/             ACTIVE 设计文档、验证报告与本地支撑资源（GitHub Pages 索引）
 research/           历次调研归档（LLM benchmark、TTS 对比、角色画像 demo、选型重审）
 .planning/          项目规划（PROJECT / ROADMAP / STATE）
 tests/              评测记录
