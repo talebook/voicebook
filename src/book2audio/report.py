@@ -15,10 +15,12 @@ def write_report(book_name: str, chapters: List[Chapter], quotes_by_ch: Dict,
              "|------|------|------|------|------|"]
     for n in sorted(profiles):
         p = profiles[n]
-        v, rate, pitch = voices[n]
+        spec = voices[n]
+        voice = spec[0]
+        voice_label = f"{voice.replace('zh-CN-', '')} {spec[2]}" if len(spec) == 3 else voice
         age = f"{p.age}岁/{p.age_stage}" if p.age else p.age_stage
         ev = p.evidence[0].replace("|", "丨") if p.evidence else "-"
-        lines.append(f"| {n} | {p.gender} | {age} | {v.replace('zh-CN-', '')} {pitch} | {ev} |")
+        lines.append(f"| {n} | {p.gender} | {age} | {voice_label} | {ev} |")
     lines.append("")
 
     method_label = {"R1": "规则·后随", "R1b": "规则·后随主语", "R2": "规则·前导",

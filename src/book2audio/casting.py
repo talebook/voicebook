@@ -13,12 +13,17 @@ from typing import Dict, List, Optional
 CN_DIGIT = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
             "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
 
-FEMALE_NOUNS = "女孩|女子|少女|姑娘|女声|夫人|小姐|婶|姨娘|丫头|女童|老妪|妇人|姣好|肤白|白嫩|娇|裙|钗|妆|夫君"
-MALE_NOUNS = "男孩|男子|少年郎|汉子|公子|男声|老汉|老者|大叔|小伙|男童|胡须|络腮"
+FEMALE_NOUNS = "女孩|女子|少女|姑娘|女声|夫人|小姐|婶|姨娘|丫头|女童|老妪|妇人|母亲|妈妈|婆婆|奶奶|姣好|肤白|白嫩|娇|裙|钗|妆|夫君"
+MALE_NOUNS = "男孩|男子|少年郎|汉子|公子|男声|老汉|老者|大叔|小伙|男童|父亲|爸爸|爷爷|道士|道长|老道|胡须|络腮"
 FEMALE_CALL = "妹|姐|姑|婶|娘"
 MALE_CALL = "哥|弟|叔|兄|爷"
-STAGE_WORDS = {"童年": "孩童|小孩|稚童|女童|男童", "少年": "少年|少女|丫头",
-               "青年": "青年|小伙|姑娘", "中年": "中年|大叔|妇人", "老年": "老者|老人|老汉|老妪|苍老"}
+STAGE_WORDS = {
+    "童年": "孩童|小孩|稚童|女童|男童",
+    "少年": "少年|少女|丫头",
+    "青年": "青年|小伙|姑娘",
+    "中年": "中年|大叔|妇人",
+    "老年": "老者|老人|老汉|老妪|苍老|老道|道爷|老头|婆婆|爷爷|奶奶|大爷|老翁",
+}
 VOICE_DESC = "低沉|沙哑|尖锐|清脆|洪亮|苍老|冰冷|悦耳|稚嫩|浑厚|尖细|粗哑|柔和|清亮"
 
 AGE_RE = re.compile(r"([一二两三四五六七八九十\d]{1,3})(?:[一二三四五六七八九\d])?(多|来|几)?岁")
@@ -85,6 +90,7 @@ def build_profiles(text: str, names: set) -> Dict[str, CharacterProfile]:
         for para in paras:
             for m in re.finditer(re.escape(name), para):
                 window = para[max(0, m.start() - 30):m.end() + 30]
+                profile_window = near(para, m, 30)
                 # 性别证据用小窗口（±12），且中间不能隔着别的角色名
                 gw = near(para, m, 12)
                 f_votes += 3 * len(re.findall(FEMALE_NOUNS, gw))
@@ -92,7 +98,7 @@ def build_profiles(text: str, names: set) -> Dict[str, CharacterProfile]:
                 f_votes += len(re.findall(r"她", gw))
                 m_votes += len(re.findall(r"他", gw))
                 # 年龄："十三岁的李项平" / "十几岁" / "四十多岁"，收集全部证据
-                for am in AGE_RE.finditer(window):
+                for am in AGE_RE.finditer(profile_window):
                     age = cn2int(am.group(1))
                     if age:
                         if am.group(2):  # 多/来/几 → 加半档
@@ -102,13 +108,19 @@ def build_profiles(text: str, names: set) -> Dict[str, CharacterProfile]:
                             p.evidence.append(window.strip()[:40])
                 # 年龄阶段词
                 for stage, words in STAGE_WORDS.items():
-                    c = len(re.findall(words, window))
+                    c = len(re.findall(words, profile_window))
                     if c:
                         stage_votes[stage] = stage_votes.get(stage, 0) + c
                 # 音色描述词
-                for d in re.findall(VOICE_DESC, window):
+                for d in re.findall(VOICE_DESC, profile_window):
                     if d not in p.voice_desc:
                         p.voice_desc.append(d)
+        # 角色名本身就是亲属/职业/年龄称谓时，作为不受上下文污染的强证据。
+        f_votes += 10 * bool(re.search(FEMALE_NOUNS, name))
+        m_votes += 10 * bool(re.search(MALE_NOUNS, name))
+        for stage, words in STAGE_WORDS.items():
+            if re.search(words, name):
+                stage_votes[stage] = stage_votes.get(stage, 0) + 10
         # 称呼语（最强证据）："项平哥" → 李项平是男性
         tail = name[-2:]
         f_votes += 10 * len(re.findall(rf"{re.escape(tail)}[{FEMALE_CALL}]", text))
@@ -205,4 +217,69 @@ def assign_voices(profiles: Dict[str, CharacterProfile]) -> Dict[str, tuple]:
             base = int(pitch.rstrip("Hz"))
             pitch = f"{base + (8 if n % 2 else -8) * ((n + 1) // 2):+d}Hz"
         voices[name] = (voice, rate, pitch)
+    return voices
+
+
+# ---------- 画像 → qwen3ttsai.com 系统音色 ----------
+
+# 2026-07-16 从站点前端 bundle 抓取并以真实 API 请求验证。
+QWEN_SYSTEM_VOICES = (
+    "Cherry", "Serena", "Ethan", "Chelsie", "Momo", "Vivian", "Moon", "Maia",
+    "Kai", "Nofish", "Bella", "Katerina", "Eldric Sage", "Mia", "Mochi",
+    "Bellona", "Vincent", "Bunny", "Neil", "Elias", "Arthur", "Nini", "Ebona",
+    "Seren", "Pip", "Stella", "Andre",
+)
+
+QWEN_NARRATOR = ("Neil",)       # 字正腔圆的中文新闻主持人
+QWEN_DIALOGUE = ("Andre",)      # 默认沉稳男声；多角色模式会按画像替换
+
+# 同一桶提供多个候选，让同年龄/性别的角色也能保持音色差异。
+QWEN_VOICE_BUCKETS = {
+    ("male", "童年"): ("Pip", "Mochi"),
+    ("male", "少年"): ("Ethan", "Pip", "Mochi"),
+    ("male", "青年"): ("Andre", "Ethan", "Kai", "Nofish"),
+    ("male", "中年"): ("Vincent", "Andre", "Neil", "Elias"),
+    ("male", "老年"): ("Eldric Sage", "Arthur", "Vincent"),
+    ("female", "童年"): ("Bunny", "Bella", "Mochi"),
+    ("female", "少年"): ("Stella", "Mia", "Nini", "Chelsie"),
+    ("female", "青年"): ("Cherry", "Serena", "Maia", "Moon", "Vivian", "Momo", "Chelsie"),
+    ("female", "中年"): ("Katerina", "Bellona", "Maia", "Serena"),
+    ("female", "老年"): ("Ebona", "Katerina", "Seren"),
+}
+
+QWEN_DESC_VOICES = {
+    ("male", "低沉"): "Andre", ("female", "低沉"): "Katerina",
+    ("male", "沙哑"): "Vincent", ("female", "沙哑"): "Ebona",
+    ("male", "粗哑"): "Vincent", ("female", "粗哑"): "Ebona",
+    ("male", "苍老"): "Arthur", ("female", "苍老"): "Ebona",
+    ("male", "洪亮"): "Vincent", ("female", "洪亮"): "Bellona",
+    ("male", "浑厚"): "Vincent", ("female", "浑厚"): "Bellona",
+    ("male", "柔和"): "Kai", ("female", "柔和"): "Serena",
+    ("male", "悦耳"): "Ethan", ("female", "悦耳"): "Maia",
+    ("male", "清亮"): "Ethan", ("female", "清亮"): "Cherry",
+    ("male", "稚嫩"): "Pip", ("female", "稚嫩"): "Bunny",
+    ("male", "冰冷"): "Eldric Sage", ("female", "冰冷"): "Moon",
+    ("male", "尖锐"): "Pip", ("female", "尖锐"): "Vivian",
+    ("male", "尖细"): "Pip", ("female", "尖细"): "Vivian",
+}
+
+
+def assign_qwen_voices(profiles: Dict[str, CharacterProfile]) -> Dict[str, tuple]:
+    """每个角色 → ``(system_voice,)``，按画像选音色并尽量避免角色撞声。"""
+    voices: Dict[str, tuple] = {}
+    used: set[str] = set()
+    for name in sorted(profiles):
+        profile = profiles[name]
+        gender = profile.gender if profile.gender in ("male", "female") else "male"
+        candidates: List[str] = []
+        for desc in profile.voice_desc:
+            voice = QWEN_DESC_VOICES.get((gender, desc))
+            if voice and voice not in candidates:
+                candidates.append(voice)
+        for voice in QWEN_VOICE_BUCKETS.get((gender, profile.age_stage), ("Andre",)):
+            if voice not in candidates:
+                candidates.append(voice)
+        selected = next((voice for voice in candidates if voice not in used), candidates[0])
+        voices[name] = (selected,)
+        used.add(selected)
     return voices

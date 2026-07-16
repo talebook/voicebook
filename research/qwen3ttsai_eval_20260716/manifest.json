@@ -1,0 +1,162 @@
+{
+  "generated_at": "2026-07-16T10:54:05+08:00",
+  "endpoint": "https://qwen3ttsai.com/api/qwen3tts/generate",
+  "concurrency": 2,
+  "environment": {
+    "python": "3.12.4",
+    "platform": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "aggregate": {
+    "sample_count": 5,
+    "success_count": 5,
+    "success_rate_percent": 100.0,
+    "batch_wall_seconds": 12.30661533298553,
+    "audio_seconds": 47.444583333333334,
+    "effective_batch_rtf": 0.2593892593917928,
+    "mean_request_seconds": 4.672922983206808,
+    "median_request_seconds": 4.421953916025814,
+    "max_request_seconds": 6.639857542002574,
+    "effective_characters_per_second": 16.251422067604423
+  },
+  "results": [
+    {
+      "id": "fanren_narrator",
+      "role": "旁白",
+      "source": "tests/samples/凡人修仙之仙界篇.txt",
+      "text": "石盘上的那根黑色铁针微微一颤，接着从中蹿出一道毒蛇般的黑色电芒，一下子打在了韩立的指尖上。",
+      "characters": 45,
+      "profile": {
+        "type": "narrator"
+      },
+      "voice": "Neil",
+      "output": "samples/01_fanren_narrator_neil.wav",
+      "bytes": 422488,
+      "sha256": "3d1484165a2fc1c9a1629e825e9522767ec264278b4e47edc9c1ae5e4add2e68",
+      "wall_seconds": 4.421953916025814,
+      "rtf": 0.5024424254321024,
+      "characters_per_second": 10.176496828000255,
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "frames": 211222,
+      "duration_seconds": 8.800916666666666
+    },
+    {
+      "id": "fanren_hanli",
+      "role": "韩立",
+      "source": "tests/samples/凡人修仙之仙界篇.txt",
+      "text": "前辈，我们不妨开诚布公的说上一说。我恰好便是修炼时间法则，为何方才探查之时，并未发现这日晷上有什么时间之力？",
+      "characters": 54,
+      "profile": {
+        "name": "韩立",
+        "gender": "male",
+        "age": null,
+        "age_stage": "青年",
+        "voice_desc": [
+          "低沉"
+        ],
+        "evidence": []
+      },
+      "voice": "Andre",
+      "output": "samples/02_fanren_hanli_andre.wav",
+      "bytes": 495448,
+      "sha256": "b34f70b6885a79d05a6ed180f9e290607cc25ed683ea89e15be45726fa8e5dfa",
+      "wall_seconds": 5.4590500830090605,
+      "rtf": 0.5289307393247428,
+      "characters_per_second": 9.891830845822701,
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "frames": 247702,
+      "duration_seconds": 10.320916666666667
+    },
+    {
+      "id": "fanren_old_taoist",
+      "role": "老道",
+      "source": "tests/samples/凡人修仙之仙界篇.txt",
+      "text": "好小子，口气可真不小，一万年就想进阶中期？要道爷我说，修炼三大至尊法则，没个百万年，你别想跨过这道坎！",
+      "characters": 51,
+      "profile": {
+        "name": "老道",
+        "gender": "male",
+        "age": null,
+        "age_stage": "老年",
+        "voice_desc": [
+          "苍老"
+        ],
+        "evidence": []
+      },
+      "voice": "Arthur",
+      "output": "samples/03_fanren_old_taoist_arthur.wav",
+      "bytes": 821848,
+      "sha256": "70216721a74d6312fb891a9bc09803d9086c10706c51ee2facf26bafc5dd21dd",
+      "wall_seconds": 6.639857542002574,
+      "rtf": 0.38782138078680994,
+      "characters_per_second": 7.680887681306857,
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "frames": 410902,
+      "duration_seconds": 17.120916666666666
+    },
+    {
+      "id": "peterpan_mother",
+      "role": "妈妈",
+      "source": "tests/samples/彼得·潘.txt",
+      "text": "当然知道，孩子。这问题问得多傻呀，他当然是骑着山羊的。",
+      "characters": 27,
+      "profile": {
+        "name": "妈妈",
+        "gender": "female",
+        "age": null,
+        "age_stage": "中年",
+        "voice_desc": [
+          "柔和"
+        ],
+        "evidence": []
+      },
+      "voice": "Serena",
+      "output": "samples/04_peterpan_mother_serena.wav",
+      "bytes": 265048,
+      "sha256": "04718838c8eed2b07607196c92d94ecabf2cf74fc17eaa183724d5ce6bcf209c",
+      "wall_seconds": 3.340423290996114,
+      "rtf": 0.6050486708420004,
+      "characters_per_second": 8.082807970108664,
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "frames": 132502,
+      "duration_seconds": 5.5209166666666665
+    },
+    {
+      "id": "peterpan_peter",
+      "role": "彼得·潘",
+      "source": "tests/samples/彼得·潘.txt",
+      "text": "我想我该回到妈妈那儿去。我估摸，也许我还能飞？",
+      "characters": 23,
+      "profile": {
+        "name": "彼得·潘",
+        "gender": "male",
+        "age": null,
+        "age_stage": "童年",
+        "voice_desc": [
+          "稚嫩"
+        ],
+        "evidence": []
+      },
+      "voice": "Pip",
+      "output": "samples/05_peterpan_peter_pip.wav",
+      "bytes": 272728,
+      "sha256": "0d692398ebe5f77dc1fce39251845da99f01b851cc37866e1a08eef8fd93ab52",
+      "wall_seconds": 3.5033300840004813,
+      "rtf": 0.6166839419695439,
+      "characters_per_second": 6.565182112025285,
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "frames": 136342,
+      "duration_seconds": 5.680916666666667
+    }
+  ],
+  "errors": []
+}

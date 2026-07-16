@@ -1,0 +1,33 @@
+{
+  "captured_at": "2026-07-16T10:45:49+08:00",
+  "page": "https://qwen3ttsai.com/zh",
+  "frontend_bundle": "https://qwen3ttsai.com/_next/static/chunks/5519-5c66152db369e51c.js",
+  "endpoint": "https://qwen3ttsai.com/api/qwen3tts/generate",
+  "method": "POST",
+  "authentication": "none",
+  "request": {
+    "content_type": "application/json",
+    "schema": {
+      "text": "string, 1..1000 characters",
+      "voice": "system voice id",
+      "mode": "system"
+    },
+    "observed_example": {
+      "text": "API抓包验证。",
+      "voice": "Cherry",
+      "mode": "system"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "audio/wav",
+    "content_length": 73048,
+    "cache_control": "no-cache",
+    "server": "cloudflare",
+    "format": "PCM signed 16-bit little-endian",
+    "sample_rate_hz": 24000,
+    "channels": 1,
+    "audio_duration_seconds": 1.520917,
+    "request_wall_seconds": 2.292282
+  }
+}

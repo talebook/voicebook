@@ -1,7 +1,7 @@
 """端到端流水线：TXT -> 章节 -> 对白/旁白 -> TTS 合成 -> ffmpeg 拼接为 MP4 有声书
 
 输出模式按 -o 后缀/参数分流：
-  .mp4           合成有声书（--multi-voice 多角色，当前支持 --engine edge）
+  .mp4           合成有声书（--multi-voice 多角色，支持 --engine edge/qwen）
   .md            只读识别报告（人工查看）
   .script        可编辑配音脚本（中间格式，改完用 --from-script 回灌合成）
   --from-script  从配音脚本直接合成，跳过识别（用人工校正后的归属）
@@ -25,13 +25,13 @@ DIALOGUE_VOICE = "zh-CN-YunxiNeural"
 
 CONCURRENCY = 4
 MAX_RETRIES = 3
-SUPPORTED_ENGINES = {"edge"}
+SUPPORTED_ENGINES = {"edge", "qwen"}
 
 
 def _validate_engine(engine: str):
     if engine not in SUPPORTED_ENGINES:
         raise SystemExit(
-            f"不支持 TTS 引擎: {engine}。当前主流程只保留 edge；"
+            f"不支持 TTS 引擎: {engine}。当前支持 edge、qwen；"
             "本地模型需先在 research/ 单独评估，单模型目标体积约 500MB。"
         )
 
@@ -61,29 +61,33 @@ def _merge_adjacent(parts):
     return merged
 
 
-def _multivoice_parts(chapter: Chapter, quotes, voices):
+def _multivoice_parts(chapter: Chapter, quotes, voices, narrator_spec=None):
     """识别结果 -> (text, voicespec) 段列表。旁白/拟声/未识别用旁白音，对白用角色音（叠加状态）。"""
-    from .casting import NARRATOR, apply_state
+    from .casting import NARRATOR, QWEN_DIALOGUE, apply_state
+
+    narrator_spec = narrator_spec or NARRATOR
+    dialogue_spec = QWEN_DIALOGUE if voices and len(next(iter(voices.values()))) == 1 else (
+        DIALOGUE_VOICE, "+0%", "+0Hz")
 
     by_para = {}
     for q in quotes:
         by_para.setdefault(q.para_idx, []).append(q)
 
-    parts = [(chapter.title, NARRATOR)]
+    parts = [(chapter.title, narrator_spec)]
     paras = [p.strip() for p in chapter.content.splitlines() if p.strip()]
     for pi, para in enumerate(paras):
         pos = 0
         for q in sorted(by_para.get(pi, []), key=lambda x: x.span[0]):
             if para[pos:q.span[0]].strip():
-                parts.append((para[pos:q.span[0]], NARRATOR))
+                parts.append((para[pos:q.span[0]], narrator_spec))
             if q.kind == "sfx" or not q.speaker:
-                parts.append((para[q.span[0]:q.span[1]], NARRATOR))
+                parts.append((para[q.span[0]:q.span[1]], narrator_spec))
             else:
-                spec = voices.get(q.speaker, (DIALOGUE_VOICE, "+0%", "+0Hz"))
+                spec = voices.get(q.speaker, dialogue_spec)
                 parts.append((q.text, apply_state(spec, q.state) if q.state else spec))
             pos = q.span[1]
         if para[pos:].strip():
-            parts.append((para[pos:], NARRATOR))
+            parts.append((para[pos:], narrator_spec))
     return _merge_adjacent(parts)
 
 
@@ -114,6 +118,32 @@ async def synth_chapter_edge(parts, work_dir: Path, ch_num: int) -> Path:
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
                     "-i", str(list_file), "-c", "copy", str(chapter_mp3)], check=True)
     return chapter_mp3
+
+
+async def synth_chapter_qwen(parts, work_dir: Path, ch_num: int) -> Path:
+    """Qwen3TTSAI 合成一章；自动按站点 1000 字上限切分，返回 PCM WAV。"""
+    from .tts import Qwen3TTSAIEngine, VoiceSpec, split_tts_text
+
+    engine = Qwen3TTSAIEngine()
+    seg_dir = work_dir / f"ch{ch_num:04d}"
+    seg_dir.mkdir(parents=True, exist_ok=True)
+    seg_files, tasks = [], []
+    index = 0
+    for text, spec in parts:
+        voice = spec[0]
+        for chunk in split_tts_text(text):
+            out = seg_dir / f"{index:05d}.wav"
+            index += 1
+            seg_files.append(out)
+            tasks.append(engine.synth(chunk, VoiceSpec(voice), out))
+    await asyncio.gather(*tasks)
+
+    list_file = seg_dir / "list.txt"
+    list_file.write_text("".join(f"file '{f.resolve()}'\n" for f in seg_files))
+    chapter_wav = work_dir / f"chapter_{ch_num:04d}.wav"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
+                    "-i", str(list_file), "-c", "copy", str(chapter_wav)], check=True)
+    return chapter_wav
 
 
 def synth_all_cosyvoice(parts_by_ch, narrator, work_dir: Path):
@@ -184,6 +214,9 @@ def _resolve_voices(profiles, engine):
         voices = assign_cosy_voices(profiles, bank)
         nar = next(e for e in bank["voices"] if e["id"] == bank["narrator"])
         return voices, (nar["wav"], nar["text"])
+    if engine == "qwen":
+        from .casting import QWEN_NARRATOR, assign_qwen_voices
+        return assign_qwen_voices(profiles), QWEN_NARRATOR
     from .casting import NARRATOR, assign_voices
     return assign_voices(profiles), NARRATOR
 
@@ -195,6 +228,11 @@ def _synthesize(parts_by_ch, titles, output, engine, book_title, keep_temp):
             bank = json.loads(Path("voicebank/bank.json").read_text())
             nar = next(e for e in bank["voices"] if e["id"] == bank["narrator"])
             chapter_files = synth_all_cosyvoice(parts_by_ch, (nar["wav"], nar["text"]), work_dir)
+        elif engine == "qwen":
+            chapter_files = []
+            for ch_num, parts in parts_by_ch.items():
+                print(f"[ch{ch_num}] qwen 合成 {len(parts)} 段...")
+                chapter_files.append(asyncio.run(synth_chapter_qwen(parts, work_dir, ch_num)))
         else:
             chapter_files = []
             for ch_num, parts in parts_by_ch.items():
@@ -225,6 +263,8 @@ def run_from_script(script_path: Path, output: Path, engine: str = "edge", keep_
                 e = next((e for e in bank["voices"] if e["id"] == override), None)
                 if e:
                     voices[n] = (e["wav"], e["text"])
+            elif engine == "qwen":
+                voices[n] = (override,)
             else:
                 voices[n] = (override, "+0%", "+0Hz")
 
@@ -268,7 +308,7 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
     if report_mode or script_mode:
         multi_voice = True
 
-    quotes_by_ch, voices, profiles = {}, None, {}
+    quotes_by_ch, voices, profiles, narrator_spec = {}, None, {}, None
     if multi_voice:
         from .attribution import Attributor
         from .casting import build_profiles
@@ -280,7 +320,7 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
             quotes_by_ch[ch.num] = attributor.attribute(ch.content)
         speakers = {q.speaker for qs in quotes_by_ch.values() for q in qs if q.speaker}
         profiles = build_profiles(selected, speakers)
-        voices, _ = _resolve_voices(profiles, engine)
+        voices, narrator_spec = _resolve_voices(profiles, engine)
         print("角色音色分配:")
         for n in sorted(voices):
             p = profiles[n]
@@ -299,15 +339,24 @@ def run(input_txt: Path, output: Path, chapter_range: range, keep_temp: bool = F
         return
 
     if multi_voice:
-        parts_by_ch = {ch.num: _multivoice_parts(ch, quotes_by_ch[ch.num], voices) for ch in chapters}
+        parts_by_ch = {
+            ch.num: _multivoice_parts(ch, quotes_by_ch[ch.num], voices, narrator_spec)
+            for ch in chapters
+        }
     else:
         if engine == "cosyvoice":
             raise SystemExit("cosyvoice 引擎当前仅支持 --multi-voice 模式")
+        if engine == "qwen":
+            from .casting import QWEN_DIALOGUE, QWEN_NARRATOR
+            narration_spec, dialogue_spec = QWEN_NARRATOR, QWEN_DIALOGUE
+        else:
+            narration_spec = (NARRATOR_VOICE, "+0%", "+0Hz")
+            dialogue_spec = (DIALOGUE_VOICE, "+0%", "+0Hz")
         parts_by_ch = {}
         for ch in chapters:
             ss = split_segments(ch.content)
-            parts_by_ch[ch.num] = [(ch.title, (NARRATOR_VOICE, "+0%", "+0Hz"))] + [
-                (s.text, ((NARRATOR_VOICE if s.kind == "narration" else DIALOGUE_VOICE), "+0%", "+0Hz"))
+            parts_by_ch[ch.num] = [(ch.title, narration_spec)] + [
+                (s.text, narration_spec if s.kind == "narration" else dialogue_spec)
                 for s in ss]
     titles = [ch.title for ch in chapters]
     _synthesize(parts_by_ch, titles, output, engine, input_txt.stem, keep_temp)

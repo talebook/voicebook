@@ -28,18 +28,20 @@ TXT → 章节分割 → 说话人识别(L1规则+L2 CSI模型) → 角色画像
 ```bash
 # 多角色有声书（edge-tts，快）
 uv run python -m book2audio -i book/xuanjian.txt -c 1-3 -o out.mp4 --multi-voice
+# Qwen3-TTS 在线系统音色（自动按角色性别/年龄/音色描述选声）
+uv run python -m book2audio -i book/xuanjian.txt -c 1 -o out_qwen.mp4 --multi-voice --engine qwen
 # 识别报告（只读，人工查看）
 uv run python -m book2audio -i book/xuanjian.txt -c 1-3 -o report.md
 # 配音脚本（中间格式，可编辑后回灌）：先导出 → 人工改错行/角色表 → 再合成
 uv run python -m book2audio -i book/xuanjian.txt -c 1-3 -o draft.script
-uv run python -m book2audio --from-script draft.script -o out.mp4 --engine edge
+uv run python -m book2audio --from-script draft.script -o out.mp4 --engine qwen
 #   脚本里：无标签行=旁白；[角色名]=对白；[角色名@虚弱/愤怒/...]=状态(自动识别,调韵律)；
 #          [角色名@老年]=年龄段切音色；同角色多年龄在角色表加 "角色名@老年" 行
 ```
 
 - 说话人识别：规则层 R1-R8 + CSI RoBERTa（`models/csi-v1`，fp16 约650MB），金标 93%
 - 角色画像：纯规则（性别/年龄/称呼语/辈分），(gender, age_stage) → 音色桶
-- TTS：当前默认只保留 edge-tts。新增本地模型时单模型磁盘体积目标约 500MB，超过此量级先放 `research/` 单独评估，不进入主流程。
+- TTS：默认 `edge-tts`；可选 `qwen` 使用 `qwen3ttsai.com` 的公开 Web API（无需 Cookie，单次最多 1000 字，自动切分）。Qwen 模式从 27 个中文系统音色中按角色性别、年龄阶段和音色描述自动匹配。
 
 ## 目录结构
 
