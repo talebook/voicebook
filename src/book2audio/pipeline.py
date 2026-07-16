@@ -26,6 +26,9 @@ DIALOGUE_VOICE = "zh-CN-YunxiNeural"
 CONCURRENCY = 4
 MAX_RETRIES = 3
 SUPPORTED_ENGINES = {"edge", "qwen"}
+QWEN_CHAPTER_END_PAUSE_MS = 700
+QWEN_SEGMENT_PAUSE_MS = 250
+QWEN_TITLE_PAUSE_MS = 450
 
 
 def _validate_engine(engine: str):
@@ -61,12 +64,21 @@ def _merge_adjacent(parts):
     return merged
 
 
+def _is_qwen_voice_spec(spec) -> bool:
+    """Qwen specs use ``(system_voice, numeric_tempo)``; Cosy uses two strings."""
+    return (
+        isinstance(spec, tuple)
+        and len(spec) == 2
+        and isinstance(spec[1], (int, float))
+    )
+
+
 def _multivoice_parts(chapter: Chapter, quotes, voices, narrator_spec=None):
     """识别结果 -> (text, voicespec) 段列表。旁白/拟声/未识别用旁白音，对白用角色音（叠加状态）。"""
     from .casting import NARRATOR, QWEN_DIALOGUE, apply_state
 
     narrator_spec = narrator_spec or NARRATOR
-    dialogue_spec = QWEN_DIALOGUE if voices and len(next(iter(voices.values()))) == 1 else (
+    dialogue_spec = QWEN_DIALOGUE if voices and _is_qwen_voice_spec(next(iter(voices.values()))) else (
         DIALOGUE_VOICE, "+0%", "+0Hz")
 
     by_para = {}
@@ -88,6 +100,8 @@ def _multivoice_parts(chapter: Chapter, quotes, voices, narrator_spec=None):
             pos = q.span[1]
         if para[pos:].strip():
             parts.append((para[pos:], narrator_spec))
+    if _is_qwen_voice_spec(narrator_spec):
+        return parts[:1] + _merge_adjacent(parts[1:])
     return _merge_adjacent(parts)
 
 
@@ -97,6 +111,8 @@ def _script_parts(title: str, segments, resolve, narrator_spec):
     parts = [(title, narrator_spec)]
     for tag, text in segments:
         parts.append((text, resolve(tag)))
+    if _is_qwen_voice_spec(narrator_spec):
+        return parts[:1] + _merge_adjacent(parts[1:])
     return _merge_adjacent(parts)
 
 
@@ -127,23 +143,47 @@ async def synth_chapter_qwen(parts, work_dir: Path, ch_num: int) -> Path:
     engine = Qwen3TTSAIEngine()
     seg_dir = work_dir / f"ch{ch_num:04d}"
     seg_dir.mkdir(parents=True, exist_ok=True)
-    seg_files, tasks = [], []
+    logical_segments, tasks = [], []
     index = 0
     for text, spec in parts:
         voice = spec[0]
+        tempo = float(spec[1]) if _is_qwen_voice_spec(spec) else 1.0
+        segment_files = []
         for chunk in split_tts_text(text):
             out = seg_dir / f"{index:05d}.wav"
             index += 1
-            seg_files.append(out)
+            segment_files.append((out, tempo))
             tasks.append(engine.synth(chunk, VoiceSpec(voice), out))
+        if segment_files:
+            logical_segments.append(segment_files)
     await asyncio.gather(*tasks)
 
-    from .audio import smooth_pcm16_wav_edges
-    for segment_file in seg_files:
-        smooth_pcm16_wav_edges(segment_file)
+    from .audio import change_pcm16_wav_tempo, smooth_pcm16_wav_edges, write_wav_silence_like
+    for segment_files in logical_segments:
+        for segment_file, tempo in segment_files:
+            change_pcm16_wav_tempo(segment_file, tempo)
+            smooth_pcm16_wav_edges(segment_file)
+
+    concat_files = []
+    for logical_index, segment_files in enumerate(logical_segments):
+        concat_files.extend(path for path, _tempo in segment_files)
+        if logical_index == len(logical_segments) - 1:
+            continue
+        pause_ms = QWEN_TITLE_PAUSE_MS if logical_index == 0 else QWEN_SEGMENT_PAUSE_MS
+        pause_file = seg_dir / f"pause_{logical_index:05d}_{pause_ms}ms.wav"
+        write_wav_silence_like(segment_files[-1][0], pause_file, pause_ms)
+        concat_files.append(pause_file)
+    if logical_segments:
+        chapter_pause = seg_dir / f"chapter_end_{QWEN_CHAPTER_END_PAUSE_MS}ms.wav"
+        write_wav_silence_like(
+            logical_segments[-1][-1][0],
+            chapter_pause,
+            QWEN_CHAPTER_END_PAUSE_MS,
+        )
+        concat_files.append(chapter_pause)
 
     list_file = seg_dir / "list.txt"
-    list_file.write_text("".join(f"file '{f.resolve()}'\n" for f in seg_files))
+    list_file.write_text("".join(f"file '{f.resolve()}'\n" for f in concat_files))
     chapter_wav = work_dir / f"chapter_{ch_num:04d}.wav"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
                     "-i", str(list_file), "-c", "copy", str(chapter_wav)], check=True)
@@ -268,7 +308,8 @@ def run_from_script(script_path: Path, output: Path, engine: str = "edge", keep_
                 if e:
                     voices[n] = (e["wav"], e["text"])
             elif engine == "qwen":
-                voices[n] = (override,)
+                from .casting import qwen_tempo_for_age
+                voices[n] = (override, qwen_tempo_for_age(profiles[n].age_stage))
             else:
                 voices[n] = (override, "+0%", "+0Hz")
 

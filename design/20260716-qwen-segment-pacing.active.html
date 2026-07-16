@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen 多角色音频节奏修正方案</title>
+  <style>
+    :root { --ink:#20231f; --muted:#687067; --paper:#f6f3eb; --panel:#fff; --line:#d8d3c7; --green:#216749; --amber:#a86610; --soft:#fff3d8; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:48px 22px 72px; color:var(--ink); background:var(--paper); font:16px/1.7 system-ui,-apple-system,"Noto Sans SC",sans-serif; }
+    main { max-width:980px; margin:auto; }
+    h1 { margin:.2em 0; font:700 clamp(34px,6vw,60px)/1.08 Georgia,"Noto Serif SC",serif; }
+    h2 { margin-top:42px; padding-bottom:8px; border-bottom:1px solid var(--line); font-size:23px; }
+    h3 { margin-top:24px; font-size:17px; }
+    .eyebrow { color:var(--green); font-size:13px; font-weight:750; letter-spacing:.14em; }
+    .subtitle,.muted { color:var(--muted); }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 28px; }
+    .badge { padding:5px 10px; border-radius:999px; color:#fff; background:var(--green); font-size:12px; font-weight:750; }
+    .badge.neutral { color:var(--ink); background:#e6e1d6; }
+    .summary,.decision,.warn { padding:18px 21px; border:1px solid var(--line); background:var(--panel); }
+    .summary { border-left:4px solid var(--green); }
+    .warn { border-left:4px solid var(--amber); background:var(--soft); }
+    .decision + .decision { border-top:0; }
+    a { color:var(--green); font-weight:650; }
+    .player { padding:20px; border:1px solid var(--line); background:var(--panel); }
+    .player video { display:block; width:100%; margin:14px 0; background:#111; }
+    .links { display:flex; flex-wrap:wrap; gap:14px; }
+    table { width:100%; border-collapse:collapse; background:var(--panel); font-size:14px; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:var(--muted); }
+    code { padding:2px 5px; border-radius:3px; background:#ece9e1; }
+    pre { padding:20px; overflow:auto; color:#eef4ec; background:#17221d; font:13px/1.6 ui-monospace,Menlo,monospace; }
+    ul,ol { padding-left:23px; }
+    li { margin:6px 0; }
+    footer { margin-top:58px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+    @media (max-width:640px) { body { padding:28px 14px 52px; } table { display:block; overflow-x:auto; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">VOICEBOOK · PACING DESIGN</div>
+    <h1>Qwen 多角色音频节奏修正</h1>
+    <p class="subtitle">在保留片段边界去爆音的基础上，为逻辑片段恢复自然留白，并校正老年角色偏慢的听感。</p>
+    <div class="meta"><span class="badge">ACTIVE</span><span class="badge neutral">2026-07-16</span><span class="badge neutral">影响：Qwen 合成、角色选声、Demo MP4</span></div>
+  </header>
+
+  <div class="summary"><strong>需求复述：</strong>当前完整版 MP4 虽已消除边界“啪”声，但旁白与对白、不同角色之间无停顿，节奏过紧；老年角色又明显过慢。需要在不吞字、不重新引入爆音的前提下生成更自然的可播放版本，并说明旧版本是否人为改慢。</div>
+
+  <section>
+    <h2>01 · 已确认事实与工作假设</h2>
+    <table>
+      <thead><tr><th>类型</th><th>内容</th><th>依据</th></tr></thead>
+      <tbody>
+        <tr><td>事实</td><td>Qwen 片段当前由 concat demuxer 直接拼接，没有插入静音。</td><td><code>synth_chapter_qwen</code> 只列出生成的 WAV。</td></tr>
+        <tr><td>事实</td><td>Qwen 请求没有语速字段，仅发送 text、voice、mode。</td><td><code>QwenTTSClient.generate</code> 的请求体。</td></tr>
+        <tr><td>事实</td><td>旧 Qwen MP4 没有额外降速；慢速来自自动选择的老年系统音色。</td><td>Qwen voice spec 只有音色名，未执行 tempo 滤镜。</td></tr>
+        <tr><td>旁支事实</td><td>Edge 老年音色配置为 -10%，但与本次 Qwen MP4 无关。</td><td><code>VOICE_BUCKETS</code>。</td></tr>
+        <tr><td>已实现参数</td><td>250ms 角色留白、450ms 标题留白、700ms 章节结尾留白和 1.15× 老年语速用于本轮成品。</td><td>自动测试与媒体检查通过；主观听感仍接受用户反馈。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>02 · 决策</h2>
+    <div class="decision"><strong>按逻辑片段留白。</strong> 标题后插入 450ms 静音；旁白/对白或角色片段之间插入 250ms 静音；每章结尾插入 700ms 静音，隔开下一章标题。因 API 1000 字限制产生的同一逻辑片段内部切块不插入停顿。</div>
+    <div class="decision"><strong>老年画像明确加速。</strong> Qwen API 不支持 rate，因此在本地对老年角色 WAV 使用 1.15× tempo 后处理；其他年龄保持 1.00×。处理后再执行边缘淡入淡出。</div>
+    <div class="decision"><strong>保留旧资源。</strong> 新成品与节奏评测材料进入 <code>design/resources/qwen-segment-pacing/</code>，不覆盖此前用于去爆音对照的 MP4。</div>
+    <div class="warn"><strong>开放反馈：</strong>250ms / 450ms / 1.15× 是当前工作值，不是 API 固有限制。用户给出更松或更快的偏好时先回写本方案，再改实现。</div>
+  </section>
+
+  <section>
+    <h2>03 · 目标流程</h2>
+    <pre>逻辑片段（标题 / 旁白 / 角色对白）
+  ├─ 按 API 上限切块并并发合成
+  ├─ 老年角色：tempo 1.15×；其余：1.00×
+  ├─ 每个语音块：10ms 淡入 + 5ms 淡出
+  ├─ 同一逻辑片段内部：连续拼接
+  ├─ 逻辑片段边界：标题后 450ms / 其他 250ms 静音
+  └─ 章节结尾：700ms 静音
+                         ↓
+                 章节 WAV → AAC / MP4</pre>
+  </section>
+
+  <section>
+    <h2>04 · 实现边界与兼容性</h2>
+    <ul>
+      <li>Qwen voice spec 增加本地 tempo 值；系统音色覆盖仍可用，年龄画像继续决定默认 tempo。</li>
+      <li>静音 WAV 复用相邻 Qwen WAV 的采样率、声道和位深，避免 concat 格式不一致。</li>
+      <li>Edge 与历史 CosyVoice 路径不改变；Qwen API 协议不改变。</li>
+      <li>章节时长和章节元数据会随新增留白重新计算。</li>
+      <li>回滚只需恢复 tempo 为 1.00、pause 为 0；旧 MP4 资源继续保留。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>05 · 验收结果</h2>
+    <table>
+      <thead><tr><th>层级</th><th>验收项</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>自动测试</td><td><code>python -m unittest discover -s tests -p 'test*.py' -v</code></td><td><strong>10/10 通过</strong>，0.246s</td></tr>
+        <tr><td>集成</td><td>假 Qwen WAV 含 450ms 标题静音、250ms 片段静音、700ms 章节结尾静音；同一逻辑片段的 API 切块无额外停顿。</td><td><strong>通过</strong>，并验证手工音色覆盖保留老年 tempo</td></tr>
+        <tr><td>音质</td><td>新版 MP4 解码 PCM 全片扫描。</td><td><strong>通过</strong>：≥20000 跳变 0 个，最大相邻采样跳变 15533</td></tr>
+        <tr><td>成品</td><td>真实 Qwen API 重生成、ffprobe 检查媒体与章节。</td><td><strong>通过</strong>：AAC / 24kHz / mono，2 章，41.480s；检测到约 0.73s / 0.76s 章尾静音</td></tr>
+        <tr><td>浏览器</td><td>GitHub Pages 相对路径与 Chromium 播放器。</td><td><strong>通过</strong>：1440×900 与 390×844 视口无溢出，播放器识别 0:41 媒体</td></tr>
+        <tr><td>主观</td><td>由用户试听确认留白和老年语速。</td><td>新版已交付，等待偏好反馈</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">沙箱内首次真实生成因 DNS 受限失败；获准联网后重跑成功。移动端首次尝试因本机未安装 WebKit 失败，随后使用已安装的 Chromium 以等效 390×844 视口验证通过。原始媒体检查结果保存在 <a href="resources/qwen-segment-pacing/media_evaluation.json">media_evaluation.json</a>。</p>
+  </section>
+
+  <section id="playback">
+    <h2>06 · 试听与对照</h2>
+    <div class="player">
+      <h3>节奏修正版完整版</h3>
+      <p>含 250ms / 450ms 逻辑留白、700ms 章节结尾留白，以及老年角色 1.15× tempo 校正。</p>
+      <video controls preload="metadata" src="resources/qwen-segment-pacing/voicebook_qwen_novel_paced.mp4">
+        浏览器不支持内嵌视频，请使用下方链接打开 MP4。
+      </video>
+      <div class="links">
+        <a href="resources/qwen-segment-pacing/voicebook_qwen_novel_paced.mp4">直接打开节奏修正版 MP4</a>
+        <a href="resources/qwen3ttsai/voicebook_qwen_novel_demo.mp4">打开旧版 MP4 对照</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>ACTIVE · 已实现并验证；250ms / 450ms / 700ms / 1.15× 可根据后续试听反馈继续校准。</footer>
+</main>
+</body>
+</html>

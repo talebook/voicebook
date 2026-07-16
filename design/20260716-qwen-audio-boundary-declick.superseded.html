@@ -46,8 +46,10 @@
     <div class="eyebrow">VOICEBOOK · AUDIO QUALITY DESIGN</div>
     <h1>Qwen 音频片段边界去爆音方案</h1>
     <p class="subtitle">消除多角色小说中每次切换音频片段时出现的“啪”声，同时保持原始文字、音色、语速、时长和章节结构。</p>
-    <div class="meta"><span class="badge">ACTIVE</span><span class="badge neutral">2026-07-16</span><span class="badge neutral">Qwen · WAV · MP4</span></div>
+    <div class="meta"><span class="badge">SUPERSEDED</span><span class="badge neutral">2026-07-16</span><span class="badge neutral">Qwen · WAV · MP4</span></div>
   </header>
+
+  <div class="callout warn"><strong>已被替代：</strong>去爆音机制继续保留，但当前 Qwen 流水线还加入了片段留白与老年语速校正。请以 <a href="20260716-qwen-segment-pacing.active.html">Qwen 多角色音频节奏修正方案</a> 为准。</div>
 
   <div class="summary"><strong>结论：</strong>Qwen API 返回的每个 PCM WAV 都含有相同的起始满幅瞬态。当前流水线用 <code>-c copy</code> 把它原样带进章节，因此每个新片段边界都会听到爆音。修复在 Qwen WAV 落盘后施加 10ms 半余弦淡入与 5ms 半余弦淡出，再执行现有拼接和 AAC 编码。<br><a class="play-link" href="#playback">播放修复后的完整版 MP4 ↓</a></div>
 
@@ -149,7 +151,7 @@
     </div>
   </section>
 
-  <footer>ACTIVE · Qwen 音频片段边界去爆音已实现，新 MP4 与真实验证结果已回写。</footer>
+  <footer>SUPERSEDED · 本文保留去爆音问题的历史证据；当前实现由 Qwen 多角色音频节奏修正方案替代。</footer>
 </main>
 </body>
 </html>

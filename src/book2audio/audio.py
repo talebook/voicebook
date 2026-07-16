@@ -3,10 +3,58 @@
 from __future__ import annotations
 
 import math
+import subprocess
 import sys
 import wave
 from array import array
 from pathlib import Path
+
+
+def change_pcm16_wav_tempo(path: Path, tempo: float) -> Path:
+    """Change PCM16 WAV tempo with ffmpeg while preserving pitch."""
+    if tempo <= 0:
+        raise ValueError("tempo must be greater than zero")
+    if math.isclose(tempo, 1.0):
+        return path
+
+    with wave.open(str(path), "rb") as wav:
+        params = wav.getparams()
+        if params.sampwidth != 2 or params.comptype != "NONE":
+            raise ValueError(f"expected uncompressed PCM16 WAV: {path}")
+
+    temporary = path.with_name(f".{path.stem}.tempo.tmp.wav")
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-loglevel", "error", "-i", str(path),
+                "-filter:a", f"atempo={tempo:.6f}", "-c:a", "pcm_s16le", str(temporary),
+            ],
+            check=True,
+        )
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return path
+
+
+def write_wav_silence_like(reference: Path, output: Path, duration_ms: float) -> Path:
+    """Write uncompressed silence matching a reference WAV's PCM format."""
+    if duration_ms < 0:
+        raise ValueError("silence duration cannot be negative")
+    with wave.open(str(reference), "rb") as wav:
+        params = wav.getparams()
+        if params.comptype != "NONE":
+            raise ValueError(f"expected uncompressed PCM WAV: {reference}")
+
+    frame_count = round(params.framerate * duration_ms / 1000)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with wave.open(str(output), "wb") as wav:
+        wav.setnchannels(params.nchannels)
+        wav.setsampwidth(params.sampwidth)
+        wav.setframerate(params.framerate)
+        wav.setcomptype(params.comptype, params.compname)
+        wav.writeframes(bytes(frame_count * params.nchannels * params.sampwidth))
+    return output
 
 
 def _fade_frame_counts(

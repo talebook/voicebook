@@ -6,7 +6,12 @@ from pathlib import Path
 from unittest.mock import patch
 
 from book2audio.audio import smooth_pcm16_wav_edges
-from book2audio.pipeline import synth_chapter_qwen
+from book2audio.pipeline import (
+    QWEN_CHAPTER_END_PAUSE_MS,
+    QWEN_SEGMENT_PAUSE_MS,
+    QWEN_TITLE_PAUSE_MS,
+    synth_chapter_qwen,
+)
 
 
 SAMPLE_RATE = 24_000
@@ -60,16 +65,36 @@ class PCM16WaveEdgeTests(unittest.TestCase):
 
 
 class QwenAudioBoundaryTests(unittest.IsolatedAsyncioTestCase):
-    async def test_chapter_synthesis_suppresses_qwen_start_click_at_every_segment(self):
-        parts = [("第一段", ("Cherry",)), ("第二段", ("Andre",))]
+    async def test_chapter_synthesis_suppresses_clicks_and_inserts_logical_pauses(self):
+        parts = [
+            ("标题", ("Cherry", 1.0)),
+            ("第二段", ("Andre", 1.0)),
+            ("第三段", ("Neil", 1.0)),
+        ]
         with tempfile.TemporaryDirectory() as directory:
             work_dir = Path(directory)
             with patch("book2audio.tts.Qwen3TTSAIEngine", FakeQwenEngine):
                 chapter = await synth_chapter_qwen(parts, work_dir, 1)
             samples = read_samples(chapter)
 
+        title_pause_frames = round(SAMPLE_RATE * QWEN_TITLE_PAUSE_MS / 1000)
+        segment_pause_frames = round(SAMPLE_RATE * QWEN_SEGMENT_PAUSE_MS / 1000)
+        chapter_pause_frames = round(SAMPLE_RATE * QWEN_CHAPTER_END_PAUSE_MS / 1000)
+        starts = (
+            0,
+            SEGMENT_FRAMES + title_pause_frames,
+            SEGMENT_FRAMES * 2 + title_pause_frames + segment_pause_frames,
+        )
+        self.assertEqual(
+            SEGMENT_FRAMES * 3 + title_pause_frames + segment_pause_frames + chapter_pause_frames,
+            len(samples),
+        )
+        self.assertFalse(any(samples[SEGMENT_FRAMES:starts[1]]))
+        self.assertFalse(any(samples[starts[1] + SEGMENT_FRAMES:starts[2]]))
+        self.assertFalse(any(samples[starts[2] + SEGMENT_FRAMES:]))
+
         search_frames = SAMPLE_RATE // 100
-        for start in (0, SEGMENT_FRAMES):
+        for start in starts:
             first = max(1, start)
             largest_jump = max(
                 abs(samples[index] - samples[index - 1])
@@ -80,6 +105,28 @@ class QwenAudioBoundaryTests(unittest.IsolatedAsyncioTestCase):
                 5_000,
                 f"segment at frame {start} retains a click-sized jump: {largest_jump}",
             )
+
+    async def test_api_chunks_inside_one_logical_part_do_not_gain_extra_pause(self):
+        parts = [("长标题", ("Cherry", 1.0)), ("对白", ("Andre", 1.0))]
+
+        def split_into_test_chunks(text):
+            return ["第一块", "第二块"] if text == "长标题" else [text]
+
+        with tempfile.TemporaryDirectory() as directory:
+            work_dir = Path(directory)
+            with (
+                patch("book2audio.tts.Qwen3TTSAIEngine", FakeQwenEngine),
+                patch("book2audio.tts.split_tts_text", side_effect=split_into_test_chunks),
+            ):
+                chapter = await synth_chapter_qwen(parts, work_dir, 1)
+            samples = read_samples(chapter)
+
+        title_pause_frames = round(SAMPLE_RATE * QWEN_TITLE_PAUSE_MS / 1000)
+        chapter_pause_frames = round(SAMPLE_RATE * QWEN_CHAPTER_END_PAUSE_MS / 1000)
+        self.assertEqual(
+            SEGMENT_FRAMES * 3 + title_pause_frames + chapter_pause_frames,
+            len(samples),
+        )
 
 
 if __name__ == "__main__":

@@ -1,14 +1,18 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from book2audio.casting import (
     CharacterProfile,
+    QWEN_DEFAULT_TEMPO,
+    QWEN_OLD_AGE_TEMPO,
     QWEN_SYSTEM_VOICES,
     assign_qwen_voices,
     build_profiles,
 )
 from book2audio.tts import QwenTTSClient, split_tts_text
+from book2audio.pipeline import run_from_script
 
 
 FAKE_WAV = b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(32)
@@ -67,6 +71,37 @@ class QwenVoiceCastingTests(unittest.TestCase):
         self.assertEqual("Ebona", voices["老婆婆"])
         self.assertNotEqual(voices["少女甲"], voices["少女乙"])
         self.assertTrue(set(voices.values()).issubset(QWEN_SYSTEM_VOICES))
+
+    def test_old_profiles_get_local_tempo_boost_without_changing_other_ages(self):
+        profiles = {
+            "青年": CharacterProfile("青年", gender="male", age_stage="青年"),
+            "老者": CharacterProfile("老者", gender="male", age_stage="老年"),
+            "老婆婆": CharacterProfile("老婆婆", gender="female", age_stage="老年"),
+        }
+
+        voices = assign_qwen_voices(profiles)
+
+        self.assertEqual(QWEN_DEFAULT_TEMPO, voices["青年"][1])
+        self.assertEqual(QWEN_OLD_AGE_TEMPO, voices["老者"][1])
+        self.assertEqual(QWEN_OLD_AGE_TEMPO, voices["老婆婆"][1])
+
+    def test_script_override_keeps_old_age_tempo_and_title_boundary(self):
+        script_text = """## 角色表
+老道 | male | 老年 | Arthur
+
+## 第一章
+
+[老道] 且听我说。
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / "demo.script"
+            script.write_text(script_text, encoding="utf-8")
+            with patch("book2audio.pipeline._synthesize") as synthesize:
+                run_from_script(script, Path(directory) / "demo.mp4", engine="qwen")
+
+        parts = synthesize.call_args.args[0][1]
+        self.assertEqual(("第一章", ("Neil", QWEN_DEFAULT_TEMPO)), parts[0])
+        self.assertEqual(("且听我说。", ("Arthur", QWEN_OLD_AGE_TEMPO)), parts[1])
 
 
 class QwenTTSClientTests(unittest.TestCase):

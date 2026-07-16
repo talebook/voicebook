@@ -230,8 +230,17 @@ QWEN_SYSTEM_VOICES = (
     "Seren", "Pip", "Stella", "Andre",
 )
 
-QWEN_NARRATOR = ("Neil",)       # 字正腔圆的中文新闻主持人
-QWEN_DIALOGUE = ("Andre",)      # 默认沉稳男声；多角色模式会按画像替换
+QWEN_DEFAULT_TEMPO = 1.0
+QWEN_OLD_AGE_TEMPO = 1.15
+
+
+def qwen_tempo_for_age(age_stage: str) -> float:
+    """Return the local tempo correction for a Qwen character age profile."""
+    return QWEN_OLD_AGE_TEMPO if age_stage == "老年" else QWEN_DEFAULT_TEMPO
+
+
+QWEN_NARRATOR = ("Neil", QWEN_DEFAULT_TEMPO)   # 字正腔圆的中文新闻主持人
+QWEN_DIALOGUE = ("Andre", QWEN_DEFAULT_TEMPO)  # 默认沉稳男声；多角色模式会按画像替换
 
 # 同一桶提供多个候选，让同年龄/性别的角色也能保持音色差异。
 QWEN_VOICE_BUCKETS = {
@@ -265,7 +274,7 @@ QWEN_DESC_VOICES = {
 
 
 def assign_qwen_voices(profiles: Dict[str, CharacterProfile]) -> Dict[str, tuple]:
-    """每个角色 → ``(system_voice,)``，按画像选音色并尽量避免角色撞声。"""
+    """每个角色 → ``(system_voice, tempo)``，按画像选音色并校正老年语速。"""
     voices: Dict[str, tuple] = {}
     used: set[str] = set()
     for name in sorted(profiles):
@@ -280,6 +289,6 @@ def assign_qwen_voices(profiles: Dict[str, CharacterProfile]) -> Dict[str, tuple
             if voice not in candidates:
                 candidates.append(voice)
         selected = next((voice for voice in candidates if voice not in used), candidates[0])
-        voices[name] = (selected,)
+        voices[name] = (selected, qwen_tempo_for_age(profile.age_stage))
         used.add(selected)
     return voices
