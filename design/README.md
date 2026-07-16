@@ -12,6 +12,12 @@
 | ACTIVE | [Design 文档与资源目录整理方案](./20260716-design-resources-layout.active.html) | 10xdev 文档生命周期、目录布局与资源管理约束 | — |
 | ACTIVE | [Qwen3TTSAI 接入与性能报告](./20260716-qwen3ttsai-integration.active.html) | Web API 协议、角色自动选声、接入基线性能和原始 Demo | [原始 Demo](./resources/qwen3ttsai/voicebook_qwen_novel_demo.mp4) · [评测数据](./resources/qwen3ttsai/manifest.json) · [音色目录](./resources/qwen3ttsai/voice_catalog.json) |
 
+## 调研记录
+
+| 日期 | 主题 | 结论与证据 |
+|---|---|---|
+| 2026-07-16 | [qwen3ttsai.com API 能力现场调研](./resources/research/20260716-qwen3ttsai-capabilities/) | `generate` 无逐次引导词字段；Voice Design 有 `voicePrompt` 但 UI 未开放，且现场请求受上游欠费阻断 |
+
 ## 历史方案
 
 | 状态 | 文档 | 替代关系 | 历史资源 |

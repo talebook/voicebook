@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-07-16T18:19:43+08:00",
+  "scope": "qwen3ttsai.com only",
+  "page": "https://qwen3ttsai.com/zh",
+  "frontend_bundle": "https://qwen3ttsai.com/_next/static/chunks/5519-5c66152db369e51c.js",
+  "ui": {
+    "system_voices": "enabled",
+    "voice_cloning": "disabled: Coming Soon",
+    "voice_design": "disabled: Coming Soon"
+  },
+  "system_voice_catalog": {
+    "count": 49,
+    "language_codes": [
+      "zh-CN",
+      "en-US",
+      "es-ES",
+      "ru-RU",
+      "it-IT",
+      "ko-KR",
+      "ja-JP",
+      "de-DE",
+      "fr-FR",
+      "pt-BR",
+      "zh-CN-shanghai",
+      "zh-CN-beijing",
+      "zh-CN-nanjing",
+      "zh-CN-shaanxi",
+      "zh-CN-minnan",
+      "zh-CN-tianjin",
+      "zh-CN-sichuan",
+      "zh-CN-cantonese"
+    ]
+  },
+  "endpoints": {
+    "generate": {
+      "method": "POST",
+      "path": "/api/qwen3tts/generate",
+      "frontend_payload_fields": ["text", "voice", "mode"],
+      "per_generation_guidance_prompt": false,
+      "observed_live_status": 500,
+      "observed_live_error": "Arrearage"
+    },
+    "voice_design": {
+      "method": "POST",
+      "path": "/api/qwen3tts/voice-design",
+      "frontend_payload_fields": ["voicePrompt", "previewText", "preferredName"],
+      "guidance_semantics": "describe and create a reusable designed voice",
+      "empty_payload_status": 400,
+      "empty_payload_error": "声音描述不能为空",
+      "complete_payload_status": 400,
+      "complete_payload_error": "Arrearage"
+    },
+    "voice_cloning": {
+      "method": "POST",
+      "path": "/api/qwen3tts/voice-cloning",
+      "frontend_payload_fields": ["audioData", "audioMimeType", "preferredName"],
+      "empty_payload_status": 400,
+      "empty_payload_error": "音频数据不能为空"
+    }
+  },
+  "limitations": [
+    "Frontend network capture script could not run because its Puppeteer dependency was absent.",
+    "Findings were cross-checked from the live page bundle and direct same-domain HTTP requests.",
+    "Endpoint presence does not imply current usability; provider arrearage blocked successful generation during this observation."
+  ]
+}
