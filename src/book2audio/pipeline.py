@@ -138,6 +138,10 @@ async def synth_chapter_qwen(parts, work_dir: Path, ch_num: int) -> Path:
             tasks.append(engine.synth(chunk, VoiceSpec(voice), out))
     await asyncio.gather(*tasks)
 
+    from .audio import smooth_pcm16_wav_edges
+    for segment_file in seg_files:
+        smooth_pcm16_wav_edges(segment_file)
+
     list_file = seg_dir / "list.txt"
     list_file.write_text("".join(f"file '{f.resolve()}'\n" for f in seg_files))
     chapter_wav = work_dir / f"chapter_{ch_num:04d}.wav"

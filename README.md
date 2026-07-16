@@ -46,7 +46,7 @@ uv run python -m book2audio --from-script draft.script -o out.mp4 --engine qwen
 
 - 说话人识别：规则层 R1-R8 + CSI RoBERTa（`models/csi-v1`，fp16 约650MB），金标 93%
 - 角色画像：纯规则（性别/年龄/称呼语/辈分），(gender, age_stage) → 音色桶
-- TTS：默认 `edge-tts`；可选 `qwen` 使用 `qwen3ttsai.com` 的公开 Web API（无需 Cookie，单次最多 1000 字，自动切分）。Qwen 模式从 27 个中文系统音色中按角色性别、年龄阶段和音色描述自动匹配。
+- TTS：默认 `edge-tts`；可选 `qwen` 使用 `qwen3ttsai.com` 的公开 Web API（无需 Cookie，单次最多 1000 字，自动切分）。Qwen 模式从 27 个中文系统音色中按角色性别、年龄阶段和音色描述自动匹配，并在片段拼接前自动平滑 WAV 边缘以消除爆音。
 
 ## 目录结构
 

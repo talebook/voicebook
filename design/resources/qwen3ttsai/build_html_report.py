@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import subprocess
 from pathlib import Path
 
 
@@ -17,6 +18,19 @@ RESOURCE_URL = Path("resources/qwen3ttsai")
 
 def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
+
+
+def media_duration_seconds(path: Path) -> float:
+    result = subprocess.run(
+        [
+            "ffprobe", "-v", "error", "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1", str(path),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return float(result.stdout.strip())
 
 
 def main() -> None:
@@ -73,6 +87,7 @@ def main() -> None:
     if not video_path.is_file():
         raise FileNotFoundError(video_path)
     video_src = (RESOURCE_URL / video_path.name).as_posix()
+    video_duration = media_duration_seconds(video_path)
 
     document = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -211,7 +226,7 @@ def main() -> None:
 
     <div class="tldr">
       <div class="tldr-label">TL;DR</div>
-      Voicebook 已接入 qwen3ttsai.com 的公开系统音色接口，并从 <strong>{voices['count']} 个中文音色</strong>中按角色性别、年龄阶段和声音描述自动选声。五个小说片段全部生成成功；并发 2 时用 <strong>{aggregate['batch_wall_seconds']:.3f} 秒</strong>生成 {aggregate['audio_seconds']:.3f} 秒音频，有效 RTF 为 <strong>{aggregate['effective_batch_rtf']:.3f}</strong>。WAV 与 MP4 统一放在 <code>design/resources/qwen3ttsai/</code>，本报告可随该目录离线播放。
+      Voicebook 已接入 qwen3ttsai.com 的公开系统音色接口，并从 <strong>{voices['count']} 个中文音色</strong>中按角色性别、年龄阶段和声音描述自动选声。五个小说片段全部生成成功；并发 2 时用 <strong>{aggregate['batch_wall_seconds']:.3f} 秒</strong>生成 {aggregate['audio_seconds']:.3f} 秒音频，有效 RTF 为 <strong>{aggregate['effective_batch_rtf']:.3f}</strong>。Qwen 分段在拼接前应用 10ms 淡入和 5ms 淡出以消除起始瞬态；WAV 与 MP4 统一放在 <code>design/resources/qwen3ttsai/</code>，本报告可随该目录离线播放。
     </div>
 
     <section>
@@ -234,7 +249,7 @@ def main() -> None:
           </g>
           <g fill="none" stroke="#6f9bb8" stroke-width="1.4" marker-end="url(#arr)"><path d="M160 136L195 136"/><path d="M342 136L377 136"/><path d="M514 136L549 136"/><path d="M686 136L721 136"/></g>
           <text x="430" y="55" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="600">VOICEBOOK → QWEN3TTSAI</text>
-          <text x="430" y="213" text-anchor="middle" fill="#7a7a7a">长文本自动切分 · 角色状态保留 · ffmpeg 合并章节</text>
+          <text x="430" y="213" text-anchor="middle" fill="#7a7a7a">长文本自动切分 · 片段边缘平滑 · ffmpeg 合并章节</text>
         </svg>
         <figcaption><span class="fig-num">FIG 1</span>端到端数据流 · 小说文本到多角色音频</figcaption>
       </figure>
@@ -289,7 +304,7 @@ def main() -> None:
       <div class="video-shell">
         <div class="media-index">END-TO-END · 2 CHAPTERS · 4 CHARACTERS</div>
         <h3>Voicebook 多角色小说 MP4</h3>
-        <p>包含《凡人修仙之仙界篇》和《彼得·潘》两个章节标记，总时长 48.006 秒。</p>
+        <p>包含《凡人修仙之仙界篇》和《彼得·潘》两个章节标记，总时长 {video_duration:.3f} 秒。</p>
         <video controls preload="metadata" src="{esc(video_src)}"></video>
       </div>
     </section>
@@ -308,9 +323,10 @@ def main() -> None:
 uv --cache-dir /private/tmp/voicebook-uv-cache run python \\
   design/resources/qwen3ttsai/build_html_report.py</code></pre>
       <ul>
-        <li><strong>自动测试。</strong> 5 项单元测试通过，覆盖请求协议、限流重试、长文本切分和角色选声。</li>
+        <li><strong>自动测试。</strong> 7 项单元与集成测试通过，覆盖请求协议、限流重试、长文本切分、角色选声和音频边界平滑。</li>
         <li><strong>音频校验。</strong> 五个文件均通过 WAV 头、采样率、声道与 SHA-256 检查。</li>
-        <li><strong>成品校验。</strong> MP4 含两个章节标记，时长 48.006 秒。</li>
+        <li><strong>边界平滑。</strong> Qwen 分段 PCM WAV 在拼接前应用 10ms 半余弦淡入与 5ms 半余弦淡出，消除接口返回的起始满幅瞬态。</li>
+        <li><strong>成品校验。</strong> MP4 含两个章节标记，时长 {video_duration:.3f} 秒。</li>
         <li><strong>提交状态。</strong> 核心接入已推送至 <code>origin/main</code>。</li>
       </ul>
     </section>

@@ -1,0 +1,26 @@
+{
+  "date": "2026-07-16",
+  "sample_rate_hz": 24000,
+  "measurement": "absolute difference between adjacent decoded PCM16 samples",
+  "before": {
+    "source": "design/resources/qwen3ttsai/voicebook_qwen_novel_demo.mp4 at commit f8b4e71",
+    "decoded_duration_seconds": 48.042667,
+    "maximum_jump": 32865,
+    "jumps_ge_20000": 37,
+    "jumps_ge_25000": 15,
+    "jumps_ge_30000": 15,
+    "start_rms_20ms": 3427.3,
+    "observed_internal_click_times_seconds": [8.961792, 14.882708, 33.842875, 34.963792, 42.324708]
+  },
+  "after": {
+    "source": "regenerated with 10ms half-cosine fade-in and 5ms half-cosine fade-out",
+    "decoded_duration_seconds": 47.146667,
+    "maximum_jump": 12892,
+    "jumps_ge_20000": 0,
+    "jumps_ge_25000": 0,
+    "jumps_ge_30000": 0,
+    "start_rms_20ms": 37.8,
+    "mp4_duration_seconds": 47.126,
+    "chapter_count": 2
+  }
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qwen 音频片段边界去爆音方案</title>
+  <style>
+    :root { --paper:#f6f4ee; --panel:#fff; --ink:#20231f; --muted:#697068; --line:#d8d4ca; --green:#245f49; --green-soft:#e4efe8; --amber:#a56c27; --amber-soft:#f6ead8; --red:#9a4840; --code:#232722; }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:56px 22px 80px; background:var(--paper); color:var(--ink); font:16px/1.65 ui-serif,Georgia,"Songti SC",serif; }
+    main { max-width:920px; margin:auto; }
+    header { padding-bottom:28px; border-bottom:2px solid var(--ink); margin-bottom:34px; }
+    .eyebrow,.badge,th { font:600 11px/1.4 ui-monospace,Menlo,monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .eyebrow { color:var(--green); }
+    h1 { margin:12px 0; font-size:clamp(30px,5vw,48px); line-height:1.1; }
+    .subtitle { max-width:760px; color:var(--muted); }
+    .meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+    .badge { padding:6px 9px; border:1px solid var(--amber); color:var(--amber); background:var(--amber-soft); }
+    .badge.neutral { border-color:var(--line); color:var(--muted); background:var(--panel); }
+    section { margin:42px 0; }
+    h2 { font-size:23px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+    h3 { font-size:17px; margin-top:24px; }
+    .summary,.callout { padding:19px 22px; border:1px solid var(--line); background:var(--panel); }
+    .summary { border-left:4px solid var(--green); }
+    .callout.warn { border-left:4px solid var(--amber); background:var(--amber-soft); }
+    table { width:100%; border-collapse:collapse; background:var(--panel); font-size:14px; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:var(--muted); }
+    code { background:#ece9e1; padding:2px 5px; border-radius:3px; font-size:.9em; }
+    pre { background:var(--code); color:#eef4ec; padding:20px; overflow:auto; font:13px/1.6 ui-monospace,Menlo,monospace; }
+    ul,ol { padding-left:23px; }
+    li { margin:6px 0; }
+    .good { color:var(--green); font-weight:600; }
+    .bad { color:var(--red); font-weight:600; }
+    footer { margin-top:60px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+    @media (max-width:640px) { body { padding:28px 14px 56px; } table { display:block; overflow-x:auto; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">VOICEBOOK · AUDIO QUALITY DESIGN</div>
+    <h1>Qwen 音频片段边界去爆音方案</h1>
+    <p class="subtitle">消除多角色小说中每次切换音频片段时出现的“啪”声，同时保持原始文字、音色、语速、时长和章节结构。</p>
+    <div class="meta"><span class="badge">ACTIVE</span><span class="badge neutral">2026-07-16</span><span class="badge neutral">Qwen · WAV · MP4</span></div>
+  </header>
+
+  <div class="summary"><strong>结论：</strong>Qwen API 返回的每个 PCM WAV 都含有相同的起始满幅瞬态。当前流水线用 <code>-c copy</code> 把它原样带进章节，因此每个新片段边界都会听到爆音。修复在 Qwen WAV 落盘后施加 10ms 半余弦淡入与 5ms 半余弦淡出，再执行现有拼接和 AAC 编码。</div>
+
+  <section>
+    <h2>01 · 原始诉求与验收目标</h2>
+    <p><strong>原始诉求：</strong>“Voicebook 多角色小说 MP4 这个完整版的 MP4，各个音频片段之间有个啪的中断音，想办法解决。”</p>
+    <ul>
+      <li>消除角色切换、章节切换处的可闻爆音。</li>
+      <li>不裁掉台词，不引入明显停顿，不改变角色音色与章节时间线。</li>
+      <li>修复正式 Qwen 流水线，并重新生成现有完整版 MP4。</li>
+      <li>用自动回归测试和解码后的 PCM 跳变指标共同验收。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>02 · 修复前证据</h2>
+    <table>
+      <thead><tr><th>证据</th><th>观测</th><th>判断</th></tr></thead>
+      <tbody>
+        <tr><td>完整版 MP4 解码 PCM</td><td>8.962s、14.883s、33.843s、34.964s、42.325s 出现 31k–33k 采样跳变</td><td class="bad">与五个内部片段起点吻合</td></tr>
+        <tr><td>5 个独立 Qwen WAV</td><td>首样本均为 18770；0.000875s 均从约 -100 跳到 32767</td><td class="bad">API 输出自带同源瞬态</td></tr>
+        <tr><td>片段末尾 20ms</td><td>多数 RMS 约 2，接近静音</td><td>上一片段尾部不是主因</td></tr>
+        <tr><td>现有拼接</td><td>concat demuxer + <code>-c copy</code></td><td>没有边界平滑，会保留起始瞬态</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>03 · 假设与取舍</h2>
+    <ol>
+      <li><strong>Qwen WAV 起始瞬态。</strong> 已由五个独立文件重复观测，作为主因处理。</li>
+      <li><strong>无损硬拼放大问题。</strong> 是传播路径，不是瞬态来源；保留高效拼接，但先清理片段边缘。</li>
+      <li><strong>AAC 编码伪影。</strong> 源 WAV 已有同类峰值，因此不作为主修复点。</li>
+      <li><strong>尾部 DC/非零断层。</strong> 数据基本排除；仍加 5ms 淡出作为格式变化时的保护。</li>
+    </ol>
+    <div class="callout warn"><strong>不采用直接裁剪。</strong> 固定裁掉前 10–20ms 可能吞掉首个辅音；淡入保持样本数和时间线不变，并把 0.875ms 满幅脉冲压低到不可闻量级。</div>
+  </section>
+
+  <section>
+    <h2>04 · 目标流程</h2>
+    <pre>Qwen API PCM WAV
+        │
+        ▼
+格式校验：PCM16 / 采样率 / 声道
+        │
+        ▼
+10ms 半余弦淡入 ── 5ms 半余弦淡出
+        │             （不改变帧数）
+        ▼
+章节内 WAV concat ── 全书 AAC/MP4 编码 ── 章节元数据</pre>
+    <h3>实现边界</h3>
+    <ul>
+      <li>新增一个无第三方依赖的 PCM16 WAV 边缘平滑函数，支持单声道和交错多声道。</li>
+      <li>只在 <code>synth_chapter_qwen</code> 的并发合成全部成功后处理每个分段 WAV。</li>
+      <li>Edge MP3 与 CosyVoice 路径不变，避免扩大行为范围。</li>
+      <li>淡入淡出长度超过短音频时自动缩短，且不改变采样率、声道、帧数和时长。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>05 · 验证结果</h2>
+    <table>
+      <thead><tr><th>层级</th><th>验证</th><th>实际结果</th></tr></thead>
+      <tbody>
+        <tr><td>单元</td><td>带 Qwen 型满幅起始脉冲的合成 PCM16 WAV 经处理后首尾归零、边缘跳变受控、格式与帧数不变</td><td class="good">通过</td></tr>
+        <tr><td>集成</td><td>Fake Qwen 引擎生成两个故障片段，真实运行章节拼接，拼接边界不再出现高幅跳变</td><td><span class="bad">修复前 32868，测试失败</span><br><span class="good">修复后低于 5000，测试通过</span></td></tr>
+        <tr><td>回归</td><td><code>python -m unittest discover -s tests -p 'test*.py' -v</code></td><td class="good">7/7 通过，0.152s</td></tr>
+        <tr><td>成品</td><td>重新生成完整版 MP4，解码 PCM 后检查全片采样跳变、媒体与章节结构</td><td class="good">≥20000 跳变从 37 个降为 0；最大值从 32865 降为 12892；两章、47.126s</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>06 · 发布与回滚</h2>
+    <p>这是纯本地后处理，不改变 Qwen 请求协议或 CLI 参数。仓库 Demo MP4 与 HTML 报告已经更新；若发现极短语音首音量受损，可将淡入常量从 10ms 降低，而无需回滚其他 Qwen 接入代码。</p>
+  </section>
+
+  <section>
+    <h2>07 · 实际执行记录</h2>
+    <ul>
+      <li>修复前先运行回归测试，稳定失败于 <code>32868 not less than 5000</code>。</li>
+      <li>首次在网络沙箱内重新请求 Qwen 时 DNS 解析失败；在获准的网络环境中重跑后，六个片段和两章 MP4 全部生成成功。</li>
+      <li>新成品为 24kHz 单声道 AAC，保留“凡人修仙之仙界篇选段”和“彼得·潘选段”两个章节。</li>
+      <li>诊断脚本和原始前后指标保存在 <code>research/qwen_mp4_click_diagnosis_20260716/</code>。</li>
+      <li>Pages 结构检查通过：3 份 ACTIVE HTML、6 个本地媒体引用有效；Chromium 桌面与移动视口无重叠或裁切，新 MP4 播放器显示 47 秒媒体。</li>
+      <li>未进行人工扬声器听音；以用户所述“啪”声对应的近满幅瞬态、回归夹具和全片 PCM 扫描作为可重复验收信号。</li>
+    </ul>
+  </section>
+
+  <footer>ACTIVE · Qwen 音频片段边界去爆音已实现，新 MP4 与真实验证结果已回写。</footer>
+</main>
+</body>
+</html>
