@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen 标题留白与多小说选角试听方案</title>
+  <style>
+    :root { --ink:#20231f; --muted:#687067; --paper:#f6f3eb; --panel:#fff; --line:#d8d3c7; --green:#216749; --amber:#a86610; --soft:#fff3d8; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:48px 22px 72px; color:var(--ink); background:var(--paper); font:16px/1.7 system-ui,-apple-system,"Noto Sans SC",sans-serif; }
+    main { max-width:940px; margin:auto; }
+    h1 { margin:.2em 0; font:700 clamp(34px,6vw,58px)/1.08 Georgia,"Noto Serif SC",serif; }
+    h2 { margin-top:40px; padding-bottom:8px; border-bottom:1px solid var(--line); font-size:23px; }
+    .eyebrow { color:var(--green); font-size:13px; font-weight:750; letter-spacing:.14em; }
+    .subtitle,.muted { color:var(--muted); }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 28px; }
+    .badge { padding:5px 10px; border-radius:999px; color:#fff; background:var(--green); font-size:12px; font-weight:750; }
+    .badge.neutral { color:var(--ink); background:#e6e1d6; }
+    .summary,.decision,.warn { padding:18px 21px; border:1px solid var(--line); background:var(--panel); }
+    .summary { border-left:4px solid var(--green); }
+    .warn { border-left:4px solid var(--amber); background:var(--soft); }
+    a { color:var(--green); font-weight:650; }
+    .media-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .media-card { padding:18px; border:1px solid var(--line); background:var(--panel); }
+    .media-card h3 { margin:4px 0 8px; font-size:19px; }
+    .media-card p { margin:7px 0; }
+    .media-card video { display:block; width:100%; margin:14px 0 10px; background:#111; }
+    .version { color:var(--green); font-size:12px; font-weight:750; letter-spacing:.12em; }
+    table { width:100%; border-collapse:collapse; background:var(--panel); font-size:14px; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:var(--muted); }
+    code { padding:2px 5px; border-radius:3px; background:#ece9e1; }
+    pre { padding:20px; overflow:auto; color:#eef4ec; background:#17221d; font:13px/1.6 ui-monospace,Menlo,monospace; }
+    footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+    @media (max-width:700px) { body { padding:28px 14px 52px; } table { display:block; overflow-x:auto; } .media-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">VOICEBOOK · PACING TUNING</div>
+    <h1>Qwen 标题留白与多小说选角试听</h1>
+    <p class="subtitle">标题后留白翻倍，并用三部不同类型小说的 A/B 音色阵容提供可直接比较的选角样本。</p>
+    <div class="meta"><span class="badge">ACTIVE</span><span class="badge neutral">2026-07-16</span><span class="badge neutral">影响：Qwen 合成、选角 Demo、Pages 报告</span></div>
+  </header>
+
+  <div class="summary"><strong>原始诉求：</strong>先将标题后留白从 450ms 翻倍为 900ms；随后用户要求“再用其他小说，多做几个版本，以及不同角色→音色的匹配，让我听一下”。本轮采用 3 部小说 × 2 套阵容，共 6 个 MP4；同一小说的 A/B 版正文旁白和角色台词完全相同，口播标题保留风格标签以便辨认版本。</div>
+
+  <section>
+    <h2>01 · 决策与不变量</h2>
+    <table>
+      <thead><tr><th>参数</th><th>当前</th><th>目标</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>标题后留白</td><td>450ms</td><td><strong>900ms</strong></td><td>本次节奏修改</td></tr>
+        <tr><td>角色/旁白切换</td><td>250ms</td><td>250ms</td><td>保持</td></tr>
+        <tr><td>章节结尾</td><td>700ms</td><td>700ms</td><td>保持</td></tr>
+        <tr><td>老年角色 tempo</td><td>1.15×</td><td>1.15×</td><td>用户已确认正常</td></tr>
+        <tr><td>边缘平滑</td><td>10ms 淡入 / 5ms 淡出</td><td>不变</td><td>继续防止爆音</td></tr>
+      </tbody>
+    </table>
+    <div class="warn"><strong>工作范围：</strong>“翻倍”的基数已由代码和当前 ACTIVE 共同确认；“几个版本”按 3 部 × 2 版落地，覆盖老年独角戏、青年男女对话、成年男性群像三类选角问题。</div>
+  </section>
+
+  <section>
+    <h2>02 · 目标流程</h2>
+    <pre>标题语音 ── 900ms 静音 ── 正文/对白
+   │                           │
+10ms/5ms 边缘平滑        角色切换仍为 250ms
+                               │
+                         章节结尾仍为 700ms</pre>
+  </section>
+
+  <section>
+    <h2>03 · 实现与资源边界</h2>
+    <div class="decision">将 <code>QWEN_TITLE_PAUSE_MS</code> 从 450 改为 900；不修改 Qwen API 请求、音色分配、tempo 逻辑或 Edge 路径。</div>
+    <div class="decision">测试必须直接断言 900，避免仅引用同一个常量而产生“实现和测试一起写错仍通过”的假阳性；评测分别校验 A/B 正文一致和媒体章节标题匹配脚本标签。</div>
+    <div class="decision">新脚本、MP4 和媒体评测写入 <code>design/resources/qwen-title-pause-and-casting-demos/</code>；当前 450ms 成品保留作历史对照。</div>
+  </section>
+
+  <section>
+    <h2>04 · 试听矩阵与角色→音色匹配</h2>
+    <table>
+      <thead><tr><th>小说 / 目标</th><th>A 版</th><th>B 版</th></tr></thead>
+      <tbody>
+        <tr><td><strong>《老人与海》</strong><br>老年独角戏</td><td>老人 → Eldric Sage（沉稳睿智）</td><td>老人 → Arthur（质朴故事感）</td></tr>
+        <tr><td><strong>《他的国》</strong><br>青年男女对话</td><td>左小龙 → Andre；泥巴 → Serena</td><td>左小龙 → Ethan；泥巴 → Cherry</td></tr>
+        <tr><td><strong>《天行者》</strong><br>成年男性群像</td><td>余校长 → Elias；孙四海 → Vincent；邓有米 → Kai</td><td>余校长 → Andre；孙四海 → Elias；邓有米 → Nofish</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">旁白统一使用 Neil，避免旁白变化干扰角色音色比较；所有版本使用相同 900ms / 250ms / 700ms 节奏参数。</p>
+  </section>
+
+  <section id="playback">
+    <h2>05 · A/B 试听播放器</h2>
+    <p>每一对使用相同文字；建议先完整听 A，再听 B，只比较角色是否“贴脸”。旁白均为 Neil。</p>
+    <div class="media-grid">
+      <article class="media-card">
+        <div class="version">老人与海 · A</div>
+        <h3>沉稳睿智</h3>
+        <p><strong>老人 → Eldric Sage</strong></p>
+        <p class="muted">沉稳、沧桑但清醒；老年角色保持 1.15×。</p>
+        <video controls preload="metadata" src="resources/qwen-title-pause-and-casting-demos/old-man-and-sea-a.mp4"></video>
+        <a href="resources/qwen-title-pause-and-casting-demos/old-man-and-sea-a.mp4">直接打开 A 版</a>
+      </article>
+      <article class="media-card">
+        <div class="version">老人与海 · B</div>
+        <h3>质朴故事感</h3>
+        <p><strong>老人 → Arthur</strong></p>
+        <p class="muted">更生活化、更像老人口述；同样保持 1.15×。</p>
+        <video controls preload="metadata" src="resources/qwen-title-pause-and-casting-demos/old-man-and-sea-b.mp4"></video>
+        <a href="resources/qwen-title-pause-and-casting-demos/old-man-and-sea-b.mp4">直接打开 B 版</a>
+      </article>
+      <article class="media-card">
+        <div class="version">他的国 · A</div>
+        <h3>沉稳自然</h3>
+        <p><strong>左小龙 → Andre</strong><br><strong>泥巴 → Serena</strong></p>
+        <p class="muted">男声磁性平稳，女声柔和。</p>
+        <video controls preload="metadata" src="resources/qwen-title-pause-and-casting-demos/his-country-a.mp4"></video>
+        <a href="resources/qwen-title-pause-and-casting-demos/his-country-a.mp4">直接打开 A 版</a>
+      </article>
+      <article class="media-card">
+        <div class="version">他的国 · B</div>
+        <h3>青春明亮</h3>
+        <p><strong>左小龙 → Ethan</strong><br><strong>泥巴 → Cherry</strong></p>
+        <p class="muted">男女声都更有朝气，适合年轻角色。</p>
+        <video controls preload="metadata" src="resources/qwen-title-pause-and-casting-demos/his-country-b.mp4"></video>
+        <a href="resources/qwen-title-pause-and-casting-demos/his-country-b.mp4">直接打开 B 版</a>
+      </article>
+      <article class="media-card">
+        <div class="version">天行者 · A</div>
+        <h3>乡土厚重</h3>
+        <p><strong>余校长 → Elias</strong><br><strong>孙四海 → Vincent</strong><br><strong>邓有米 → Kai</strong></p>
+        <p class="muted">讲师、烟嗓、柔和男声形成明显层次。</p>
+        <video controls preload="metadata" src="resources/qwen-title-pause-and-casting-demos/sky-walker-a.mp4"></video>
+        <a href="resources/qwen-title-pause-and-casting-demos/sky-walker-a.mp4">直接打开 A 版</a>
+      </article>
+      <article class="media-card">
+        <div class="version">天行者 · B</div>
+        <h3>克制纪实</h3>
+        <p><strong>余校长 → Andre</strong><br><strong>孙四海 → Elias</strong><br><strong>邓有米 → Nofish</strong></p>
+        <p class="muted">整体更平实，把角色差异交给音色质感而非夸张表演。</p>
+        <video controls preload="metadata" src="resources/qwen-title-pause-and-casting-demos/sky-walker-b.mp4"></video>
+        <a href="resources/qwen-title-pause-and-casting-demos/sky-walker-b.mp4">直接打开 B 版</a>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>06 · 验收结果</h2>
+    <table>
+      <thead><tr><th>层级</th><th>验收项</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>单元</td><td>直接断言标题留白常量为 900ms，并验证生成 WAV 的对应静音帧数。</td><td><strong>通过</strong></td></tr>
+        <tr><td>回归</td><td>250ms、700ms、1.15× 和去爆音测试继续通过。</td><td><strong>10/10 通过</strong>，0.268s</td></tr>
+        <tr><td>成品</td><td>6 个真实 Qwen MP4 全部生成；每个媒体解码无 ≥20000 相邻采样跳变。</td><td><strong>通过</strong>；21.097s–41.915s，最大跳变 15328</td></tr>
+        <tr><td>选角</td><td>每个脚本角色表与页面展示的 voice id 一致；A/B 正文相同，口播标题仅标识版本。</td><td><strong>通过</strong>；3/3 正文对一致，6/6 章节标题匹配脚本</td></tr>
+        <tr><td>浏览器</td><td>桌面与移动视口能加载 6 个媒体播放器并显示时长。</td><td><strong>通过</strong>；1440×900 双列、390×844 单列无溢出</td></tr>
+        <tr><td>主观</td><td>交付 6 个版本供用户比较并选择偏好阵容。</td><td>待反馈</td></tr>
+      </tbody>
+    </table>
+    <div class="warn"><strong>真实失败记录：</strong>首次生成 6/6 成功；试图去掉口播标题标签后再次生成时，公共服务返回 <code>Arrearage</code>。已有成品未损坏，本方案保留便于辨认的标题标签，并通过章节元数据反向核对脚本。</div>
+    <p class="muted">媒体 SHA-256、时长、选角映射、静音检测与 PCM 扫描详见 <a href="resources/qwen-title-pause-and-casting-demos/demo_evaluation.json">demo_evaluation.json</a>。</p>
+  </section>
+
+  <section>
+    <h2>07 · 发布与回滚</h2>
+    <p>验证通过后，本方案转为 ACTIVE，上一版节奏方案转为 SUPERSEDED。若 900ms 过松，只需恢复标题常量和对应测试；试听资源作为选角证据保留，不进入默认运行时依赖。</p>
+  </section>
+
+  <footer>ACTIVE · 900ms 标题留白与 3 部小说 × 2 套选角试听已实现并验证。</footer>
+</main>
+</body>
+</html>

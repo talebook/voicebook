@@ -66,6 +66,7 @@ class PCM16WaveEdgeTests(unittest.TestCase):
 
 class QwenAudioBoundaryTests(unittest.IsolatedAsyncioTestCase):
     async def test_chapter_synthesis_suppresses_clicks_and_inserts_logical_pauses(self):
+        self.assertEqual(900, QWEN_TITLE_PAUSE_MS)
         parts = [
             ("标题", ("Cherry", 1.0)),
             ("第二段", ("Andre", 1.0)),

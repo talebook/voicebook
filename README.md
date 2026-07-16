@@ -5,7 +5,7 @@
 ## 文档入口
 
 - [设计文档索引](design/)
-- [Qwen 多角色音频节奏修正方案与新版 MP4](design/20260716-qwen-segment-pacing.active.html#playback)
+- [Qwen 标题留白与多小说 A/B 选角试听](design/20260716-qwen-title-pause-and-casting-demos.active.html#playback)
 - [Qwen3TTSAI 接入与性能报告](design/20260716-qwen3ttsai-integration.active.html)
 
 ## 快速开始
@@ -47,7 +47,7 @@ uv run python -m book2audio --from-script draft.script -o out.mp4 --engine qwen
 
 - 说话人识别：规则层 R1-R8 + CSI RoBERTa（`models/csi-v1`，fp16 约650MB），金标 93%
 - 角色画像：纯规则（性别/年龄/称呼语/辈分），(gender, age_stage) → 音色桶
-- TTS：默认 `edge-tts`；可选 `qwen` 使用 `qwen3ttsai.com` 的公开 Web API（无需 Cookie，单次最多 1000 字，自动切分）。Qwen 模式从 27 个中文系统音色中按角色性别、年龄阶段和音色描述自动匹配；片段拼接前会平滑 WAV 边缘、在逻辑片段间插入自然留白，并对老年画像应用 1.15× 本地 tempo 校正。
+- TTS：默认 `edge-tts`；可选 `qwen` 使用 `qwen3ttsai.com` 的公开 Web API（无需 Cookie，单次最多 1000 字，自动切分）。Qwen 模式从 27 个中文系统音色中按角色性别、年龄阶段和音色描述自动匹配；片段拼接前会平滑 WAV 边缘，使用标题后 900ms、角色间 250ms、章节尾 700ms 的自然留白，并对老年画像应用 1.15× 本地 tempo 校正。
 
 ## 目录结构
 

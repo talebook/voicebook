@@ -1,0 +1,180 @@
+{
+  "evaluated_at": "2026-07-16T16:25:03+08:00",
+  "configured_pacing": {
+    "title_pause_ms": 900,
+    "segment_pause_ms": 250,
+    "chapter_end_pause_ms": 700,
+    "old_age_tempo": 1.15
+  },
+  "pair_body_text_identity": {
+    "old-man-and-sea-a__old-man-and-sea-b": true,
+    "his-country-a__his-country-b": true,
+    "sky-walker-a__sky-walker-b": true
+  },
+  "results": [
+    {
+      "id": "old-man-and-sea-a",
+      "cast": {
+        "老人": "Eldric Sage"
+      },
+      "media": "old-man-and-sea-a.mp4",
+      "bytes": 351829,
+      "sha256": "3c2701aadc5f1580d94e3d706a1e58fe509251732744cf6989a08196f4aa9341",
+      "duration_seconds": 41.915,
+      "codec": "aac",
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "chapter_count": 1,
+      "chapter_titles": [
+        "老人与海选段 · 沉稳睿智版"
+      ],
+      "max_adjacent_sample_jump": 12056,
+      "adjacent_sample_jumps_gte_20000": 0,
+      "silence_runs_gte_800ms": [
+        {
+          "start_seconds": 2.158,
+          "duration_ms": 904
+        },
+        {
+          "start_seconds": 21.617,
+          "duration_ms": 898
+        }
+      ]
+    },
+    {
+      "id": "old-man-and-sea-b",
+      "cast": {
+        "老人": "Arthur"
+      },
+      "media": "old-man-and-sea-b.mp4",
+      "bytes": 329242,
+      "sha256": "c1bebe4af2221b09b53942f4f3a0ef526a9b98e32860fa597cca1958a7e69842",
+      "duration_seconds": 39.731,
+      "codec": "aac",
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "chapter_count": 1,
+      "chapter_titles": [
+        "老人与海选段 · 质朴故事版"
+      ],
+      "max_adjacent_sample_jump": 13127,
+      "adjacent_sample_jumps_gte_20000": 0,
+      "silence_runs_gte_800ms": [
+        {
+          "start_seconds": 2.886,
+          "duration_ms": 975
+        }
+      ]
+    },
+    {
+      "id": "his-country-a",
+      "cast": {
+        "左小龙": "Andre",
+        "泥巴": "Serena"
+      },
+      "media": "his-country-a.mp4",
+      "bytes": 175978,
+      "sha256": "d4e83ea9f17507b16eaa9124a67c81940432a43bedc7cb6e9dae5b59e8c195ab",
+      "duration_seconds": 21.097,
+      "codec": "aac",
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "chapter_count": 1,
+      "chapter_titles": [
+        "他的国选段 · 沉稳自然版"
+      ],
+      "max_adjacent_sample_jump": 11764,
+      "adjacent_sample_jumps_gte_20000": 0,
+      "silence_runs_gte_800ms": [
+        {
+          "start_seconds": 1.988,
+          "duration_ms": 913
+        }
+      ]
+    },
+    {
+      "id": "his-country-b",
+      "cast": {
+        "左小龙": "Ethan",
+        "泥巴": "Cherry"
+      },
+      "media": "his-country-b.mp4",
+      "bytes": 175549,
+      "sha256": "d107e6aecac081f33de5a6536a337515ab159043933fbadceeb16aacc668fcff",
+      "duration_seconds": 21.337,
+      "codec": "aac",
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "chapter_count": 1,
+      "chapter_titles": [
+        "他的国选段 · 青春明亮版"
+      ],
+      "max_adjacent_sample_jump": 10925,
+      "adjacent_sample_jumps_gte_20000": 0,
+      "silence_runs_gte_800ms": [
+        {
+          "start_seconds": 1.859,
+          "duration_ms": 963
+        }
+      ]
+    },
+    {
+      "id": "sky-walker-a",
+      "cast": {
+        "余校长": "Elias",
+        "孙四海": "Vincent",
+        "邓有米": "Kai"
+      },
+      "media": "sky-walker-a.mp4",
+      "bytes": 259393,
+      "sha256": "d20b233a18204e412a2f805d7d72571fc207765e69bbc1632e7afa838f90e3f1",
+      "duration_seconds": 30.835,
+      "codec": "aac",
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "chapter_count": 1,
+      "chapter_titles": [
+        "天行者选段 · 乡土厚重版"
+      ],
+      "max_adjacent_sample_jump": 15328,
+      "adjacent_sample_jumps_gte_20000": 0,
+      "silence_runs_gte_800ms": [
+        {
+          "start_seconds": 2.639,
+          "duration_ms": 903
+        },
+        {
+          "start_seconds": 19.412,
+          "duration_ms": 830
+        }
+      ]
+    },
+    {
+      "id": "sky-walker-b",
+      "cast": {
+        "余校长": "Andre",
+        "孙四海": "Elias",
+        "邓有米": "Nofish"
+      },
+      "media": "sky-walker-b.mp4",
+      "bytes": 216836,
+      "sha256": "da0534378c049e33eb7f0f6f68833588b59b0edb58bc6f8d73f2b443400fd403",
+      "duration_seconds": 26.195,
+      "codec": "aac",
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "chapter_count": 1,
+      "chapter_titles": [
+        "天行者选段 · 克制纪实版"
+      ],
+      "max_adjacent_sample_jump": 13246,
+      "adjacent_sample_jumps_gte_20000": 0,
+      "silence_runs_gte_800ms": [
+        {
+          "start_seconds": 2.648,
+          "duration_ms": 973
+        }
+      ]
+    }
+  ]
+}
