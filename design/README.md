@@ -8,7 +8,7 @@
 
 | 状态 | 文档 | 内容 |
 |---|---|---|
-| WIP | [voicebook-tool 首版命令行工具方案](./20260716-voicebook-tool.wip.html) | EPUB/TXT → 角色识别与自动选声 → 分章 MP3；等待用户审查，尚未进入实现 |
+| WIP | [voicebook-tool 首版命令行工具方案](./20260716-voicebook-tool.wip.html) | EPUB/TXT → 角色识别与自动选声 → 分章 MP3；方案已确认，正在实现与验证 |
 
 ## 当前有效文档
 
