@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>voicebook-tool 首版命令行工具方案 · ACTIVE</title>
+  <style>
+    :root {
+      --paper: #f4f0e8;
+      --surface: #fffdf8;
+      --ink: #1f2927;
+      --muted: #66716d;
+      --line: #d9d2c4;
+      --brand: #146b61;
+      --brand-soft: #dcefe9;
+      --accent: #d9683a;
+      --warn: #8b5e00;
+      --warn-soft: #fff0c9;
+      --code: #172321;
+      --shadow: 0 14px 40px rgba(34, 44, 41, .09);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(20, 107, 97, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 107, 97, .035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { width: min(1160px, calc(100% - 32px)); margin: 32px auto 72px; }
+    header, section {
+      background: rgba(255, 253, 248, .96);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    header { padding: clamp(28px, 6vw, 64px); position: relative; overflow: hidden; }
+    header::after {
+      content: "ACTIVE";
+      position: absolute;
+      right: -22px;
+      top: 18px;
+      width: 130px;
+      text-align: center;
+      transform: rotate(35deg);
+      padding: 6px 0;
+      color: #fff;
+      background: var(--accent);
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+    section { margin-top: 18px; padding: clamp(24px, 4vw, 42px); }
+    h1, h2, h3 { line-height: 1.24; margin: 0; }
+    h1 { max-width: 820px; font-size: clamp(34px, 6vw, 64px); letter-spacing: -.035em; }
+    h2 { font-size: clamp(24px, 3vw, 34px); margin-bottom: 22px; }
+    h3 { font-size: 19px; margin: 28px 0 10px; }
+    p { margin: 10px 0; overflow-wrap: anywhere; }
+    a { color: var(--brand); }
+    .eyebrow { color: var(--brand); font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .lede { max-width: 870px; margin-top: 22px; font-size: clamp(17px, 2vw, 21px); color: #3c4945; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .chip.wip { color: var(--warn); border-color: #e6c46b; background: var(--warn-soft); }
+    .callout {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--brand);
+      background: var(--brand-soft);
+    }
+    .callout.warn { border-color: var(--accent); background: #fff0e8; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { padding: 18px; border: 1px solid var(--line); background: #fff; }
+    .card strong { color: var(--brand); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; background: #fff; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #e8f1ee; color: #244b45; font-size: 13px; letter-spacing: .03em; }
+    tr:last-child td { border-bottom: 0; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+    :not(pre) > code { padding: 2px 6px; border-radius: 4px; color: #18594f; background: #e6efec; }
+    pre {
+      overflow-x: auto;
+      margin: 14px 0;
+      padding: 18px;
+      border-radius: 8px;
+      color: #eaf7f2;
+      background: var(--code);
+      line-height: 1.55;
+      white-space: pre;
+    }
+    ul, ol { padding-left: 22px; }
+    li { overflow-wrap: anywhere; }
+    li + li { margin-top: 6px; }
+    .diagram { overflow-x: auto; padding: 8px 0; }
+    .diagram svg { min-width: 820px; width: 100%; height: auto; display: block; }
+    .status-list { display: grid; grid-template-columns: 150px 1fr; gap: 0; border: 1px solid var(--line); }
+    .status-list div { padding: 11px 14px; border-bottom: 1px solid var(--line); }
+    .status-list div:nth-last-child(-n+2) { border-bottom: 0; }
+    .status-list .label { font-weight: 800; background: #eef3f1; }
+    .pending { color: var(--warn); font-weight: 800; }
+    .passed { color: var(--brand); font-weight: 800; }
+    .audio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .audio-card { padding: 15px; border: 1px solid var(--line); background: #fff; }
+    .audio-card h4 { margin: 0 0 4px; font-size: 15px; }
+    .audio-card p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+    .audio-card audio { width: 100%; display: block; }
+    .small { color: var(--muted); font-size: 14px; }
+    footer { margin-top: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 18px, 1160px); margin-top: 9px; }
+      header, section { border-radius: 0; }
+      .grid { grid-template-columns: 1fr; }
+      .audio-grid { grid-template-columns: 1fr; }
+      .status-list { grid-template-columns: 1fr; }
+      .status-list .label { border-bottom: 0; }
+      .status-list div:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .status-list div:last-child { border-bottom: 0; }
+    }
+    @media print {
+      body { background: #fff; }
+      main { width: 100%; margin: 0; }
+      header, section { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Voicebook · CLI Productization</div>
+    <h1>voicebook-tool 首版命令行工具方案</h1>
+    <p class="lede">把 EPUB/TXT 书籍转换为多角色、分章节 MP3：先识别角色，再按画像自动选声，支持可编辑脚本、片段级断点续跑与可复现生成。</p>
+    <div class="meta">
+      <span class="chip">状态：ACTIVE · 已实现并验证</span>
+      <span class="chip">创建日期：2026-07-16</span>
+      <span class="chip">需求来源：用户 10xdev 请求与 grill 决策</span>
+      <span class="chip">分支：feat/20260716-voicebook-tool</span>
+    </div>
+    <div class="callout"><strong>实现结论：</strong>用户已显式确认并进入开发。CLI、书籍解析、脚本、选角、缓存和分章 MP3 已实现；本文件已回写真实自动化、外部服务和三部公版小说完整两回验收结果。</div>
+  </header>
+
+  <section>
+    <h2>1. 原始诉求与验收结果</h2>
+    <p>提供一个可安装的 <code>voicebook-tool</code> 命令行工具，将 EPUB/TXT 书籍转换为纯音频 MP3。工具默认使用 qwen3ttsai.com 的 <code>qwen3tts</code>，也支持 <code>edgetts</code>；默认执行角色识别，并让不同角色自动匹配最合适的音色；输出按章节拆分。</p>
+    <div class="grid">
+      <div class="card"><strong>输入</strong><br>正式支持 EPUB、TXT；默认整本，可按 <code>1,3,8-12</code> 选择章节。</div>
+      <div class="card"><strong>过程</strong><br>规则/CSI 说话人识别 → 中文角色画像 → 确定性自动选声 → TTS → 统一节奏拼接。</div>
+      <div class="card"><strong>输出</strong><br>每章一个 MP3、<code>manifest.json</code>、可复用 <code>book.script</code>；<code>--combine</code> 可生成整书 MP3。</div>
+      <div class="card"><strong>可靠性</strong><br>片段级缓存、失败重试、原子落盘、默认续跑；<code>--force</code> 强制重建。</div>
+    </div>
+
+    <h3>已确认决策</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>主题</th><th>决策</th><th>原因</th></tr></thead>
+      <tbody>
+        <tr><td>默认引擎</td><td><code>qwen3tts</code>，映射 qwen3ttsai.com；备选 <code>edgetts</code></td><td>沿用已试听的系统音色接入。</td></tr>
+        <tr><td>服务失败</td><td>不静默切换引擎</td><td>避免同一本书前后混入两套角色音色。</td></tr>
+        <tr><td>输出格式</td><td>分章 MP3；可选整书 MP3</td><td>纯音频、易分发、适合断点生产。</td></tr>
+        <tr><td>CSI 模型</td><td>不自动下载；显式 <code>models download csi</code></td><td>避免转换时突然下载约 650MB 权重。</td></tr>
+        <tr><td>识别失败</td><td><code>[?]</code> 并使用旁白音色</td><td>安全降级，避免把对白错误绑定给主角。</td></tr>
+        <tr><td>脚本</td><td>中文、引擎无关、YAML Front Matter、可人工编辑</td><td>同一份脚本可生成 Qwen/Edge 两版。</td></tr>
+        <tr><td>角色画像</td><td>增加定位、类型、地域；非人类进入方言音色池</td><td>让机器人、怪兽、地域人物与普通人类形成稳定听觉区分。</td></tr>
+        <tr><td>主角音</td><td>可分别保留一个男主角音和女主角音；没有主角时保持未使用</td><td>保留核心音色，不能被配角抢占。</td></tr>
+        <tr><td>全书一致性</td><td>连续发言角色不得同音；同一角色跨章节保持同音，明确年龄变化除外</td><td>避免对话撞声和章节间角色漂移。</td></tr>
+        <tr><td>旧入口</td><td>不提供兼容保证；本次不负责清理</td><td>新命令按产品契约设计，旧入口后续单独清理。</td></tr>
+        <tr><td>字幕</td><td>不纳入首版</td><td>聚焦可靠的有声书生产主链路。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>2. 用户命令契约</h2>
+    <pre><code># 只识别，不调用 TTS
+voicebook-tool inspect book.epub -o book.script
+
+# 从人工校正后的脚本生成分章 MP3
+voicebook-tool generate book.script -o output/ --engine qwen3tts
+
+# 二合一：inspect + generate，并保存 output/book.script
+voicebook-tool convert book.epub -o output/
+
+# 生成 EdgeTTS 版本与整书 MP3
+voicebook-tool generate book.script -o edge/ --engine edgetts --combine
+
+# 选择离散章节；默认整本
+voicebook-tool convert book.txt -o output/ --chapters 1,3,8-12
+
+# 忽略缓存，强制重建所选章节
+voicebook-tool generate book.script -o output/ --force
+
+# 显式下载 CSI 模型
+voicebook-tool models download csi</code></pre>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>子命令</th><th>输入</th><th>主要输出</th><th>是否调用 TTS</th></tr></thead>
+      <tbody>
+        <tr><td><code>inspect</code></td><td>EPUB/TXT</td><td><code>book.script</code>；EPUB 封面存在时生成同名前缀封面</td><td>否</td></tr>
+        <tr><td><code>generate</code></td><td><code>voicebook-script</code> v1</td><td>分章 MP3、manifest、缓存；可选整书 MP3</td><td>是</td></tr>
+        <tr><td><code>convert</code></td><td>EPUB/TXT</td><td>中间脚本 + <code>generate</code> 的全部输出</td><td>是</td></tr>
+        <tr><td><code>models download csi</code></td><td>模型名</td><td><code>models/csi-v1/</code></td><td>否</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>退出行为</h3>
+    <ul>
+      <li>全部所选章节成功才返回 0。</li>
+      <li>单片段短暂失败按引擎策略重试；重试耗尽后章节记为失败，继续其他独立章节，最终非 0。</li>
+      <li>认证、欠费、协议不兼容等系统性错误立即停止，不自动切换到 Edge。</li>
+      <li>所有失败写入 manifest；重跑同一命令时只补缺失或失效的片段。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. book.script v1</h2>
+    <p>脚本是识别与生成之间的稳定边界：<code>inspect</code> 负责创建，用户可以编辑，<code>generate</code> 不再重复角色识别。</p>
+    <pre><code>---
+格式: voicebook-script
+版本: 1
+书名: 凡人修仙传
+简介: 多角色有声书配音脚本
+作者: 忘语
+语言: zh-CN
+来源: book.epub
+封面: book.cover.jpg
+主角音:
+  qwen3tts:
+    男: Andre
+    女: Serena
+  edgetts:
+    男: zh-CN-YunxiNeural
+    女: zh-CN-XiaoxiaoNeural
+---
+
+## 角色表
+# 角色 | 定位 | 类型 | 性别 | 年龄段 | 地域 | 音色描述 | 语速 | 音色覆盖
+旁白 | 旁白 | 人类 | 男 | 中年 | 中原 | 沉稳、清晰 | x1.0 |
+韩立 | 主角 | 人类 | 男 | 青年 | 山区 | 低沉、克制 | x1.05 |
+墨大夫 | 重要角色 | 人类 | 男 | 老年 | 中原 | 沙哑、苍老 | x1.1 | qwen3tts=Arthur
+陈巧倩 | 重要角色 | 人类 | 女 | 青年 | 中原 | 柔和、清亮 | 自动 | edgetts=zh-CN-XiaoxiaoNeural
+机械守卫 | 配角 | 机器人 | 中性 | 未知 | 未知 | 冷硬、短促 | x0.9 |
+赤焰兽 | 配角 | 怪兽 | 中性 | 成年 | 火山 | 粗哑、暴躁 | x0.85 |
+
+## 章节 0001 | 第一章 山边小村
+
+[旁白] 二愣子睁大了双眼，望着黑屋顶。
+[韩立] 这里是什么地方？
+[墨大夫@低语] 你终于醒了。
+[?] 外面有人吗？
+[音] 砰！</code></pre>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>元素</th><th>规则</th><th>校验</th></tr></thead>
+      <tbody>
+        <tr><td>Front Matter</td><td>中文键；用 <code>yaml.safe_load</code>；<code>格式/版本/书名</code> 必填</td><td>禁止对象标签和任意构造；版本不支持时明确失败。</td></tr>
+        <tr><td>主角音</td><td>按引擎配置可选 <code>男/女</code> 两个音色 ID；任一项允许留空</td><td>从对应引擎普通候选池移除；没有对应主角时保持未使用。</td></tr>
+        <tr><td>定位</td><td><code>旁白 / 主角 / 重要角色 / 配角 / 群体 / 未知</code></td><td>自动最多确认一名男主角和一名女主角；用户编辑优先。</td></tr>
+        <tr><td>类型</td><td><code>人类 / 机器人 / 怪兽 / 妖怪 / 灵兽 / 鬼魂 / 神明 / 其他非人类</code></td><td>非人类硬路由到方言音色池，再按特征排序。</td></tr>
+        <tr><td>性别</td><td><code>男 / 女 / 中性 / 未知</code></td><td>有明确性别时不跨性别选声；中性/未知可用全部同类候选。</td></tr>
+        <tr><td>年龄段</td><td><code>童年 / 少年 / 青年 / 中年 / 老年 / 幼体 / 成年 / 古老 / 未知</code></td><td>非人生命周期映射为声音年龄；其他值给出行号错误。</td></tr>
+        <tr><td>地域</td><td>中文自由文本，如 <code>山区</code>、<code>海外·西班牙</code>、<code>岭南</code></td><td>作为角色长期属性；旅行地点不改变既有音色。</td></tr>
+        <tr><td>语速</td><td><code>自动</code> 或 <code>x0.75</code>～<code>x1.5</code></td><td>显式值覆盖年龄自动校正；状态修正后再次限制范围。</td></tr>
+        <tr><td>音色覆盖</td><td><code>qwen3tts=Arthur; edgetts=...</code></td><td>按分号拆项、首个等号拆键值；未知引擎报错。</td></tr>
+        <tr><td>标签</td><td><code>[旁白] [角色] [角色@状态] [?] [音]</code></td><td>未在角色表出现的角色报错；<code>?</code> 安全落旁白。</td></tr>
+        <tr><td>章节</td><td><code>## 章节 0001 | 标题</code></td><td>编号唯一且递增；用于选章、文件名和恢复。</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">Qwen System Voice API 没有逐句 instruct/prompt 字段；脚本状态不会伪装成 Qwen 引导词。Qwen 只应用可实现的本地语速/边界处理，Edge 可映射为 rate/pitch 韵律。</p>
+  </section>
+
+  <section>
+    <h2>4. 架构与数据流</h2>
+    <div class="diagram">
+      <svg viewBox="0 0 1040 390" role="img" aria-label="voicebook-tool 架构图">
+        <defs>
+          <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#146b61"/></marker>
+        </defs>
+        <rect x="20" y="38" width="150" height="74" rx="10" fill="#fff" stroke="#146b61" stroke-width="2"/>
+        <text x="95" y="68" text-anchor="middle" font-weight="700" fill="#1f2927">EPUB / TXT</text>
+        <text x="95" y="91" text-anchor="middle" font-size="13" fill="#66716d">BookDocument</text>
+        <rect x="220" y="38" width="170" height="74" rx="10" fill="#dcefe9" stroke="#146b61" stroke-width="2"/>
+        <text x="305" y="67" text-anchor="middle" font-weight="700">inspect</text>
+        <text x="305" y="90" text-anchor="middle" font-size="13">规则 + 可选 CSI + 画像</text>
+        <rect x="440" y="38" width="170" height="74" rx="10" fill="#fff" stroke="#146b61" stroke-width="2"/>
+        <text x="525" y="67" text-anchor="middle" font-weight="700">book.script</text>
+        <text x="525" y="90" text-anchor="middle" font-size="13">人工可编辑边界</text>
+        <rect x="660" y="38" width="170" height="74" rx="10" fill="#dcefe9" stroke="#146b61" stroke-width="2"/>
+        <text x="745" y="67" text-anchor="middle" font-weight="700">generate</text>
+        <text x="745" y="90" text-anchor="middle" font-size="13">选声 + 缓存 + TTS</text>
+        <rect x="880" y="38" width="140" height="74" rx="10" fill="#fff" stroke="#146b61" stroke-width="2"/>
+        <text x="950" y="67" text-anchor="middle" font-weight="700">章节 MP3</text>
+        <text x="950" y="90" text-anchor="middle" font-size="13">ID3 + 封面</text>
+        <path d="M170 75 H215" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M390 75 H435" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M610 75 H655" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M830 75 H875" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <rect x="220" y="180" width="180" height="74" rx="10" fill="#fff7df" stroke="#b27a10" stroke-width="2"/>
+        <text x="310" y="209" text-anchor="middle" font-weight="700">Voice Catalog</text>
+        <text x="310" y="232" text-anchor="middle" font-size="13">类型 / 地域 / 性别 / 年龄 / 描述</text>
+        <rect x="450" y="180" width="180" height="74" rx="10" fill="#fff7df" stroke="#b27a10" stroke-width="2"/>
+        <text x="540" y="209" text-anchor="middle" font-weight="700">TTS Adapter</text>
+        <text x="540" y="232" text-anchor="middle" font-size="13">qwen3tts / edgetts</text>
+        <rect x="680" y="180" width="180" height="74" rx="10" fill="#fff7df" stroke="#b27a10" stroke-width="2"/>
+        <text x="770" y="209" text-anchor="middle" font-weight="700">Audio Builder</text>
+        <text x="770" y="232" text-anchor="middle" font-size="13">语速 / 平滑 / 留白 / MP3</text>
+        <path d="M745 112 V148 H310 V175" fill="none" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M400 217 H445" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M630 217 H675" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M860 217 H950 V117" fill="none" stroke="#146b61" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <rect x="335" y="310" width="370" height="58" rx="10" fill="#e9eef0" stroke="#66716d"/>
+        <text x="520" y="334" text-anchor="middle" font-weight="700">Project Store</text>
+        <text x="520" y="355" text-anchor="middle" font-size="13">manifest.json + .voicebook-cache（原子更新）</text>
+        <path d="M540 254 V305" stroke="#66716d" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M770 254 V282 H705" fill="none" stroke="#66716d" stroke-width="2" marker-end="url(#arrow)"/>
+      </svg>
+    </div>
+
+    <h3>核心数据模型</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>模型</th><th>关键字段</th><th>职责</th></tr></thead>
+      <tbody>
+        <tr><td><code>BookDocument</code></td><td>书名、作者、语言、封面、章节列表、来源</td><td>屏蔽 EPUB/TXT 差异。</td></tr>
+        <tr><td><code>BookChapter</code></td><td>稳定序号、卷/部上下文、章节标题、段落、来源项 ID</td><td>保留 TXT/EPUB 层级，同时提供稳定选章和输出文件名。</td></tr>
+        <tr><td><code>ScriptDocument</code></td><td>元数据、角色表、带标签片段</td><td>可编辑、可校验、可重复生成。</td></tr>
+        <tr><td><code>CharacterSpec</code></td><td>定位、类型、中文性别、年龄段、地域、音色描述、语速、按引擎覆盖</td><td>自动选声、主角保留和人工覆盖的唯一输入。</td></tr>
+        <tr><td><code>RenderSegment</code></td><td>文本、角色、状态、引擎、音色、速度、指纹</td><td>最小缓存和重试单元。</td></tr>
+        <tr><td><code>ProjectManifest</code></td><td>schema、配置指纹、章节/片段状态、时长、错误、统计</td><td>恢复、审计和最终结果依据。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>5. EPUB/TXT 解析</h2>
+    <h3>EPUB</h3>
+    <ol>
+      <li>使用标准库读取 ZIP，解析 <code>META-INF/container.xml</code> 与 OPF；不把归档直接解压到磁盘。</li>
+      <li>按 OPF spine 阅读顺序遍历内容项，忽略 nav、封面页和 <code>linear="no"</code> 项。</li>
+      <li>从 Dublin Core 元数据读取书名、作者、语言；从 manifest 的 cover 属性或旧 cover meta 定位封面。</li>
+      <li>优先按正文中的章节标题拆分；无可靠标题时，一个有效 spine 文档作为一章，并使用 TOC/标题/文件名兜底。</li>
+      <li>保留段落顺序、中文引号和必要标点，剥离脚本、样式、隐藏节点和纯导航文本。</li>
+    </ol>
+    <h3>TXT：参考 txt2epub 的分层识别</h3>
+    <p>语义参考 <code>/Users/bytedance/code/txt2epub/src/txt2epub.py</code> 的卷/章分层、组合标题、特殊章节和段落合并方式，重新实现为带误判防护的解析器，不直接复制其宽松正则。</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>优先级</th><th>标题类型</th><th>示例</th><th>输出行为</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>显式指令</td><td><code>#@chapter:第一卷</code>、<code>#@section:第一章 山村</code></td><td>用户标记最高优先级，不再参与自动猜测。</td></tr>
+        <tr><td>2</td><td>同一行卷章组合</td><td><code>第一卷 凡尘：第一章 山边小村</code>、<code>第二部 序：序幕</code></td><td>拆成卷/部上下文和具体章节，避免只保留后半段。</td></tr>
+        <tr><td>3</td><td>卷/部/部分组标题</td><td><code>第十二卷 灵界</code>、<code>第二部 北境</code></td><td>更新当前分组，不单独生成空 MP3。</td></tr>
+        <tr><td>4</td><td>编号章节</td><td><code>第一章</code>、<code>第12章 风起</code>、<code>第九节 夜谈</code></td><td>创建新的顺序章节，并继承当前卷/部。</td></tr>
+        <tr><td>5</td><td>特殊章节</td><td><code>序章</code>、<code>序幕</code>、<code>楔子</code>、<code>引子</code>、<code>尾声</code>、<code>终章</code>、<code>后记</code>、<code>番外一</code>、<code>大结局</code></td><td>作为正常章节输出；位于卷标题后时继承该卷。</td></tr>
+        <tr><td>6</td><td>英文兜底</td><td><code>Chapter 12</code>、<code>CHAPTER XII</code></td><td>只对独立短标题行启用，避免英文正文误判。</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>标题语法</h3>
+    <ul>
+      <li>编号接受阿拉伯数字、中文数字、全角数字和常见罗马数字；允许空格、全角空格、冒号、破折号作为标题分隔。</li>
+      <li>卷级关键词：<code>卷 / 部 / 部分</code>；章节关键词：<code>章 / 节 / 回 / 幕 / 集</code>。</li>
+      <li>组合标题先识别卷级前缀，再识别后半段章节，保留原始标题文本用于脚本和 MP3 元数据。</li>
+      <li>重复的相同标题不创建空章节；只有收集到正文后才固化章节。</li>
+    </ul>
+
+    <h3>误判防护</h3>
+    <ul>
+      <li>自动标题必须独占一行，规范化后长度不超过 80 个字符；显式指令不受该长度限制。</li>
+      <li>包含完整句号、问号、感叹号或明显对白引号的长句不作为自动标题，特殊标题白名单除外。</li>
+      <li><code>第X章</code> 出现在正文句子中间时不切章；编号和关键词必须靠近行首。</li>
+      <li>单独出现的卷/部只更新分组；连续两个标题之间没有正文时合并上下文，不产生静音文件。</li>
+      <li>解析结束后检查章节编号异常跳变、极短章节和标题密度，并把可疑项写入 inspect 警告，不擅自删除正文。</li>
+    </ul>
+
+    <h3>文本编码、元数据与硬换行</h3>
+    <ul>
+      <li>编码按 UTF-8 BOM → UTF-8 → GB18030 尝试；实际编码写入 script 元数据和 manifest。全部失败时明确报错。</li>
+      <li>首部支持 <code>《书名》</code>、<code>&lt;&lt;书名&gt;&gt;</code>、<code>#title:</code>、<code>作者：</code>/<code>作者:</code>、<code>简介</code>/<code>内容简介</code>；这些行不进入正文。</li>
+      <li>参考 txt2epub 的缩进判断：四个半角空格或两个全角空格视为新段；无缩进的排版硬换行按句末标点和上下文合并。</li>
+      <li><code>--</code>、<code>==</code> 等场景分隔行保持独立，不与上下文拼接；单字对白和拟声词不能因长度过短被丢弃。</li>
+      <li>没有识别到任何章节时，整份正文作为第 1 章，标题使用已解析书名或文件名。</li>
+    </ul>
+    <div class="callout"><strong>安全边界：</strong>限制 EPUB 归档总展开体积、单项体积和内容项数量；规范化 ZIP/OPF 相对路径；输出文件名删除路径分隔符和控制字符，并限制长度。</div>
+  </section>
+
+  <section>
+    <h2>6. 角色识别、自动选声与语速</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>阶段</th><th>行为</th><th>降级方式</th></tr></thead>
+      <tbody>
+        <tr><td>名字与对白</td><td>复用规则 R1–R8；检测到本地 CSI 时做融合兜底</td><td>CSI 不存在时继续规则识别，并在脚本/manifest 标记降级。</td></tr>
+        <tr><td>角色画像</td><td>全书范围汇总定位、类型、性别、年龄、长期地域和音色描述证据</td><td>未知值保持未知；不把当前旅行地点误写成角色长期地域。</td></tr>
+        <tr><td>主角判断</td><td>按章节覆盖、出现次数和对白占比保守判断，最多一个男主角和一个女主角</td><td>没有显著领先者则不设置主角；脚本人工定位优先。</td></tr>
+        <tr><td>音色匹配</td><td>先做语言/类型/性别硬过滤，再做年龄、地域、描述评分，最后执行全书冲突约束</td><td>扩大同声别候选范围，不跨性别、不占用主角保留音。</td></tr>
+        <tr><td>人工覆盖</td><td>脚本中的引擎覆盖优先于自动匹配</td><td>音色不存在时生成前失败，列出可用候选。</td></tr>
+        <tr><td>语速</td><td><code>自动</code> 使用画像/引擎默认；<code>xN</code> 显式覆盖</td><td>范围外直接报脚本行号错误，不擅自截断用户值。</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Qwen 49 音色分层</h3>
+    <p>当前站点目录包含 27 个普通中文、10 个中文方言和 12 个海外音色。实现使用带标签的数据目录，不再把音色名硬编码为几个简单桶。</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>年龄声音</th><th>普通中文男声候选</th><th>普通中文女声候选</th></tr></thead>
+      <tbody>
+        <tr><td>童年</td><td>Pip、Mochi</td><td>Bella、Bunny</td></tr>
+        <tr><td>少年</td><td>Ethan、Mochi、Pip</td><td>Mia、Nini、Stella、Chelsie、Momo</td></tr>
+        <tr><td>青年</td><td>Andre、Ethan、Kai、Nofish</td><td>Cherry、Serena、Moon、Maia、Vivian、Momo、Chelsie</td></tr>
+        <tr><td>中年</td><td>Neil、Elias、Vincent、Andre</td><td>Katerina、Bellona、Maia、Seren</td></tr>
+        <tr><td>老年</td><td>Eldric Sage、Arthur、Vincent</td><td>Ebona；不足时按相邻年龄回退 Katerina</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>地域与海外音色</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>长期地域证据</th><th>男声</th><th>女声</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td>上海</td><td>同声别江南地域候选</td><td>Jada</td><td rowspan="8">地域缺少对应性别时，不跨性别硬配；先扩大到相邻地域同声别候选。</td></tr>
+        <tr><td>北京</td><td>Dylan</td><td>同声别北方地域候选</td></tr>
+        <tr><td>南京/江淮</td><td>Li</td><td>同声别江南地域候选</td></tr>
+        <tr><td>陕西/西北山区</td><td>Marcus</td><td>同声别北方地域候选</td></tr>
+        <tr><td>闽南/福建/台湾</td><td>Roy</td><td>同声别南方地域候选</td></tr>
+        <tr><td>天津</td><td>Peter</td><td>同声别北方地域候选</td></tr>
+        <tr><td>四川/重庆/西南山区</td><td>Eric</td><td>Sunny</td></tr>
+        <tr><td>广东/香港/岭南</td><td>Rocky</td><td>Kiki</td></tr>
+        <tr><td>海外·英语区</td><td>Aiden、Ryan</td><td>Jennifer</td><td rowspan="5">海外音色只有通过中文朗读可懂度测试后才进入自动候选；国家与性别冲突时优先保持性别。</td></tr>
+        <tr><td>海外·西班牙/拉美</td><td>Bodega</td><td>Sonrisa</td></tr>
+        <tr><td>海外·俄/意/德/法/葡语区</td><td>Alek、Dolce、Lenn、Emilien、Radio Gol</td><td>通用海外女声</td></tr>
+        <tr><td>海外·日本/韩国</td><td>通用海外男声</td><td>Ono Anna、Sohee</td></tr>
+        <tr><td>海外·国家未知</td><td>通用海外男声池</td><td>通用海外女声池</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">地域是角色长期属性：来自、祖籍、长期居住、群体身份和反复出现的环境证据可以投票；角色临时旅行不会换方言。无名山民、当地守卫等群体角色可以继承场景地域。未指明方向的山区进入同声别方言池，按性格与声音特征选择。</p>
+
+    <h3>非人类方言池</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>类型/特征</th><th>优先候选</th><th>约束</th></tr></thead>
+      <tbody>
+        <tr><td>机器人、冷硬、规律</td><td>Li、Dylan、Peter</td><td rowspan="6">男声候选为 Dylan、Li、Marcus、Roy、Peter、Eric、Rocky；女声候选为 Jada、Sunny、Kiki；只有中性/未知可以跨全部方言池。</td></tr>
+        <tr><td>怪兽、粗哑、强壮</td><td>Marcus、Eric、Rocky</td></tr>
+        <tr><td>妖怪、狡黠、话多</td><td>Roy、Peter、Jada</td></tr>
+        <tr><td>灵兽、幼年、活泼</td><td>Dylan、Sunny、Kiki</td></tr>
+        <tr><td>鬼魂、缓慢、阴沉</td><td>Li、Marcus，并降低自动语速</td></tr>
+        <tr><td>神明、威严、洪亮</td><td>Marcus、Jada、Eric</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>评分与全书约束分配</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>项目</th><th>分值/约束</th></tr></thead>
+      <tbody>
+        <tr><td>人工覆盖</td><td>硬指定，不参与评分；仍校验音色存在。</td></tr>
+        <tr><td>语言、角色类型、明确性别</td><td>硬过滤；非人类进入方言池；明确性别不跨声别。</td></tr>
+        <tr><td>性别匹配</td><td>+40；中性/未知不加分。</td></tr>
+        <tr><td>年龄完全匹配 / 相邻年龄</td><td>+30 / +10。</td></tr>
+        <tr><td>音色描述标签</td><td>每个 +10，最多 +30。</td></tr>
+        <tr><td>旁白/讲述功能匹配</td><td>+20；Neil、Elias、Arthur、Seren 等进入不同讲述风格。</td></tr>
+        <tr><td>主要角色未占用音色</td><td>+15；主要角色优先独占。</td></tr>
+      </tbody>
+    </table></div>
+    <ol>
+      <li>先锁定人工覆盖和按引擎配置的男/女主角保留音；没有对应主角时保留音保持未使用。</li>
+      <li>按章节覆盖率、对白字数、角色定位和发言邻接度排序：主角 → 重要角色 → 高邻接角色 → 配角。</li>
+      <li>扫描全书发言顺序建立角色邻接图；连续出现的两个不同角色形成“不得同音”边。</li>
+      <li>使用确定性候选排序与有限回溯分配：优先最高分，同时满足邻接不同音和主角音保留。</li>
+      <li>同一规范角色 ID 只分配一次，跨章节复用；别名先归一。<code>角色@老年</code> 等明确年龄变化创建变体并允许换音，情绪变化不换音。</li>
+      <li>候选冲突无法满足时扩大同声别年龄/地域范围并记录警告；不得偷偷使用主角保留音或跨性别。</li>
+    </ol>
+    <p>每个角色的候选音色、得分、选中原因、地域证据、邻接冲突和最终音色都写入 manifest，便于解释与复现。Edge 使用同一约束算法，但候选来自扩充后的中文 Neural voice 目录。</p>
+    <p>统一节奏基线：标题后 900ms、逻辑片段间 250ms、章尾 700ms；API 长文本切块之间不额外插入片段停顿。Qwen WAV 继续做边缘平滑；Edge 片段在最终装配前规范化为统一 PCM，再编码为章节 MP3。</p>
+  </section>
+
+  <section>
+    <h2>7. 缓存、恢复与输出</h2>
+    <pre><code>output/
+├── book.script
+├── book.cover.jpg                 # EPUB 有封面时
+├── 0001-第一章-山边小村.mp3
+├── 0002-第二章-青牛镇.mp3
+├── book.mp3                       # 仅 --combine
+├── manifest.json
+└── .voicebook-cache/
+    ├── segments/&lt;sha256&gt;.wav
+    └── chapters/&lt;sha256&gt;.mp3</code></pre>
+
+    <h3>指纹与恢复</h3>
+    <ul>
+      <li>片段指纹包含：脚本版本、规范化文本、角色/状态、引擎、音色、最终语速和音频处理版本。</li>
+      <li>章节指纹包含有序片段指纹、停顿配置和编码配置。</li>
+      <li>文件存在且指纹一致才可复用；仅文件名相同不能视为命中。</li>
+      <li>manifest 使用临时文件 + 原子替换；章节 MP3 也先写临时文件，成功后替换正式产物。</li>
+      <li><code>--force</code> 忽略所选章节的缓存，但不删除未选择章节的已完成结果。</li>
+    </ul>
+
+    <h3>manifest 摘要</h3>
+    <pre><code>{
+  "格式": "voicebook-manifest",
+  "版本": 1,
+  "书籍": {"书名": "凡人修仙传", "作者": "忘语"},
+  "配置": {"引擎": "qwen3tts", "章节": "全部", "指纹": "..."},
+  "识别": {"模式": "规则+CSI", "未识别对白": 3},
+  "选声": {
+    "主角保留音": {"男": "Andre", "女": "Serena"},
+    "角色": {
+      "韩立": {"音色": "Andre", "原因": ["男主角保留音"]},
+      "赤焰兽": {"音色": "Marcus", "原因": ["怪兽", "中性", "粗哑", "非人类方言池"]}
+    }
+  },
+  "章节": [
+    {
+      "编号": 1,
+      "标题": "第一章 山边小村",
+      "状态": "完成",
+      "输出": "0001-第一章-山边小村.mp3",
+      "时长秒": 612.4,
+      "缓存命中片段": 31,
+      "新生成片段": 2,
+      "错误": null
+    }
+  ]
+}</code></pre>
+    <p class="small">完整片段正文保留在 <code>book.script</code>；manifest 只记录角色、文本哈希、短预览、时长和状态，避免大型小说重复保存全部正文。</p>
+  </section>
+
+  <section>
+    <h2>8. MP3 与元数据</h2>
+    <ul>
+      <li>章节音频统一编码为单声道 MP3；具体采样率和码率在实现时固定并写入 manifest。</li>
+      <li>ID3：<code>title=章节标题</code>、<code>album=书名</code>、<code>track=章节序号/总数</code>、<code>artist=作者</code>。</li>
+      <li>EPUB 有封面时通过 ffmpeg 写入 attached picture；它是 MP3 封面元数据，不是视频流。</li>
+      <li><code>--combine</code> 使用相同编码参数生成整书 MP3，并写入整书级 ID3；分章文件仍保留。</li>
+      <li>生成完成后用 ffprobe 校验 codec、时长和元数据，不能只检查文件非空。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>9. 代码影响范围</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>路径</th><th>计划变更</th></tr></thead>
+      <tbody>
+        <tr><td><code>pyproject.toml</code></td><td>注册 <code>voicebook-tool</code> console script；增加 YAML 解析依赖；整理项目说明。</td></tr>
+        <tr><td><code>src/book2audio/cli.py</code></td><td>实现四组子命令、章节表达式、统一错误与退出码。</td></tr>
+        <tr><td><code>src/book2audio/books.py</code></td><td>新增 EPUB/TXT 适配器和统一 BookDocument。</td></tr>
+        <tr><td><code>src/book2audio/script.py</code></td><td>升级为 voicebook-script v1；中文 Front Matter、角色表、语速与覆盖校验。</td></tr>
+        <tr><td><code>src/book2audio/tool_pipeline.py</code></td><td>实现 inspect/generate/convert、manifest、指纹缓存、首片段探测、有限并发、统一 PCM、停顿、分章/整书 MP3、ID3/封面与 ffprobe 校验。</td></tr>
+        <tr><td><code>src/book2audio/voice_casting.py</code></td><td>实现结构化 49 音色目录、角色类型/地域画像、主角保留音、发言邻接图、全书约束分配和统一语速。</td></tr>
+        <tr><td><code>src/book2audio/attribution.py / casting.py</code></td><td>复用并增强规则/CSI 识别与画像；增加繁体古典小说姓名动作剥离、精确名优先和传统称谓画像。</td></tr>
+        <tr><td><code>src/book2audio/tts.py / audio.py</code></td><td>复用 Qwen/Edge 适配与 WAV 边缘平滑；透传 Qwen 上游失败原因。</td></tr>
+        <tr><td><code>tests/</code></td><td>新增 EPUB fixture、脚本 round-trip、CLI、选声、缓存恢复、MP3 元数据与离线端到端测试。</td></tr>
+        <tr><td><code>README.md / design/README.md</code></td><td>更新新 CLI 使用说明与设计索引。</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><strong>内部包名：</strong>本次允许继续复用 <code>book2audio</code> Python 包以降低迁移风险，但不为旧 CLI 行为做兼容适配。删除旧入口、重命名包和清理历史 CosyVoice 代码另开任务。</div>
+  </section>
+
+  <section>
+    <h2>10. 性能、安全与外部依赖</h2>
+    <div class="grid">
+      <div class="card"><strong>大书规模</strong><br>按既有 research 的 2,502 个 EPUB 内容项、约 663 万汉字规模设计；不把全书音频放入内存，manifest 增量更新。</div>
+      <div class="card"><strong>并发</strong><br>章节顺序处理，片段内部有限并发；Qwen 与 Edge 分别使用保守并发上限，避免触发限流。</div>
+      <div class="card"><strong>网络与隐私</strong><br>两个引擎均为云端 TTS，正文会发送到外部服务；README 和首次执行提示必须明确说明。</div>
+      <div class="card"><strong>工具依赖</strong><br>环境由 uv 管理；ffmpeg/ffprobe 是显式系统依赖，启动前检测并给出安装提示。</div>
+      <div class="card"><strong>YAML 安全</strong><br>只使用 safe loader，并对最终数据类型、键名、枚举和长度再次校验。</div>
+      <div class="card"><strong>第三方服务</strong><br>qwen3ttsai.com 当前曾出现上游欠费；错误必须透明呈现，不能把端点存在写成服务 SLA。</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>11. 测试计划与验收标准</h2>
+    <div class="status-list">
+      <div class="label">当前状态</div><div class="passed">实现完成，自动化、构建、EdgeTTS 和多书长文本验收通过</div>
+      <div class="label">自动化</div><div><strong>30 项通过</strong>：EPUB/TXT、脚本、古典姓名、49 音色、选角约束、缓存、首片段探测、ffmpeg/ID3 和 CLI。</div>
+      <div class="label">真实长文本</div><div><strong>3 部书 / 6 回通过</strong>，合计 9,618.911 秒，6 个 MP3 全部通过 ffprobe。</div>
+      <div class="label">外部状态</div><div>EdgeTTS 可用；Qwen 极短请求真实返回 HTTP 500 / <code>Arrearage</code>，已透明报错且未回退。</div>
+    </div>
+
+    <h3>实际执行命令</h3>
+    <pre><code>uv sync
+uv run python -m unittest discover -s tests -p 'test_*.py'
+uv run voicebook-tool --help
+uv run voicebook-tool inspect &lt;public-domain-book.txt&gt; -o book.script
+uv run voicebook-tool generate book.script -o output/ --engine edgetts
+uv build</code></pre>
+
+    <h3>必须覆盖的自动化场景</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>层级</th><th>场景</th><th>通过标准</th></tr></thead>
+      <tbody>
+        <tr><td>单元</td><td>章节表达式</td><td><code>1,3,8-12</code> 正确、去重、有序；越界和非法值报错。</td></tr>
+        <tr><td>单元</td><td>EPUB 解析</td><td>按 spine 顺序提取两章、元数据和封面；nav/非线性项不进入正文。</td></tr>
+        <tr><td>单元</td><td>TXT 标题矩阵</td><td>卷章同一行、独立卷、章/节/回/幕/集、序章/楔子/尾声/番外/后记、显式指令和英文兜底均按预期分层。</td></tr>
+        <tr><td>单元</td><td>TXT 误判与段落</td><td>正文中的“第X章”不误切；重复/空标题不产文件；UTF-8/GB18030、缩进段落、硬换行和单字对白不丢失。</td></tr>
+        <tr><td>单元</td><td>无标题 TXT</td><td>整书稳定产生第 1 章，标题取书名或文件名。</td></tr>
+        <tr><td>单元</td><td>脚本 round-trip</td><td>中文元数据、主角音、定位、类型、地域、<code>x0.9</code>、音色覆盖和标签写入后可等价读回。</td></tr>
+        <tr><td>单元</td><td>主角保留音</td><td>主角使用配置音；保留音不分给配角；没有对应主角时保留音保持未使用。</td></tr>
+        <tr><td>单元</td><td>连续发言与跨章一致性</td><td>邻接角色音色不同；同一规范角色跨章节同音；年龄变体允许换音。</td></tr>
+        <tr><td>单元</td><td>类型/地域选声</td><td>非人类只进方言池；长期地域触发对应候选；旅行地点不改音；明确性别不跨声别。</td></tr>
+        <tr><td>单元</td><td>海外音色门禁</td><td>只有通过中文可懂度白名单的海外音色可自动使用；国家无对应性别时优先保持性别。</td></tr>
+        <tr><td>单元</td><td>自动选声确定性</td><td>覆盖值优先；相同脚本/目录版本的候选得分、冲突处理和最终结果完全一致。</td></tr>
+        <tr><td>单元</td><td>错误分类</td><td>429/暂时性 5xx 重试；欠费/认证错误不重试整本且不切引擎。</td></tr>
+        <tr><td>单元</td><td>缓存恢复</td><td>第二次同配置零 TTS 调用；只改一段只重生一段；<code>--force</code> 重建所选章。</td></tr>
+        <tr><td>集成</td><td>离线假 TTS + ffmpeg</td><td>生成两章可解码 MP3；留白、语速、ID3、封面和时长均可由 ffprobe 验证。</td></tr>
+        <tr><td>CLI</td><td>inspect/generate/convert</td><td>输出结构和退出码符合契约；convert 保留脚本。</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>外部冒烟结果</h3>
+    <ul>
+      <li>EdgeTTS：极短中文请求成功生成 15,264 字节 MP3；随后完整生成三部公版小说各两回。</li>
+      <li>Qwen3TTS：极短中文请求返回 <code>Arrearage</code>；CLI 自动化确认原因透传且没有引擎回退。</li>
+      <li>真实生成首次发现孤立标点“。”会被 Edge 拒绝；增加不可朗读片段过滤后利用既有缓存续跑成功。</li>
+    </ul>
+  </section>
+
+  <section id="full-book-demos">
+    <h2>12. 三部公版小说 · 完整两回试听</h2>
+    <p>以下 6 个播放器都是本工具真实生成的完整章节，不是短片段。书源来自维基文库，先执行 <code>inspect</code>，再用可审计脚本校正明显别名、主角定位、性别、年龄和非人类类型，最后显式选择当前可用的 <code>edgetts</code> 生成。低置信对白继续保留 <code>[?]</code> 并使用旁白音。</p>
+    <div class="callout"><strong>媒体规格：</strong>共 40,657 个源文本字符，160.3 分钟，73.4 MiB；全部为 24 kHz、单声道、64 kbps MP3，ID3 与 SHA-256 记录见 <a href="./resources/voicebook-tool/evaluation-20260716/evaluation.json">evaluation.json</a>。完整复现说明见 <a href="./resources/voicebook-tool/evaluation-20260716/README.md">评测 README</a>。</div>
+
+    <h3>《西游记》· 吴承恩</h3>
+    <p class="small">重点覆盖灵兽、怪兽、神明、群体角色和“石猴→孙悟空”别名校正。来源：<a href="https://zh.wikisource.org/wiki/西遊記/第001回">第一回</a>、<a href="https://zh.wikisource.org/wiki/西遊記/第002回">第二回</a>；<a href="./resources/voicebook-tool/evaluation-20260716/xiyouji/book.script">查看脚本</a>。</p>
+    <div class="audio-grid">
+      <div class="audio-card"><h4>第一回 · 灵根育孕源流出</h4><p>28.92 分钟 · 13.24 MiB</p><audio controls preload="metadata" src="./resources/voicebook-tool/evaluation-20260716/xiyouji/0001-第一回-靈根育孕源流出-心性修持大道生.mp3"></audio></div>
+      <div class="audio-card"><h4>第二回 · 悟彻菩提真妙理</h4><p>29.92 分钟 · 13.69 MiB</p><audio controls preload="metadata" src="./resources/voicebook-tool/evaluation-20260716/xiyouji/0002-第二回-悟徹菩提真妙理-斷魔歸本合元神.mp3"></audio></div>
+    </div>
+
+    <h3>《儒林外史》· 吴敬梓</h3>
+    <p class="small">重点覆盖王冕、周进等跨章人物、老年角色正常语速，以及繁体古典“姓名＋动作＋说道”识别。来源：<a href="https://zh.wikisource.org/wiki/儒林外史/第01回">第一回</a>、<a href="https://zh.wikisource.org/wiki/儒林外史/第02回">第二回</a>；<a href="./resources/voicebook-tool/evaluation-20260716/rulinwaishi/book.script">查看脚本</a>。</p>
+    <div class="audio-grid">
+      <div class="audio-card"><h4>第一回 · 说楔子敷陈大义</h4><p>26.96 分钟 · 12.34 MiB</p><audio controls preload="metadata" src="./resources/voicebook-tool/evaluation-20260716/rulinwaishi/0001-第一回-說楔子敷陳大義-借名流隱括全文.mp3"></audio></div>
+      <div class="audio-card"><h4>第二回 · 王孝廉村学识同科</h4><p>23.93 分钟 · 10.95 MiB</p><audio controls preload="metadata" src="./resources/voicebook-tool/evaluation-20260716/rulinwaishi/0002-第二回-王孝廉村學識同科-周蒙師暮年登上第.mp3"></audio></div>
+    </div>
+
+    <h3>《红楼梦》· 曹雪芹</h3>
+    <p class="small">重点覆盖贾雨村主角保留音、男女主要人物，以及大量低置信对白的安全降级。来源：<a href="https://zh.wikisource.org/wiki/紅樓夢/第001回">第一回</a>、<a href="https://zh.wikisource.org/wiki/紅樓夢/第002回">第二回</a>；<a href="./resources/voicebook-tool/evaluation-20260716/hongloumeng/book.script">查看脚本</a>。</p>
+    <div class="audio-grid">
+      <div class="audio-card"><h4>第一回 · 甄士隐梦幻识通灵</h4><p>28.12 分钟 · 12.87 MiB</p><audio controls preload="metadata" src="./resources/voicebook-tool/evaluation-20260716/hongloumeng/0001-第一回-甄士隱夢幻識通靈-賈雨村風塵懷閨秀.mp3"></audio></div>
+      <div class="audio-card"><h4>第二回 · 贾夫人仙逝扬州城</h4><p>22.48 分钟 · 10.29 MiB</p><audio controls preload="metadata" src="./resources/voicebook-tool/evaluation-20260716/hongloumeng/0002-第二回-賈夫人仙逝揚州城-冷子興演說榮國府.mp3"></audio></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>13. 发布、回滚与非目标</h2>
+    <h3>发布</h3>
+    <ol>
+      <li>方案已由用户确认，voicebook-tool 首版实现完成。</li>
+      <li>离线自动化、外部冒烟与三部公版书长文本评测已完成，真实结果已回写。</li>
+      <li>方案已激活为 <code>design/20260716-voicebook-tool.active.html</code>，README 索引已同步。</li>
+      <li>提交并推送 <code>feat/20260716-voicebook-tool</code>，保留 worktree 供后续审查/PR。</li>
+    </ol>
+    <h3>回滚</h3>
+    <p>新 CLI 是独立 console script。回滚时撤销入口与新增模块即可；输出目录中的 MP3、script 和 manifest 均为普通文件。缓存带 schema/处理版本，旧版本无法识别时必须失效重建，不能误用。</p>
+    <h3>明确非目标</h3>
+    <p>PDF、MOBI/AZW3、OCR、字幕、M4B、Web UI、Audiobookshelf 推送、语音克隆、语音设计、背景音、旧 CLI 清理均不在本次范围。</p>
+  </section>
+
+  <section>
+    <h2>14. 审查结论</h2>
+    <ul>
+      <li><code>inspect → book.script → generate</code> 是可人工干预的主链路，<code>convert</code> 是二合一快捷方式。</li>
+      <li>默认整本、默认 qwen3tts；服务失败透明报错，不静默切换 Edge。</li>
+      <li>分章 MP3、默认续跑、可选整书 MP3，并写入 ID3/封面。</li>
+      <li>TXT 按卷/部与章/节分层，支持组合标题、特殊章节、显式指令、GB18030 和硬换行合并，并启用短行/标点/空章误判防护。</li>
+      <li>脚本使用中文 Front Matter、角色定位/类型/地域、中文性别、<code>x0.9</code> 语速格式和按引擎音色覆盖。</li>
+      <li>按引擎保留男/女主角音、连续发言角色不同音、跨章节同角色保持同音。</li>
+      <li>非人类进入方言池；海外音色必须先通过中文可懂度测试。</li>
+    </ul>
+    <div class="callout"><strong>结论：</strong>上述决策均已由用户逐项确认；实现、测试和多书试听已完成。本 ACTIVE 文档代表当前真实行为，后续变更需要新方案或更新本文件并重新验证。</div>
+  </section>
+
+  <footer>voicebook-tool · 10xdev ACTIVE Design · 2026-07-16</footer>
+</main>
+</body>
+</html>

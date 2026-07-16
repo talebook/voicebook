@@ -35,6 +35,7 @@ class VoicebookScriptTests(unittest.TestCase):
 
         self.assertTrue(raw.startswith("---\n格式: voicebook-script"))
         self.assertIn("## 章节 0001 | 第一章", raw)
+        self.assertFalse(any(line.endswith((" ", "\t")) for line in raw.splitlines()))
         self.assertEqual(value, parsed)
 
     def test_rejects_unknown_role_and_invalid_speed(self):

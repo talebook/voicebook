@@ -6,7 +6,10 @@ import unittest
 import wave
 from pathlib import Path
 
-from book2audio.script import ScriptChapter, ScriptCharacter, ScriptSegment, VoicebookScript, write_voicebook_script
+from book2audio.script import (
+    ScriptChapter, ScriptCharacter, ScriptSegment, VoicebookScript,
+    parse_voicebook_script, write_voicebook_script,
+)
 from book2audio.tool_pipeline import generate_audio
 
 
@@ -99,6 +102,18 @@ class ToolPipelineTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "Arrearage"):
                 generate_audio(script, root / "out", synthesizer=fake)
             self.assertEqual(1, fake.calls)
+
+    def test_punctuation_only_segment_is_not_sent_to_tts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script_path = root / "book.script"
+            self._script(script_path)
+            script = parse_voicebook_script(script_path)
+            script.chapters[0].segments.insert(0, ScriptSegment("旁白", "。……"))
+            write_voicebook_script(script, script_path)
+            fake = FakeSynthesizer()
+            generate_audio(script_path, root / "out", synthesizer=fake)
+            self.assertNotIn("。……", [call[0] for call in fake.calls])
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
 ## 文档入口
 
 - [设计文档索引](design/)
-- [voicebook-tool 首版方案](design/20260716-voicebook-tool.wip.html)
+- [voicebook-tool 首版方案与完整两章试听](design/20260716-voicebook-tool.active.html#full-book-demos)
 - [Qwen 标题留白与多小说 A/B 选角试听](design/20260716-qwen-title-pause-and-casting-demos.active.html#playback)
 - [Qwen3TTSAI 接入与性能报告](design/20260716-qwen3ttsai-integration.active.html)
 

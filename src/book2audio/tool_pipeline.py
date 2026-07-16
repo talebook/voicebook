@@ -31,12 +31,14 @@ from .voice_casting import DEFAULT_PROTAGONISTS, CastAssignment, assign_cast, en
 
 
 AUDIO_FORMAT_VERSION = "pcm24k-mono-v1"
+MP3_BITRATE = "64k"
 TITLE_PAUSE_MS = 900
 SEGMENT_PAUSE_MS = 250
 CHAPTER_END_PAUSE_MS = 700
 STATE_SPEED = {"虚弱": 0.9, "愤怒": 1.08, "冷淡": 0.96, "低语": 0.92, "悲伤": 0.9, "急切": 1.15}
 AGE_STATES = {"童年", "少年", "青年", "中年", "老年", "幼体", "成年", "古老"}
 SAFE_FILE_RE = re.compile(r"[^\w\-一-龥]+", re.UNICODE)
+SPEAKABLE_RE = re.compile(r"[A-Za-z0-9一-龥]")
 
 
 class Synthesizer(Protocol):
@@ -166,6 +168,11 @@ def inspect_book(
         ScriptChapter(chapter.number, chapter.title, _segments_from_quotes(chapter.content, quotes_by_chapter[chapter.number]), chapter.volume)
         for chapter in chosen
     ]
+    used_characters = {
+        segment.character
+        for chapter in script_chapters for segment in chapter.segments
+        if segment.character not in {"旁白", "?", "音"}
+    }
     characters = [
         ScriptCharacter(
             name="旁白",
@@ -178,8 +185,10 @@ def inspect_book(
         )
     ]
     gender_map = {"male": "男", "female": "女", "unknown": "未知"}
-    for name in sorted(profiles):
-        profile = profiles[name]
+    for name in sorted(used_characters):
+        profile = profiles.get(name)
+        if profile is None:
+            continue
         character = ScriptCharacter(
             name=name,
             gender=gender_map.get(profile.gender, "未知"),
@@ -357,7 +366,7 @@ def _encode_mp3(wav: Path, output: Path, script: VoicebookScript, title: str, co
     if cover:
         command.extend(("-i", str(cover), "-map", "0:a", "-map", "1:v", "-c:v", "copy", "-disposition:v", "attached_pic"))
     command.extend((
-        "-c:a", "libmp3lame", "-b:a", "96k", "-id3v2_version", "3",
+        "-c:a", "libmp3lame", "-b:a", MP3_BITRATE, "-id3v2_version", "3",
         "-metadata", f"title={title}", "-metadata", f"album={script.title}",
         "-metadata", f"artist={script.author or 'voicebook-tool'}",
     ))
@@ -455,6 +464,7 @@ def generate_audio(
         logical.extend(
             (segment, *_segment_assignment(segment, character_map, base_cast, script, engine))
             for segment in chapter.segments
+            if SPEAKABLE_RE.search(segment.text)
         )
         audio_parts: list[Path] = []
         rendered = _render_with_probe(logical, engine, cache_dir, synth, force)

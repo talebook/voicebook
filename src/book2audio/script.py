@@ -263,7 +263,9 @@ def write_voicebook_script(script: VoicebookScript, output: Path) -> Path:
             character.speed,
             _format_overrides(character.voice_overrides),
         )
-        lines.append(" | ".join(value.replace("|", "／").replace("\n", " ") for value in values))
+        lines.append(
+            " | ".join(value.replace("|", "／").replace("\n", " ") for value in values).rstrip()
+        )
     lines.append("")
     for chapter in script.chapters:
         heading = f"## 章节 {chapter.number:04d} | {chapter.title}"
