@@ -165,6 +165,9 @@
         <tr><td>CSI 模型</td><td>不自动下载；显式 <code>models download csi</code></td><td>避免转换时突然下载约 650MB 权重。</td></tr>
         <tr><td>识别失败</td><td><code>[?]</code> 并使用旁白音色</td><td>安全降级，避免把对白错误绑定给主角。</td></tr>
         <tr><td>脚本</td><td>中文、引擎无关、YAML Front Matter、可人工编辑</td><td>同一份脚本可生成 Qwen/Edge 两版。</td></tr>
+        <tr><td>角色画像</td><td>增加定位、类型、地域；非人类进入方言音色池</td><td>让机器人、怪兽、地域人物与普通人类形成稳定听觉区分。</td></tr>
+        <tr><td>主角音</td><td>可分别保留一个男主角音和女主角音；没有主角时保持未使用</td><td>保留核心音色，不能被配角抢占。</td></tr>
+        <tr><td>全书一致性</td><td>连续发言角色不得同音；同一角色跨章节保持同音，明确年龄变化除外</td><td>避免对话撞声和章节间角色漂移。</td></tr>
         <tr><td>旧入口</td><td>不提供兼容保证；本次不负责清理</td><td>新命令按产品契约设计，旧入口后续单独清理。</td></tr>
         <tr><td>字幕</td><td>不纳入首版</td><td>聚焦可靠的有声书生产主链路。</td></tr>
       </tbody>
@@ -225,15 +228,23 @@ voicebook-tool models download csi</code></pre>
 语言: zh-CN
 来源: book.epub
 封面: book.cover.jpg
+主角音:
+  qwen3tts:
+    男: Andre
+    女: Serena
+  edgetts:
+    男: zh-CN-YunxiNeural
+    女: zh-CN-XiaoxiaoNeural
 ---
 
 ## 角色表
-# 角色 | 性别 | 年龄段 | 音色描述 | 语速 | 音色覆盖
-旁白 | 男 | 中年 | 沉稳、清晰 | x1.0 |
-韩立 | 男 | 青年 | 低沉、克制 | x1.05 |
-墨大夫 | 男 | 老年 | 沙哑、苍老 | x1.1 | qwen3tts=Arthur
-陈巧倩 | 女 | 青年 | 柔和、清亮 | 自动 | edgetts=zh-CN-XiaoxiaoNeural
-神秘人 | 未知 | 青年 | 冷淡 | 自动 |
+# 角色 | 定位 | 类型 | 性别 | 年龄段 | 地域 | 音色描述 | 语速 | 音色覆盖
+旁白 | 旁白 | 人类 | 男 | 中年 | 中原 | 沉稳、清晰 | x1.0 |
+韩立 | 主角 | 人类 | 男 | 青年 | 山区 | 低沉、克制 | x1.05 |
+墨大夫 | 重要角色 | 人类 | 男 | 老年 | 中原 | 沙哑、苍老 | x1.1 | qwen3tts=Arthur
+陈巧倩 | 重要角色 | 人类 | 女 | 青年 | 中原 | 柔和、清亮 | 自动 | edgetts=zh-CN-XiaoxiaoNeural
+机械守卫 | 配角 | 机器人 | 中性 | 未知 | 未知 | 冷硬、短促 | x0.9 |
+赤焰兽 | 配角 | 怪兽 | 中性 | 成年 | 火山 | 粗哑、暴躁 | x0.85 |
 
 ## 章节 0001 | 第一章 山边小村
 
@@ -247,8 +258,12 @@ voicebook-tool models download csi</code></pre>
       <thead><tr><th>元素</th><th>规则</th><th>校验</th></tr></thead>
       <tbody>
         <tr><td>Front Matter</td><td>中文键；用 <code>yaml.safe_load</code>；<code>格式/版本/书名</code> 必填</td><td>禁止对象标签和任意构造；版本不支持时明确失败。</td></tr>
-        <tr><td>性别</td><td><code>男 / 女 / 未知</code></td><td>读取边界转换为内部枚举；写回始终使用中文。</td></tr>
-        <tr><td>年龄段</td><td><code>童年 / 少年 / 青年 / 中年 / 老年</code></td><td>其他值给出行号错误。</td></tr>
+        <tr><td>主角音</td><td>按引擎配置可选 <code>男/女</code> 两个音色 ID；任一项允许留空</td><td>从对应引擎普通候选池移除；没有对应主角时保持未使用。</td></tr>
+        <tr><td>定位</td><td><code>旁白 / 主角 / 重要角色 / 配角 / 群体 / 未知</code></td><td>自动最多确认一名男主角和一名女主角；用户编辑优先。</td></tr>
+        <tr><td>类型</td><td><code>人类 / 机器人 / 怪兽 / 妖怪 / 灵兽 / 鬼魂 / 神明 / 其他非人类</code></td><td>非人类硬路由到方言音色池，再按特征排序。</td></tr>
+        <tr><td>性别</td><td><code>男 / 女 / 中性 / 未知</code></td><td>有明确性别时不跨性别选声；中性/未知可用全部同类候选。</td></tr>
+        <tr><td>年龄段</td><td><code>童年 / 少年 / 青年 / 中年 / 老年 / 幼体 / 成年 / 古老 / 未知</code></td><td>非人生命周期映射为声音年龄；其他值给出行号错误。</td></tr>
+        <tr><td>地域</td><td>中文自由文本，如 <code>山区</code>、<code>海外·西班牙</code>、<code>岭南</code></td><td>作为角色长期属性；旅行地点不改变既有音色。</td></tr>
         <tr><td>语速</td><td><code>自动</code> 或 <code>x0.75</code>～<code>x1.5</code></td><td>显式值覆盖年龄自动校正；状态修正后再次限制范围。</td></tr>
         <tr><td>音色覆盖</td><td><code>qwen3tts=Arthur; edgetts=...</code></td><td>按分号拆项、首个等号拆键值；未知引擎报错。</td></tr>
         <tr><td>标签</td><td><code>[旁白] [角色] [角色@状态] [?] [音]</code></td><td>未在角色表出现的角色报错；<code>?</code> 安全落旁白。</td></tr>
@@ -287,7 +302,7 @@ voicebook-tool models download csi</code></pre>
 
         <rect x="220" y="180" width="180" height="74" rx="10" fill="#fff7df" stroke="#b27a10" stroke-width="2"/>
         <text x="310" y="209" text-anchor="middle" font-weight="700">Voice Catalog</text>
-        <text x="310" y="232" text-anchor="middle" font-size="13">性别 / 年龄 / 描述匹配</text>
+        <text x="310" y="232" text-anchor="middle" font-size="13">类型 / 地域 / 性别 / 年龄 / 描述</text>
         <rect x="450" y="180" width="180" height="74" rx="10" fill="#fff7df" stroke="#b27a10" stroke-width="2"/>
         <text x="540" y="209" text-anchor="middle" font-weight="700">TTS Adapter</text>
         <text x="540" y="232" text-anchor="middle" font-size="13">qwen3tts / edgetts</text>
@@ -314,7 +329,7 @@ voicebook-tool models download csi</code></pre>
         <tr><td><code>BookDocument</code></td><td>书名、作者、语言、封面、章节列表、来源</td><td>屏蔽 EPUB/TXT 差异。</td></tr>
         <tr><td><code>BookChapter</code></td><td>稳定序号、标题、段落、来源项 ID</td><td>提供稳定选章和输出文件名。</td></tr>
         <tr><td><code>ScriptDocument</code></td><td>元数据、角色表、带标签片段</td><td>可编辑、可校验、可重复生成。</td></tr>
-        <tr><td><code>CharacterSpec</code></td><td>中文性别、年龄段、音色描述、语速、按引擎覆盖</td><td>自动选声与人工覆盖的唯一输入。</td></tr>
+        <tr><td><code>CharacterSpec</code></td><td>定位、类型、中文性别、年龄段、地域、音色描述、语速、按引擎覆盖</td><td>自动选声、主角保留和人工覆盖的唯一输入。</td></tr>
         <tr><td><code>RenderSegment</code></td><td>文本、角色、状态、引擎、音色、速度、指纹</td><td>最小缓存和重试单元。</td></tr>
         <tr><td><code>ProjectManifest</code></td><td>schema、配置指纹、章节/片段状态、时长、错误、统计</td><td>恢复、审计和最终结果依据。</td></tr>
       </tbody>
@@ -346,13 +361,83 @@ voicebook-tool models download csi</code></pre>
       <thead><tr><th>阶段</th><th>行为</th><th>降级方式</th></tr></thead>
       <tbody>
         <tr><td>名字与对白</td><td>复用规则 R1–R8；检测到本地 CSI 时做融合兜底</td><td>CSI 不存在时继续规则识别，并在脚本/manifest 标记降级。</td></tr>
-        <tr><td>角色画像</td><td>全书范围汇总性别、年龄、音色描述证据</td><td>性别未知保留 <code>未知</code>，不在脚本中伪造为男。</td></tr>
-        <tr><td>音色匹配</td><td>按语言 → 性别 → 年龄 → 描述特征评分；同桶角色尽量不撞声</td><td>无匹配时使用对应引擎通用对白音色。</td></tr>
+        <tr><td>角色画像</td><td>全书范围汇总定位、类型、性别、年龄、长期地域和音色描述证据</td><td>未知值保持未知；不把当前旅行地点误写成角色长期地域。</td></tr>
+        <tr><td>主角判断</td><td>按章节覆盖、出现次数和对白占比保守判断，最多一个男主角和一个女主角</td><td>没有显著领先者则不设置主角；脚本人工定位优先。</td></tr>
+        <tr><td>音色匹配</td><td>先做语言/类型/性别硬过滤，再做年龄、地域、描述评分，最后执行全书冲突约束</td><td>扩大同声别候选范围，不跨性别、不占用主角保留音。</td></tr>
         <tr><td>人工覆盖</td><td>脚本中的引擎覆盖优先于自动匹配</td><td>音色不存在时生成前失败，列出可用候选。</td></tr>
         <tr><td>语速</td><td><code>自动</code> 使用画像/引擎默认；<code>xN</code> 显式覆盖</td><td>范围外直接报脚本行号错误，不擅自截断用户值。</td></tr>
       </tbody>
     </table></div>
-    <p>Qwen 音色目录从当前 27 个常量升级为结构化目录，并覆盖站点当前列出的 49 个系统音色；中文书默认只选择普通话或中文方言音色。Edge 继续使用中文 Neural voices。选择算法必须确定性排序，保证同一脚本、同一版本得到相同映射。</p>
+
+    <h3>Qwen 49 音色分层</h3>
+    <p>当前站点目录包含 27 个普通中文、10 个中文方言和 12 个海外音色。实现使用带标签的数据目录，不再把音色名硬编码为几个简单桶。</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>年龄声音</th><th>普通中文男声候选</th><th>普通中文女声候选</th></tr></thead>
+      <tbody>
+        <tr><td>童年</td><td>Pip、Mochi</td><td>Bella、Bunny</td></tr>
+        <tr><td>少年</td><td>Ethan、Mochi、Pip</td><td>Mia、Nini、Stella、Chelsie、Momo</td></tr>
+        <tr><td>青年</td><td>Andre、Ethan、Kai、Nofish</td><td>Cherry、Serena、Moon、Maia、Vivian、Momo、Chelsie</td></tr>
+        <tr><td>中年</td><td>Neil、Elias、Vincent、Andre</td><td>Katerina、Bellona、Maia、Seren</td></tr>
+        <tr><td>老年</td><td>Eldric Sage、Arthur、Vincent</td><td>Ebona；不足时按相邻年龄回退 Katerina</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>地域与海外音色</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>长期地域证据</th><th>男声</th><th>女声</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td>上海</td><td>同声别江南地域候选</td><td>Jada</td><td rowspan="8">地域缺少对应性别时，不跨性别硬配；先扩大到相邻地域同声别候选。</td></tr>
+        <tr><td>北京</td><td>Dylan</td><td>同声别北方地域候选</td></tr>
+        <tr><td>南京/江淮</td><td>Li</td><td>同声别江南地域候选</td></tr>
+        <tr><td>陕西/西北山区</td><td>Marcus</td><td>同声别北方地域候选</td></tr>
+        <tr><td>闽南/福建/台湾</td><td>Roy</td><td>同声别南方地域候选</td></tr>
+        <tr><td>天津</td><td>Peter</td><td>同声别北方地域候选</td></tr>
+        <tr><td>四川/重庆/西南山区</td><td>Eric</td><td>Sunny</td></tr>
+        <tr><td>广东/香港/岭南</td><td>Rocky</td><td>Kiki</td></tr>
+        <tr><td>海外·英语区</td><td>Aiden、Ryan</td><td>Jennifer</td><td rowspan="5">海外音色只有通过中文朗读可懂度测试后才进入自动候选；国家与性别冲突时优先保持性别。</td></tr>
+        <tr><td>海外·西班牙/拉美</td><td>Bodega</td><td>Sonrisa</td></tr>
+        <tr><td>海外·俄/意/德/法/葡语区</td><td>Alek、Dolce、Lenn、Emilien、Radio Gol</td><td>通用海外女声</td></tr>
+        <tr><td>海外·日本/韩国</td><td>通用海外男声</td><td>Ono Anna、Sohee</td></tr>
+        <tr><td>海外·国家未知</td><td>通用海外男声池</td><td>通用海外女声池</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">地域是角色长期属性：来自、祖籍、长期居住、群体身份和反复出现的环境证据可以投票；角色临时旅行不会换方言。无名山民、当地守卫等群体角色可以继承场景地域。未指明方向的山区进入同声别方言池，按性格与声音特征选择。</p>
+
+    <h3>非人类方言池</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>类型/特征</th><th>优先候选</th><th>约束</th></tr></thead>
+      <tbody>
+        <tr><td>机器人、冷硬、规律</td><td>Li、Dylan、Peter</td><td rowspan="6">男声候选为 Dylan、Li、Marcus、Roy、Peter、Eric、Rocky；女声候选为 Jada、Sunny、Kiki；只有中性/未知可以跨全部方言池。</td></tr>
+        <tr><td>怪兽、粗哑、强壮</td><td>Marcus、Eric、Rocky</td></tr>
+        <tr><td>妖怪、狡黠、话多</td><td>Roy、Peter、Jada</td></tr>
+        <tr><td>灵兽、幼年、活泼</td><td>Dylan、Sunny、Kiki</td></tr>
+        <tr><td>鬼魂、缓慢、阴沉</td><td>Li、Marcus，并降低自动语速</td></tr>
+        <tr><td>神明、威严、洪亮</td><td>Marcus、Jada、Eric</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>评分与全书约束分配</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>项目</th><th>分值/约束</th></tr></thead>
+      <tbody>
+        <tr><td>人工覆盖</td><td>硬指定，不参与评分；仍校验音色存在。</td></tr>
+        <tr><td>语言、角色类型、明确性别</td><td>硬过滤；非人类进入方言池；明确性别不跨声别。</td></tr>
+        <tr><td>性别匹配</td><td>+40；中性/未知不加分。</td></tr>
+        <tr><td>年龄完全匹配 / 相邻年龄</td><td>+30 / +10。</td></tr>
+        <tr><td>音色描述标签</td><td>每个 +10，最多 +30。</td></tr>
+        <tr><td>旁白/讲述功能匹配</td><td>+20；Neil、Elias、Arthur、Seren 等进入不同讲述风格。</td></tr>
+        <tr><td>主要角色未占用音色</td><td>+15；主要角色优先独占。</td></tr>
+      </tbody>
+    </table></div>
+    <ol>
+      <li>先锁定人工覆盖和按引擎配置的男/女主角保留音；没有对应主角时保留音保持未使用。</li>
+      <li>按章节覆盖率、对白字数、角色定位和发言邻接度排序：主角 → 重要角色 → 高邻接角色 → 配角。</li>
+      <li>扫描全书发言顺序建立角色邻接图；连续出现的两个不同角色形成“不得同音”边。</li>
+      <li>使用确定性候选排序与有限回溯分配：优先最高分，同时满足邻接不同音和主角音保留。</li>
+      <li>同一规范角色 ID 只分配一次，跨章节复用；别名先归一。<code>角色@老年</code> 等明确年龄变化创建变体并允许换音，情绪变化不换音。</li>
+      <li>候选冲突无法满足时扩大同声别年龄/地域范围并记录警告；不得偷偷使用主角保留音或跨性别。</li>
+    </ol>
+    <p>每个角色的候选音色、得分、选中原因、地域证据、邻接冲突和最终音色都写入 manifest，便于解释与复现。Edge 使用同一约束算法，但候选来自扩充后的中文 Neural voice 目录。</p>
     <p>统一节奏基线：标题后 900ms、逻辑片段间 250ms、章尾 700ms；API 长文本切块之间不额外插入片段停顿。Qwen WAV 继续做边缘平滑；Edge 片段在最终装配前规范化为统一 PCM，再编码为章节 MP3。</p>
   </section>
 
@@ -385,6 +470,13 @@ voicebook-tool models download csi</code></pre>
   "书籍": {"书名": "凡人修仙传", "作者": "忘语"},
   "配置": {"引擎": "qwen3tts", "章节": "全部", "指纹": "..."},
   "识别": {"模式": "规则+CSI", "未识别对白": 3},
+  "选声": {
+    "主角保留音": {"男": "Andre", "女": "Serena"},
+    "角色": {
+      "韩立": {"音色": "Andre", "原因": ["男主角保留音"]},
+      "赤焰兽": {"音色": "Marcus", "原因": ["怪兽", "中性", "粗哑", "非人类方言池"]}
+    }
+  },
   "章节": [
     {
       "编号": 1,
@@ -423,7 +515,7 @@ voicebook-tool models download csi</code></pre>
         <tr><td><code>src/book2audio/script.py</code></td><td>升级为 voicebook-script v1；中文 Front Matter、角色表、语速与覆盖校验。</td></tr>
         <tr><td><code>src/book2audio/project.py</code></td><td>新增 manifest、指纹、缓存、原子写入和恢复逻辑。</td></tr>
         <tr><td><code>src/book2audio/pipeline.py</code></td><td>拆分 inspect/generate/convert；分章 MP3、整书 MP3 和失败隔离。</td></tr>
-        <tr><td><code>src/book2audio/casting.py</code></td><td>中文脚本边界映射、结构化音色目录、确定性匹配和统一语速。</td></tr>
+        <tr><td><code>src/book2audio/casting.py</code></td><td>结构化 49 音色目录、角色类型/地域画像、主角保留音、发言邻接图、全书约束分配和统一语速。</td></tr>
         <tr><td><code>src/book2audio/tts.py</code></td><td>引擎名规范化为 qwen3tts/edgetts；错误分类；缓存友好的适配接口。</td></tr>
         <tr><td><code>src/book2audio/audio.py</code></td><td>统一 PCM、停顿、tempo、章节 MP3、ID3/封面与 ffprobe 校验。</td></tr>
         <tr><td><code>tests/</code></td><td>新增 EPUB fixture、脚本 round-trip、CLI、选声、缓存恢复、MP3 元数据与离线端到端测试。</td></tr>
@@ -465,8 +557,12 @@ uv build</code></pre>
       <tbody>
         <tr><td>单元</td><td>章节表达式</td><td><code>1,3,8-12</code> 正确、去重、有序；越界和非法值报错。</td></tr>
         <tr><td>单元</td><td>EPUB/TXT 解析</td><td>按 spine 顺序提取两章、元数据和封面；无标题 TXT 产生单章。</td></tr>
-        <tr><td>单元</td><td>脚本 round-trip</td><td>中文元数据、角色、<code>x0.9</code>、音色覆盖和标签写入后可等价读回。</td></tr>
-        <tr><td>单元</td><td>自动选声</td><td>相同性别/年龄桶的主要角色尽量不同声；覆盖值优先；结果确定性。</td></tr>
+        <tr><td>单元</td><td>脚本 round-trip</td><td>中文元数据、主角音、定位、类型、地域、<code>x0.9</code>、音色覆盖和标签写入后可等价读回。</td></tr>
+        <tr><td>单元</td><td>主角保留音</td><td>主角使用配置音；保留音不分给配角；没有对应主角时保留音保持未使用。</td></tr>
+        <tr><td>单元</td><td>连续发言与跨章一致性</td><td>邻接角色音色不同；同一规范角色跨章节同音；年龄变体允许换音。</td></tr>
+        <tr><td>单元</td><td>类型/地域选声</td><td>非人类只进方言池；长期地域触发对应候选；旅行地点不改音；明确性别不跨声别。</td></tr>
+        <tr><td>单元</td><td>海外音色门禁</td><td>只有通过中文可懂度白名单的海外音色可自动使用；国家无对应性别时优先保持性别。</td></tr>
+        <tr><td>单元</td><td>自动选声确定性</td><td>覆盖值优先；相同脚本/目录版本的候选得分、冲突处理和最终结果完全一致。</td></tr>
         <tr><td>单元</td><td>错误分类</td><td>429/暂时性 5xx 重试；欠费/认证错误不重试整本且不切引擎。</td></tr>
         <tr><td>单元</td><td>缓存恢复</td><td>第二次同配置零 TTS 调用；只改一段只重生一段；<code>--force</code> 重建所选章。</td></tr>
         <tr><td>集成</td><td>离线假 TTS + ffmpeg</td><td>生成两章可解码 MP3；留白、语速、ID3、封面和时长均可由 ffprobe 验证。</td></tr>
@@ -503,7 +599,9 @@ uv build</code></pre>
       <li>是否确认 <code>inspect → book.script → generate</code> 是可人工干预的主链路，<code>convert</code> 是二合一快捷方式？</li>
       <li>是否确认默认整本、默认 qwen3tts、服务失败不静默切 Edge？</li>
       <li>是否确认分章 MP3、默认续跑、可选整书 MP3、ID3/封面？</li>
-      <li>是否确认中文 Front Matter、中文性别、<code>x0.9</code> 语速格式和按引擎音色覆盖？</li>
+      <li>是否确认中文 Front Matter、角色定位/类型/地域、中文性别、<code>x0.9</code> 语速格式和按引擎音色覆盖？</li>
+      <li>是否确认按引擎保留男/女主角音、连续发言角色不同音、跨章节同角色保持同音？</li>
+      <li>是否确认非人类方言池，以及海外音色必须先通过中文可懂度测试？</li>
       <li>是否允许按“代码影响范围”进入实现与测试？</li>
     </ul>
     <div class="callout warn"><strong>待用户显式确认：</strong>只有收到“可以”“进入实现”“开始开发”或等价明确答复后，才进入编码阶段。</div>
