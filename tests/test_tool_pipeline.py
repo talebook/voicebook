@@ -76,6 +76,21 @@ class ToolPipelineTests(unittest.TestCase):
             self.assertEqual(first_call_count, len(fake.calls))
             self.assertTrue(all(segment["缓存命中"] for segment in manifest["片段"]))
 
+    def test_default_engine_is_edgetts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / "book.script"
+            output = root / "out"
+            self._script(script)
+            fake = FakeSynthesizer()
+
+            generate_audio(script, output, synthesizer=fake)
+            manifest = json.loads((output / ".voicebook/manifest.json").read_text(encoding="utf-8"))
+
+            self.assertEqual("edgetts", manifest["引擎"])
+            self.assertTrue(fake.calls)
+            self.assertTrue(all(call[2] == "edgetts" for call in fake.calls))
+
     def test_editing_one_segment_invalidates_only_that_segment_and_force_invalidates_all(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

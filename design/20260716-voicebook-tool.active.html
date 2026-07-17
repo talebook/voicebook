@@ -155,7 +155,7 @@
 
   <section>
     <h2>1. 原始诉求与验收结果</h2>
-    <p>提供一个可安装的 <code>voicebook-tool</code> 命令行工具，将 EPUB/TXT 书籍转换为纯音频 MP3。工具默认使用 qwen3ttsai.com 的 <code>qwen3tts</code>，也支持 <code>edgetts</code>；默认执行角色识别，并让不同角色自动匹配最合适的音色；输出按章节拆分。</p>
+    <p>提供一个可安装的 <code>voicebook-tool</code> 命令行工具，将 EPUB/TXT 书籍转换为纯音频 MP3。工具默认使用 <code>edgetts</code>，也可显式选择 qwen3ttsai.com 的 <code>qwen3tts</code>；默认执行角色识别，并让不同角色自动匹配最合适的音色；输出按章节拆分。</p>
     <div class="grid">
       <div class="card"><strong>输入</strong><br>正式支持 EPUB、TXT；默认整本，可按 <code>1,3,8-12</code> 选择章节。</div>
       <div class="card"><strong>过程</strong><br>规则/CSI 说话人识别 → 中文角色画像 → 确定性自动选声 → TTS → 统一节奏拼接。</div>
@@ -167,7 +167,7 @@
     <div class="table-wrap"><table>
       <thead><tr><th>主题</th><th>决策</th><th>原因</th></tr></thead>
       <tbody>
-        <tr><td>默认引擎</td><td><code>qwen3tts</code>，映射 qwen3ttsai.com；备选 <code>edgetts</code></td><td>沿用已试听的系统音色接入。</td></tr>
+        <tr><td>默认引擎</td><td><code>edgetts</code>；可显式选择 <code>qwen3tts</code></td><td>EdgeTTS 当前可用且适合整书批量生成；Qwen 保留为可选引擎。</td></tr>
         <tr><td>服务失败</td><td>不静默切换引擎</td><td>避免同一本书前后混入两套角色音色。</td></tr>
         <tr><td>输出格式</td><td>分章 MP3；可选整书 MP3</td><td>纯音频、易分发、适合断点生产。</td></tr>
         <tr><td>CSI 模型</td><td>不自动下载；显式 <code>models download csi</code></td><td>避免转换时突然下载约 650MB 权重。</td></tr>
@@ -188,7 +188,7 @@
 voicebook-tool inspect book.epub -o book.script
 
 # 从人工校正后的脚本生成分章 MP3
-voicebook-tool generate book.script -o output/ --engine qwen3tts
+voicebook-tool generate book.script -o output/
 
 # 二合一：inspect + generate，并保存 output/book.script
 voicebook-tool convert book.epub -o output/
@@ -510,13 +510,13 @@ voicebook-tool models download csi</code></pre>
   "格式": "voicebook-manifest",
   "版本": 1,
   "书籍": {"书名": "凡人修仙传", "作者": "忘语"},
-  "配置": {"引擎": "qwen3tts", "章节": "全部", "指纹": "..."},
+  "配置": {"引擎": "edgetts", "章节": "全部", "指纹": "..."},
   "识别": {"模式": "规则+CSI", "未识别对白": 3},
   "选声": {
-    "主角保留音": {"男": "Andre", "女": "Serena"},
+    "主角保留音": {"男": "zh-CN-YunxiNeural", "女": "zh-CN-XiaoxiaoNeural"},
     "角色": {
-      "韩立": {"音色": "Andre", "原因": ["男主角保留音"]},
-      "赤焰兽": {"音色": "Marcus", "原因": ["怪兽", "中性", "粗哑", "非人类方言池"]}
+      "韩立": {"音色": "zh-CN-YunxiNeural", "原因": ["男主角保留音"]},
+      "赤焰兽": {"音色": "zh-CN-liaoning-XiaobeiNeural", "原因": ["怪兽", "中性", "粗哑", "非人类方言池"]}
     }
   },
   "章节": [
@@ -671,7 +671,7 @@ uv build</code></pre>
     <h2>14. 审查结论</h2>
     <ul>
       <li><code>inspect → book.script → generate</code> 是可人工干预的主链路，<code>convert</code> 是二合一快捷方式。</li>
-      <li>默认整本、默认 qwen3tts；服务失败透明报错，不静默切换 Edge。</li>
+      <li>默认整本、默认 edgetts；服务失败透明报错，不静默切换引擎。</li>
       <li>分章 MP3、默认续跑、可选整书 MP3，并写入 ID3/封面。</li>
       <li>TXT 按卷/部与章/节分层，支持组合标题、特殊章节、显式指令、GB18030 和硬换行合并，并启用短行/标点/空章误判防护。</li>
       <li>脚本使用中文 Front Matter、角色定位/类型/地域、中文性别、<code>x0.9</code> 语速格式和按引擎音色覆盖。</li>

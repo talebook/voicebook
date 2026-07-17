@@ -7,7 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .tool_pipeline import convert_book, generate_audio, inspect_book
+from .tool_pipeline import DEFAULT_ENGINE, convert_book, generate_audio, inspect_book
 
 
 def _existing_csi(value: str | None) -> Path | None:
@@ -51,7 +51,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _add_generation_options(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--engine", choices=["qwen3tts", "edgetts"], default="qwen3tts", help="TTS 引擎（默认 qwen3tts）")
+    parser.add_argument(
+        "--engine",
+        choices=["qwen3tts", "edgetts"],
+        default=DEFAULT_ENGINE,
+        help="TTS 引擎（默认 edgetts）",
+    )
     parser.add_argument("--chapters", help="章节选择，例如 1,3,8-12（默认全书）")
     parser.add_argument("--combine", action="store_true", help="额外输出一份全书合并 MP3")
     parser.add_argument("--force", action="store_true", help="忽略片段缓存并重新合成")

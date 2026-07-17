@@ -30,6 +30,7 @@ from .tts import EdgeEngine, Qwen3TTSAIEngine, VoiceSpec, split_tts_text
 from .voice_casting import DEFAULT_PROTAGONISTS, CastAssignment, assign_cast, enrich_character
 
 
+DEFAULT_ENGINE = "edgetts"
 AUDIO_FORMAT_VERSION = "pcm24k-mono-v1"
 MP3_BITRATE = "64k"
 TITLE_PAUSE_MS = 900
@@ -413,7 +414,7 @@ def generate_audio(
     script_path: Path,
     output_dir: Path,
     *,
-    engine: str = "qwen3tts",
+    engine: str = DEFAULT_ENGINE,
     chapters: str | None = None,
     combine: bool = False,
     force: bool = False,
@@ -519,7 +520,7 @@ def convert_book(
     input_path: Path,
     output_dir: Path,
     *,
-    engine: str = "qwen3tts",
+    engine: str = DEFAULT_ENGINE,
     chapters: str | None = None,
     combine: bool = False,
     force: bool = False,

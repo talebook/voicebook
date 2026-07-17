@@ -1,6 +1,6 @@
 # voicebook-tool
 
-把 EPUB/TXT 小说识别成可编辑的多角色配音脚本，并输出分章节 MP3。默认使用 qwen3ttsai.com 的 `qwen3tts`，也支持 `edgetts`。
+把 EPUB/TXT 小说识别成可编辑的多角色配音脚本，并输出分章节 MP3。默认使用 `edgetts`，也可显式选择 qwen3ttsai.com 的 `qwen3tts`。
 
 ## 文档入口
 
@@ -43,8 +43,8 @@ voicebook-tool convert book.txt -o output/
 常用选项：
 
 ```bash
-# 使用 EdgeTTS
-voicebook-tool generate book.script -o output/ --engine edgetts
+# 显式使用 Qwen3TTS
+voicebook-tool generate book.script -o output/ --engine qwen3tts
 
 # 只生成第 1、3、8 至 12 章
 voicebook-tool generate book.script -o output/ --chapters 1,3,8-12
@@ -59,7 +59,7 @@ voicebook-tool generate book.script -o output/ --force
 voicebook-tool models download csi
 ```
 
-`convert` 会在输出目录保留 `book.script`。默认恢复 `.voicebook/cache/` 中已完成的片段；修改一句对白后，只重新生成受影响的片段。Qwen 失败时命令会明确报错，不会静默换成 EdgeTTS。
+`convert` 会在输出目录保留 `book.script`。默认恢复 `.voicebook/cache/` 中已完成的片段；修改一句对白后，只重新生成受影响的片段。任一引擎失败时命令都会明确报错，不会静默切换到另一引擎。
 
 > 隐私提示：`qwen3tts` 和 `edgetts` 都是云端服务，生成时会把所选章节正文发送给对应第三方 TTS 服务。
 
