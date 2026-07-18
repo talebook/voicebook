@@ -19,11 +19,19 @@ MAX_HEADING_CHARS = 80
 
 
 @dataclass
+class BookParagraph:
+    text: str
+    locator: dict[str, object] = field(default_factory=dict)
+
+
+@dataclass
 class BookChapter:
     number: int
     title: str
     content: str
     volume: str | None = None
+    source_key: str = ""
+    paragraphs: list[BookParagraph] = field(default_factory=list)
 
 
 @dataclass
@@ -41,6 +49,7 @@ class BookDocument:
 
 class _HTMLTextExtractor(HTMLParser):
     BLOCKS = {"p", "div", "br", "li", "blockquote", "h1", "h2", "h3", "h4"}
+    VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -48,9 +57,22 @@ class _HTMLTextExtractor(HTMLParser):
         self.headings: list[tuple[int, str]] = []
         self._heading: list[str] | None = None
         self._heading_start = 0
+        self.blocks: list[tuple[str, str, str, str]] = []
+        self._stack: list[tuple[str, str]] = []
+        self._sibling_counts: list[dict[str, int]] = [{}]
+        self._captures: list[dict[str, object]] = []
 
     def handle_starttag(self, tag: str, attrs) -> None:
         tag = tag.lower()
+        counts = self._sibling_counts[-1]
+        counts[tag] = counts.get(tag, 0) + 1
+        path = "/".join([item[1] for item in self._stack] + [f"{tag}[{counts[tag]}]"])
+        attributes = dict(attrs)
+        if tag not in self.VOID_TAGS:
+            self._stack.append((tag, f"{tag}[{counts[tag]}]"))
+            self._sibling_counts.append({})
+        if tag not in self.VOID_TAGS and tag in {"p", "li", "blockquote", "h1", "h2", "h3", "h4"}:
+            self._captures.append({"tag": tag, "id": attributes.get("id", ""), "path": path, "parts": []})
         if tag in self.BLOCKS:
             self.parts.append("\n")
         if tag in {"h1", "h2", "h3", "h4"}:
@@ -61,14 +83,34 @@ class _HTMLTextExtractor(HTMLParser):
         tag = tag.lower()
         if tag in self.BLOCKS:
             self.parts.append("\n")
+        if tag in self.VOID_TAGS:
+            return
         if tag in {"h1", "h2", "h3", "h4"} and self._heading is not None:
             title = _clean_line("".join(self._heading))
             if title:
                 self.headings.append((self._heading_start, title))
             self._heading = None
+        if self._captures and self._captures[-1]["tag"] == tag:
+            capture = self._captures.pop()
+            text = _clean_line("".join(capture["parts"]))
+            if text:
+                self.blocks.append((tag, text, str(capture["id"]), str(capture["path"])))
+        if self._stack:
+            while self._stack:
+                opened, _ = self._stack.pop()
+                self._sibling_counts.pop()
+                if opened == tag:
+                    break
+
+    def handle_startendtag(self, tag: str, attrs) -> None:
+        self.handle_starttag(tag, attrs)
+        if tag.lower() not in self.VOID_TAGS:
+            self.handle_endtag(tag)
 
     def handle_data(self, data: str) -> None:
         self.parts.append(data)
+        for capture in self._captures:
+            capture["parts"].append(data)
         if self._heading is not None:
             self._heading.append(data)
 
@@ -156,6 +198,17 @@ def _normalize_txt_body(lines: Iterable[str]) -> str:
     return "\n".join(paragraphs).strip()
 
 
+def _paragraphs_from_text(content: str, *, locator_type: str = "text-segment") -> list[BookParagraph]:
+    return [
+        BookParagraph(
+            text=paragraph,
+            locator={"type": locator_type, "paragraph_index": index},
+        )
+        for index, paragraph in enumerate(content.splitlines())
+        if paragraph.strip()
+    ]
+
+
 def split_txt_chapters(text: str) -> tuple[list[BookChapter], list[str]]:
     """识别常见网文目录格式；没有标题时将全文作为一章。"""
     lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
@@ -172,7 +225,9 @@ def split_txt_chapters(text: str) -> tuple[list[BookChapter], list[str]]:
     warnings: list[str] = []
     if not any(kind in {"chapter", "combined"} for _, kind, _ in markers):
         content = _normalize_txt_body(lines)
-        return ([BookChapter(1, "正文", content)] if content else []), warnings
+        return (
+            [BookChapter(1, "正文", content, paragraphs=_paragraphs_from_text(content))] if content else []
+        ), warnings
 
     chapters: list[BookChapter] = []
     volume: str | None = None
@@ -192,7 +247,15 @@ def split_txt_chapters(text: str) -> tuple[list[BookChapter], list[str]]:
             continue
         if kind == "combined":
             volume = re.split(r"(?=第\s*" + NUM + r"\s*(?:章|节|回|幕|集))", title, maxsplit=1)[0].strip() or volume
-        chapters.append(BookChapter(len(chapters) + 1, title, body, volume))
+        chapters.append(
+            BookChapter(
+                len(chapters) + 1,
+                title,
+                body,
+                volume,
+                paragraphs=_paragraphs_from_text(body),
+            )
+        )
 
     if len(chapters) > max(20, len(lines) // 4):
         warnings.append("章节标题密度异常，请检查 TXT 是否把正文误识别成标题")
@@ -270,7 +333,7 @@ def _resolve(base: str, href: str) -> str:
     return str(PurePosixPath(base).joinpath(href))
 
 
-def _epub_sections(raw_html: bytes, fallback_title: str) -> list[tuple[str, str]]:
+def _epub_sections(raw_html: bytes, fallback_title: str, href: str) -> list[tuple[str, str, str, list[BookParagraph]]]:
     parser = _HTMLTextExtractor()
     parser.feed(raw_html.decode("utf-8", errors="replace"))
     text = parser.text()
@@ -282,13 +345,63 @@ def _epub_sections(raw_html: bytes, fallback_title: str) -> list[tuple[str, str]
         title = indices[0][1] if indices else (parser.headings[0][1] if parser.headings else fallback_title)
         if indices and indices[0][0] == 0:
             text = "\n".join(lines[1:]).strip()
-        return [(title, text)] if text else []
-    sections: list[tuple[str, str]] = []
+        paragraphs = []
+        for tag, block_text, element_id, dom_path in parser.blocks:
+            if tag.startswith("h") and block_text == title:
+                continue
+            paragraphs.append(
+                BookParagraph(
+                    block_text,
+                    {
+                        "type": "epub-dom-text",
+                        "href": href,
+                        "element_id": element_id,
+                        "dom_path": dom_path,
+                    },
+                )
+            )
+        if not paragraphs:
+            paragraphs = _paragraphs_from_text(text, locator_type="epub-text")
+            for paragraph in paragraphs:
+                paragraph.locator["href"] = href
+        content = "\n".join(paragraph.text for paragraph in paragraphs)
+        source_key = f"{href}#{parser.blocks[0][2] or fallback_title}" if parser.blocks else href
+        return [(title, content, source_key, paragraphs)] if content else []
+    sections: list[tuple[str, str, str, list[BookParagraph]]] = []
+    block_headings = [
+        (index, block)
+        for index, block in enumerate(parser.blocks)
+        if block[0].startswith("h") and _heading_kind(block[1]) in {"chapter", "combined"}
+    ]
+    if len(block_headings) == len(indices):
+        for pos, (index, heading) in enumerate(block_headings):
+            end = block_headings[pos + 1][0] if pos + 1 < len(block_headings) else len(parser.blocks)
+            paragraphs = [
+                BookParagraph(
+                    block_text,
+                    {
+                        "type": "epub-dom-text",
+                        "href": href,
+                        "element_id": element_id,
+                        "dom_path": dom_path,
+                    },
+                )
+                for tag, block_text, element_id, dom_path in parser.blocks[index + 1:end]
+                if not tag.startswith("h")
+            ]
+            body = "\n".join(paragraph.text for paragraph in paragraphs).strip()
+            if body:
+                anchor = heading[2] or f"chapter-{pos + 1}"
+                sections.append((heading[1], body, f"{href}#{anchor}", paragraphs))
+        return sections
     for pos, (index, title) in enumerate(indices):
         end = indices[pos + 1][0] if pos + 1 < len(indices) else len(lines)
         body = "\n".join(lines[index + 1:end]).strip()
         if body:
-            sections.append((title, body))
+            paragraphs = _paragraphs_from_text(body, locator_type="epub-text")
+            for paragraph in paragraphs:
+                paragraph.locator["href"] = href
+            sections.append((title, body, f"{href}#chapter-{pos + 1}", paragraphs))
     return sections
 
 
@@ -355,8 +468,18 @@ def read_epub(path: Path) -> BookDocument:
             if item_path not in members:
                 continue
             fallback = Path(item[0]).stem
-            for section_title, content in _epub_sections(archive.read(item_path), fallback):
-                chapters.append(BookChapter(len(chapters) + 1, section_title, content))
+            for section_title, content, source_key, paragraphs in _epub_sections(
+                archive.read(item_path), fallback, item_path
+            ):
+                chapters.append(
+                    BookChapter(
+                        len(chapters) + 1,
+                        section_title,
+                        content,
+                        source_key=source_key,
+                        paragraphs=paragraphs,
+                    )
+                )
         if not chapters:
             raise ValueError("EPUB spine 中没有可用正文")
         return BookDocument(

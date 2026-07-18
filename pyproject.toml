@@ -1,22 +1,24 @@
 [project]
 name = "voicebook-tool"
-version = "0.2.0"
+version = "0.3.0"
 description = "将 EPUB/TXT 转换为多角色分章节 MP3 的命令行工具"
 requires-python = ">=3.11"
 dependencies = [
     "edge-tts>=6.1",
-    "huggingface-hub>=1.8.0",
     "jieba>=0.42.1",
     "PyYAML>=6.0.2",
     "requests>=2.34.2",
-    "torch>=2.12.0",
-    "transformers>=5.10.2",
 ]
 
 [project.scripts]
 voicebook-tool = "book2audio.cli:main"
 
 [project.optional-dependencies]
+csi = [
+    "huggingface-hub>=1.8.0",
+    "torch>=2.12.0",
+    "transformers>=5.10.2",
+]
 kokoro = ["kokoro-onnx"]
 
 [build-system]

@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import wave
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -26,6 +27,7 @@ from .script import (
     parse_voicebook_script,
     write_voicebook_script,
 )
+from .machine import GenerationCancelled, ProgressEmitter, check_cancelled
 from .tts import EdgeEngine, Qwen3TTSAIEngine, VoiceSpec, split_tts_text
 from .voice_casting import DEFAULT_PROTAGONISTS, CastAssignment, assign_cast, enrich_character
 
@@ -70,6 +72,19 @@ def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _wav_duration_ms(path: Path) -> int:
+    with wave.open(str(path), "rb") as source:
+        return round(source.getnframes() * 1000 / source.getframerate())
+
+
 def _sha256_json(value) -> str:
     payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
     return _sha256_bytes(payload)
@@ -87,29 +102,70 @@ def _sanitize_filename(title: str, fallback: str) -> str:
     return cleaned or fallback
 
 
-def _segments_from_quotes(content: str, quotes) -> list[ScriptSegment]:
+def _locator_for_range(base: dict[str, object], paragraph: str, start: int, end: int) -> dict[str, object]:
+    while start < end and paragraph[start].isspace():
+        start += 1
+    while end > start and paragraph[end - 1].isspace():
+        end -= 1
+    locator = dict(base)
+    locator.update(
+        {
+            "start_char": start,
+            "end_char": end,
+            "text_sha256": _sha256_bytes(paragraph[start:end].encode("utf-8")),
+        }
+    )
+    return locator
+
+
+def _segments_from_quotes(chapter, quotes) -> list[ScriptSegment]:
+    content = chapter.content
     by_paragraph: dict[int, list] = {}
     for quote in quotes:
         by_paragraph.setdefault(quote.para_idx, []).append(quote)
     paragraphs = [paragraph.strip() for paragraph in content.splitlines() if paragraph.strip()]
+    source_paragraphs = chapter.paragraphs or []
     segments: list[ScriptSegment] = []
     for paragraph_index, paragraph in enumerate(paragraphs):
+        base_locator = (
+            source_paragraphs[paragraph_index].locator
+            if paragraph_index < len(source_paragraphs)
+            else {"type": "text-segment", "paragraph_index": paragraph_index}
+        )
         position = 0
         for quote in sorted(by_paragraph.get(paragraph_index, []), key=lambda item: item.span[0]):
             before = paragraph[position:quote.span[0]].strip()
             if before:
-                segments.append(ScriptSegment("旁白", before))
+                segments.append(
+                    ScriptSegment(
+                        "旁白",
+                        before,
+                        _locator_for_range(base_locator, paragraph, position, quote.span[0]),
+                    )
+                )
             if quote.kind == "sfx":
-                segments.append(ScriptSegment("音", quote.text))
+                tag = "音"
             elif quote.speaker:
                 tag = f"{quote.speaker}@{quote.state}" if quote.state else quote.speaker
-                segments.append(ScriptSegment(tag, quote.text))
             else:
-                segments.append(ScriptSegment("?", quote.text))
+                tag = "?"
+            segments.append(
+                ScriptSegment(
+                    tag,
+                    quote.text,
+                    _locator_for_range(base_locator, paragraph, quote.span[0], quote.span[1]),
+                )
+            )
             position = quote.span[1]
         tail = paragraph[position:].strip()
         if tail:
-            segments.append(ScriptSegment("旁白", tail))
+            segments.append(
+                ScriptSegment(
+                    "旁白",
+                    tail,
+                    _locator_for_range(base_locator, paragraph, position, len(paragraph)),
+                )
+            )
     return segments
 
 
@@ -166,7 +222,13 @@ def inspect_book(
     profiles = build_profiles(full_text, attributor.names)
 
     script_chapters = [
-        ScriptChapter(chapter.number, chapter.title, _segments_from_quotes(chapter.content, quotes_by_chapter[chapter.number]), chapter.volume)
+        ScriptChapter(
+            chapter.number,
+            chapter.title,
+            _segments_from_quotes(chapter, quotes_by_chapter[chapter.number]),
+            chapter.volume,
+            chapter.source_key,
+        )
         for chapter in chosen
     ]
     used_characters = {
@@ -361,7 +423,14 @@ def _cover_path(script_path: Path, script: VoicebookScript) -> Path | None:
     return cover
 
 
-def _encode_mp3(wav: Path, output: Path, script: VoicebookScript, title: str, cover: Path | None, track: int | None = None) -> None:
+def _encode_mp3(
+    wav: Path,
+    output: Path,
+    script: VoicebookScript,
+    title: str,
+    cover: Path | None,
+    track: int | None = None,
+) -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     command = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav)]
     if cover:
@@ -384,6 +453,27 @@ def _encode_mp3(wav: Path, output: Path, script: VoicebookScript, title: str, co
     duration = float(payload.get("format", {}).get("duration", 0))
     if "mp3" not in codecs or duration <= 0:
         raise RuntimeError(f"生成的 MP3 无法通过 ffprobe 校验：{output}")
+    return round(duration * 1000)
+
+
+def _safe_manifest_file(output_dir: Path, relative: str) -> Path | None:
+    candidate = (output_dir / relative).resolve()
+    try:
+        candidate.relative_to(output_dir.resolve())
+    except ValueError:
+        return None
+    return candidate
+
+
+def _resume_chapter(output_dir: Path, record: dict) -> tuple[Path, Path] | None:
+    audio = _safe_manifest_file(output_dir, str(record.get("audio", "")))
+    timeline = _safe_manifest_file(output_dir, str(record.get("timeline", "")))
+    if not audio or not timeline or not audio.is_file() or not timeline.is_file():
+        return None
+    expected = str(record.get("sha256", ""))
+    if expected and _sha256_file(audio) != expected:
+        return None
+    return audio, timeline
 
 
 def _segment_assignment(
@@ -416,9 +506,11 @@ def generate_audio(
     *,
     engine: str = DEFAULT_ENGINE,
     chapters: str | None = None,
-    combine: bool = False,
     force: bool = False,
     synthesizer: Synthesizer | None = None,
+    progress: ProgressEmitter | None = None,
+    cancel_file: Path | None = None,
+    resume: bool = False,
 ) -> list[Path]:
     _require_ffmpeg()
     script_path = script_path.expanduser().resolve()
@@ -445,75 +537,188 @@ def generate_audio(
     cover = _cover_path(script_path, script)
     synth = synthesizer or CloudSynthesizer()
     output_files: list[Path] = []
-    chapter_wavs: list[Path] = []
-    segment_records: list[dict] = []
-    manifest_path = output_dir / ".voicebook" / "manifest.json"
+    chapter_records: list[dict] = []
+    manifest_path = output_dir / "manifest.v2.json"
+    script_sha256 = _sha256_bytes(script_path.read_bytes())
     manifest_base = {
-        "格式": "voicebook-project",
-        "版本": 1,
-        "脚本": str(script_path),
-        "脚本指纹": _sha256_bytes(script_path.read_bytes()),
-        "引擎": engine,
-        "选章": numbers,
-        "选角": {name: asdict(assignment) for name, assignment in base_cast.items()},
+        "format": "voicebook-project",
+        "version": 2,
+        "engine": engine,
+        "script_sha256": script_sha256,
+        "title": script.title,
+        "author": script.author,
+        "selected_chapters": numbers,
+        "cast": {name: asdict(assignment) for name, assignment in base_cast.items()},
     }
-    _atomic_json(manifest_path, {**manifest_base, "状态": "生成中", "片段": [], "输出": []})
+    resumed: dict[int, dict] = {}
+    if resume and manifest_path.is_file():
+        try:
+            previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            previous = {}
+        if previous.get("version") == 2 and previous.get("engine") == engine and previous.get("script_sha256") == script_sha256:
+            resumed = {int(record["number"]): record for record in previous.get("chapters", [])}
 
-    for chapter in chosen:
-        title_assignment = base_cast["旁白"]
-        logical = [(ScriptSegment("旁白", chapter.title), title_assignment, title_assignment.speed)]
-        logical.extend(
-            (segment, *_segment_assignment(segment, character_map, base_cast, script, engine))
-            for segment in chapter.segments
-            if SPEAKABLE_RE.search(segment.text)
+    def write_manifest(status: str, **extra) -> None:
+        _atomic_json(
+            manifest_path,
+            {
+                **manifest_base,
+                "status": status,
+                "chapters": chapter_records,
+                "chapter_count": len(chapter_records),
+                "duration_ms": sum(int(record.get("duration_ms", 0)) for record in chapter_records),
+                **extra,
+            },
         )
-        audio_parts: list[Path] = []
-        rendered = _render_with_probe(logical, engine, cache_dir, synth, force)
-        for index, ((segment, assignment, speed), (audio, fingerprint, cache_hit)) in enumerate(zip(logical, rendered)):
-            audio_parts.append(audio)
-            segment_records.append({
-                "章节": chapter.number,
-                "序号": index,
-                "角色": segment.character,
-                "音色": assignment.voice,
-                "语速": speed,
-                "指纹": fingerprint,
-                "缓存命中": cache_hit,
-            })
-            _atomic_json(manifest_path, {**manifest_base, "状态": "生成中", "片段": segment_records, "输出": [str(path) for path in output_files]})
-            pause_ms = TITLE_PAUSE_MS if index == 0 else SEGMENT_PAUSE_MS
-            if index < len(logical) - 1:
-                pause = cache_dir / f"silence-{pause_ms}ms.wav"
-                if not pause.exists():
-                    write_wav_silence_like(audio, pause, pause_ms)
-                audio_parts.append(pause)
-        final_pause = cache_dir / f"silence-{CHAPTER_END_PAUSE_MS}ms.wav"
-        if not final_pause.exists():
-            write_wav_silence_like(audio_parts[-1], final_pause, CHAPTER_END_PAUSE_MS)
-        audio_parts.append(final_pause)
-        chapter_wav = output_dir / ".voicebook" / f"chapter-{chapter.number:04d}.wav"
-        _concat_wavs(audio_parts, chapter_wav)
-        chapter_wavs.append(chapter_wav)
-        filename = f"{chapter.number:04d}-{_sanitize_filename(chapter.title, 'chapter')}.mp3"
-        chapter_mp3 = output_dir / filename
-        _encode_mp3(chapter_wav, chapter_mp3, script, chapter.title, cover, chapter.number)
-        output_files.append(chapter_mp3)
 
-    if combine:
-        combined_wav = output_dir / ".voicebook" / "combined.wav"
-        _concat_wavs(chapter_wavs, combined_wav)
-        combined_mp3 = output_dir / f"{_sanitize_filename(script.title, 'voicebook')}.mp3"
-        _encode_mp3(combined_wav, combined_mp3, script, script.title, cover)
-        output_files.append(combined_mp3)
+    write_manifest("generating")
+    if progress:
+        progress.emit("phase_started", job_phase="GENERATING")
+    try:
+        for chapter in chosen:
+            check_cancelled(cancel_file)
+            previous_record = resumed.get(chapter.number)
+            previous_files = _resume_chapter(output_dir, previous_record) if previous_record else None
+            if previous_record and previous_files:
+                chapter_records.append(previous_record)
+                output_files.append(previous_files[0])
+                if progress:
+                    progress.emit(
+                        "chapter_completed",
+                        chapter_number=chapter.number,
+                        audio=previous_record["audio"],
+                        timeline=previous_record["timeline"],
+                        duration_ms=previous_record["duration_ms"],
+                        size_bytes=previous_record["size_bytes"],
+                        sha256=previous_record["sha256"],
+                        resumed=True,
+                    )
+                continue
 
-    manifest = {
-        **manifest_base,
-        "状态": "完成",
-        "片段": segment_records,
-        "输出": [str(path) for path in output_files],
-    }
-    _atomic_json(manifest_path, manifest)
-    return output_files
+            title_assignment = base_cast["旁白"]
+            logical = [(ScriptSegment("旁白", chapter.title), title_assignment, title_assignment.speed)]
+            logical.extend(
+                (segment, *_segment_assignment(segment, character_map, base_cast, script, engine))
+                for segment in chapter.segments
+                if SPEAKABLE_RE.search(segment.text)
+            )
+            if progress:
+                progress.emit(
+                    "chapter_started",
+                    chapter_number=chapter.number,
+                    title=chapter.title,
+                    total_segments=max(0, len(logical) - 1),
+                )
+            audio_parts: list[Path] = []
+            timeline_segments: list[dict] = []
+            cursor_ms = 0
+            rendered = _render_with_probe(logical, engine, cache_dir, synth, force)
+            for index, ((segment, assignment, speed), (audio, fingerprint, cache_hit)) in enumerate(
+                zip(logical, rendered)
+            ):
+                check_cancelled(cancel_file)
+                duration_ms = _wav_duration_ms(audio)
+                audio_parts.append(audio)
+                if index > 0:
+                    segment_index = index - 1
+                    locator = segment.locator or {
+                        "type": "text-segment",
+                        "chapter_number": chapter.number,
+                        "segment_index": segment_index,
+                    }
+                    timeline_segments.append(
+                        {
+                            "id": f"seg-{segment_index:06d}",
+                            "index": segment_index,
+                            "start_ms": cursor_ms,
+                            "end_ms": cursor_ms + duration_ms,
+                            "text": segment.text,
+                            "character": segment.character,
+                            "voice": assignment.voice,
+                            "speed": round(speed, 4),
+                            "locator": locator,
+                        }
+                    )
+                    if progress:
+                        progress.emit(
+                            "segment_completed",
+                            chapter_number=chapter.number,
+                            segment_index=segment_index,
+                            cache_hit=cache_hit,
+                            fingerprint=fingerprint,
+                        )
+                cursor_ms += duration_ms
+                if index < len(logical) - 1:
+                    pause_ms = TITLE_PAUSE_MS if index == 0 else SEGMENT_PAUSE_MS
+                    pause = cache_dir / f"silence-{pause_ms}ms.wav"
+                    if not pause.exists():
+                        write_wav_silence_like(audio, pause, pause_ms)
+                    audio_parts.append(pause)
+                    cursor_ms += pause_ms
+
+            final_pause = cache_dir / f"silence-{CHAPTER_END_PAUSE_MS}ms.wav"
+            if not final_pause.exists():
+                write_wav_silence_like(audio_parts[-1], final_pause, CHAPTER_END_PAUSE_MS)
+            audio_parts.append(final_pause)
+            cursor_ms += CHAPTER_END_PAUSE_MS
+            chapter_wav = output_dir / ".voicebook" / f"chapter-{chapter.number:04d}.wav"
+            _concat_wavs(audio_parts, chapter_wav)
+            wav_duration_ms = _wav_duration_ms(chapter_wav)
+            timeline_path = output_dir / "timelines" / f"{chapter.number:04d}.json"
+            timeline_relative = timeline_path.relative_to(output_dir).as_posix()
+            _atomic_json(
+                timeline_path,
+                {
+                    "format": "voicebook-timeline",
+                    "version": 1,
+                    "chapter_number": chapter.number,
+                    "source_key": chapter.source_key,
+                    "duration_ms": wav_duration_ms,
+                    "segments": timeline_segments,
+                },
+            )
+            chapter_mp3 = output_dir / "chapters" / f"{chapter.number:04d}.mp3"
+            mp3_duration_ms = _encode_mp3(
+                chapter_wav, chapter_mp3, script, chapter.title, cover, chapter.number
+            )
+            record = {
+                "number": chapter.number,
+                "source_key": chapter.source_key,
+                "title": chapter.title,
+                "audio": chapter_mp3.relative_to(output_dir).as_posix(),
+                "timeline": timeline_relative,
+                "duration_ms": mp3_duration_ms,
+                "timeline_duration_ms": wav_duration_ms,
+                "size_bytes": chapter_mp3.stat().st_size,
+                "sha256": _sha256_file(chapter_mp3),
+                "segment_count": len(timeline_segments),
+            }
+            chapter_records.append(record)
+            output_files.append(chapter_mp3)
+            write_manifest("generating")
+            if progress:
+                progress.emit("chapter_completed", chapter_number=chapter.number, **record)
+
+        write_manifest("completed")
+        if progress:
+            progress.emit(
+                "completed",
+                manifest=manifest_path.name,
+                chapter_count=len(chapter_records),
+                duration_ms=sum(record["duration_ms"] for record in chapter_records),
+            )
+        return output_files
+    except GenerationCancelled:
+        write_manifest("cancelled")
+        if progress:
+            progress.emit("cancelled", retryable=True)
+        raise
+    except Exception as exc:
+        write_manifest("failed", error=str(exc))
+        if progress:
+            progress.emit("failed", code=type(exc).__name__, message=str(exc), retryable=True)
+        raise
 
 
 def convert_book(
@@ -522,14 +727,29 @@ def convert_book(
     *,
     engine: str = DEFAULT_ENGINE,
     chapters: str | None = None,
-    combine: bool = False,
     force: bool = False,
     csi_model: Path | None = None,
     synthesizer: Synthesizer | None = None,
+    progress: ProgressEmitter | None = None,
+    cancel_file: Path | None = None,
+    resume: bool = False,
 ) -> list[Path]:
     output_dir = output_dir.expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     script_path = output_dir / "book.script"
+    if progress:
+        progress.emit("phase_started", job_phase="INSPECTING")
+    check_cancelled(cancel_file)
     inspect_book(input_path, script_path, chapters=chapters, csi_model=csi_model)
+    check_cancelled(cancel_file)
     # inspect 已经裁剪过章节，generate 不应再次按原书总章号过滤。
-    return generate_audio(script_path, output_dir, engine=engine, combine=combine, force=force, synthesizer=synthesizer)
+    return generate_audio(
+        script_path,
+        output_dir,
+        engine=engine,
+        force=force,
+        synthesizer=synthesizer,
+        progress=progress,
+        cancel_file=cancel_file,
+        resume=resume,
+    )

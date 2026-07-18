@@ -56,6 +56,36 @@ class VoicebookScriptTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "不存在"):
                 parse_voicebook_script(path)
 
+    def test_locator_sidecar_round_trip_uses_text_fingerprint(self):
+        locator = {
+            "type": "epub-dom-text",
+            "href": "OPS/ch1.xhtml",
+            "element_id": "p1",
+            "dom_path": "html[1]/body[1]/p[1]",
+            "start_char": 0,
+            "end_char": 4,
+        }
+        value = VoicebookScript(
+            title="定位测试",
+            characters=[ScriptCharacter("旁白", "旁白", gender="男")],
+            chapters=[
+                ScriptChapter(
+                    1,
+                    "开始",
+                    [ScriptSegment("旁白", "天亮了。", locator)],
+                    source_key="OPS/ch1.xhtml#start",
+                )
+            ],
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "book.script"
+            write_voicebook_script(value, path)
+            parsed = parse_voicebook_script(path)
+
+            self.assertTrue((Path(directory) / "book.script.locators.json").is_file())
+            self.assertEqual(locator, parsed.chapters[0].segments[0].locator)
+            self.assertEqual("OPS/ch1.xhtml#start", parsed.chapters[0].source_key)
+
 
 if __name__ == "__main__":
     unittest.main()

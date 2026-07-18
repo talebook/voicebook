@@ -2029,19 +2029,21 @@ wheels = [
 
 [[package]]
 name = "voicebook-tool"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "edge-tts" },
-    { name = "huggingface-hub" },
     { name = "jieba" },
     { name = "pyyaml" },
     { name = "requests" },
-    { name = "torch" },
-    { name = "transformers" },
 ]
 
 [package.optional-dependencies]
+csi = [
+    { name = "huggingface-hub" },
+    { name = "torch" },
+    { name = "transformers" },
+]
 kokoro = [
     { name = "kokoro-onnx" },
 ]
@@ -2049,15 +2051,15 @@ kokoro = [
 [package.metadata]
 requires-dist = [
     { name = "edge-tts", specifier = ">=6.1" },
-    { name = "huggingface-hub", specifier = ">=1.8.0" },
+    { name = "huggingface-hub", marker = "extra == 'csi'", specifier = ">=1.8.0" },
     { name = "jieba", specifier = ">=0.42.1" },
     { name = "kokoro-onnx", marker = "extra == 'kokoro'" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.34.2" },
-    { name = "torch", specifier = ">=2.12.0" },
-    { name = "transformers", specifier = ">=5.10.2" },
+    { name = "torch", marker = "extra == 'csi'", specifier = ">=2.12.0" },
+    { name = "transformers", marker = "extra == 'csi'", specifier = ">=5.10.2" },
 ]
-provides-extras = ["kokoro"]
+provides-extras = ["csi", "kokoro"]
 
 [[package]]
 name = "yarl"

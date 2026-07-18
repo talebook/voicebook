@@ -20,6 +20,8 @@
 标签：无标签=旁白 [音]=拟声 [?]=未识别 [角色名]=对白 [角色名@变体]=该角色的年龄/状态变体
 """
 
+import hashlib
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -167,6 +169,7 @@ class ScriptCharacter:
 class ScriptSegment:
     tag: str
     text: str
+    locator: dict[str, Any] | None = None
 
     @property
     def character(self) -> str:
@@ -183,6 +186,7 @@ class ScriptChapter:
     title: str
     segments: list[ScriptSegment] = field(default_factory=list)
     volume: str | None = None
+    source_key: str = ""
 
 
 @dataclass
@@ -247,6 +251,16 @@ def write_voicebook_script(script: VoicebookScript, output: Path) -> Path:
         meta["封面"] = script.cover
     if script.protagonist_voices:
         meta["主角音"] = script.protagonist_voices
+    chapter_sources = {
+        str(chapter.number): chapter.source_key
+        for chapter in script.chapters
+        if chapter.source_key
+    }
+    if chapter_sources:
+        meta["章节来源"] = chapter_sources
+    locator_filename = f"{output.name}.locators.json"
+    if any(segment.locator for chapter in script.chapters for segment in chapter.segments):
+        meta["定位文件"] = locator_filename
     meta.update(script.extra_meta)
     yaml_text = yaml.safe_dump(meta, allow_unicode=True, sort_keys=False, default_flow_style=False).rstrip()
     lines = ["---", yaml_text, "---", "", "## 角色表", "# " + " | ".join(ROLE_COLUMNS)]
@@ -281,7 +295,63 @@ def write_voicebook_script(script: VoicebookScript, output: Path) -> Path:
     temporary = output.with_name(f".{output.name}.tmp")
     temporary.write_text("\n".join(lines), encoding="utf-8")
     temporary.replace(output)
+    if "定位文件" in meta:
+        write_voicebook_locators(script, output.parent / locator_filename)
     return output
+
+
+def _segment_locator_key(tag: str, text: str) -> str:
+    normalized = " ".join(text.split())
+    return hashlib.sha256(f"{tag}\0{normalized}".encode("utf-8")).hexdigest()
+
+
+def write_voicebook_locators(script: VoicebookScript, output: Path) -> Path:
+    entries = []
+    occurrences: dict[tuple[int, str], int] = {}
+    for chapter in script.chapters:
+        for segment in chapter.segments:
+            if not segment.locator:
+                continue
+            key = _segment_locator_key(segment.tag, segment.text)
+            occurrence_key = (chapter.number, key)
+            occurrence = occurrences.get(occurrence_key, 0)
+            occurrences[occurrence_key] = occurrence + 1
+            entries.append(
+                {
+                    "chapter_number": chapter.number,
+                    "segment_sha256": key,
+                    "occurrence": occurrence,
+                    "locator": segment.locator,
+                }
+            )
+    payload = {"format": "voicebook-locators", "version": 1, "segments": entries}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.with_name(f".{output.name}.tmp")
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporary.replace(output)
+    return output
+
+
+def _load_voicebook_locators(script: VoicebookScript, script_path: Path, filename: str) -> None:
+    candidate = (script_path.parent / filename).resolve()
+    root = script_path.parent.resolve()
+    if candidate.parent != root or not candidate.is_file():
+        return
+    payload = json.loads(candidate.read_text(encoding="utf-8"))
+    if payload.get("format") != "voicebook-locators" or payload.get("version") != 1:
+        raise ValueError("不支持的定位文件格式")
+    locators = {
+        (int(item["chapter_number"]), str(item["segment_sha256"]), int(item["occurrence"])): item["locator"]
+        for item in payload.get("segments", [])
+    }
+    occurrences: dict[tuple[int, str], int] = {}
+    for chapter in script.chapters:
+        for segment in chapter.segments:
+            key = _segment_locator_key(segment.tag, segment.text)
+            occurrence_key = (chapter.number, key)
+            occurrence = occurrences.get(occurrence_key, 0)
+            occurrences[occurrence_key] = occurrence + 1
+            segment.locator = locators.get((chapter.number, key, occurrence))
 
 
 def _read_front_matter(text: str) -> tuple[dict[str, Any], str]:
@@ -370,11 +440,18 @@ def parse_voicebook_script(path: Path) -> VoicebookScript:
         raise ValueError("book.script 的章节编号必须唯一且递增")
     if not any(chapter.segments for chapter in chapters):
         raise ValueError("book.script 没有可合成正文")
-    known = {"格式", "版本", "书名", "简介", "作者", "语言", "来源", "封面", "主角音"}
+    sources = meta.get("章节来源") or {}
+    if not isinstance(sources, dict):
+        raise ValueError("章节来源必须是映射")
+    for chapter in chapters:
+        chapter.source_key = str(sources.get(str(chapter.number), sources.get(chapter.number, "")))
+    known = {
+        "格式", "版本", "书名", "简介", "作者", "语言", "来源", "封面", "主角音", "章节来源", "定位文件"
+    }
     protagonists = meta.get("主角音") or {}
     if not isinstance(protagonists, dict):
         raise ValueError("主角音必须是按引擎分组的映射")
-    return VoicebookScript(
+    script = VoicebookScript(
         title=str(meta.get("书名") or path.stem),
         description=str(meta.get("简介") or ""),
         author=str(meta.get("作者") or ""),
@@ -386,3 +463,7 @@ def parse_voicebook_script(path: Path) -> VoicebookScript:
         chapters=chapters,
         extra_meta={key: value for key, value in meta.items() if key not in known},
     )
+    locator_filename = meta.get("定位文件")
+    if locator_filename:
+        _load_voicebook_locators(script, path, str(locator_filename))
+    return script
