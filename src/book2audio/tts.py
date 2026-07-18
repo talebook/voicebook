@@ -146,7 +146,8 @@ class QwenTTSClient:
                 delay = 2 ** attempt
             self.sleeper(min(max(delay, 0.0), 30.0))
 
-        raise QwenTTSAPIError(f"Qwen 合成失败（已尝试 {attempts} 次）") from last_error
+        detail = f"：{last_error}" if last_error else ""
+        raise QwenTTSAPIError(f"Qwen 合成失败（已尝试 {attempts} 次）{detail}") from last_error
 
     def synth_to_file(self, text: str, voice: str, out_path: Path) -> Path:
         audio = self.generate(text, voice)

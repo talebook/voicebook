@@ -183,36 +183,6 @@ wheels = [
 ]
 
 [[package]]
-name = "book2audio"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "edge-tts" },
-    { name = "huggingface-hub" },
-    { name = "jieba" },
-    { name = "requests" },
-    { name = "torch" },
-    { name = "transformers" },
-]
-
-[package.optional-dependencies]
-kokoro = [
-    { name = "kokoro-onnx" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "edge-tts", specifier = ">=6.1" },
-    { name = "huggingface-hub", specifier = ">=1.8.0" },
-    { name = "jieba", specifier = ">=0.42.1" },
-    { name = "kokoro-onnx", marker = "extra == 'kokoro'" },
-    { name = "requests", specifier = ">=2.34.2" },
-    { name = "torch", specifier = ">=2.12.0" },
-    { name = "transformers", specifier = ">=5.10.2" },
-]
-provides-extras = ["kokoro"]
-
-[[package]]
 name = "certifi"
 version = "2026.5.20"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
@@ -2056,6 +2026,38 @@ sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/53/0c/06f8b233b8fd13
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
 ]
+
+[[package]]
+name = "voicebook-tool"
+version = "0.2.0"
+source = { editable = "." }
+dependencies = [
+    { name = "edge-tts" },
+    { name = "huggingface-hub" },
+    { name = "jieba" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "torch" },
+    { name = "transformers" },
+]
+
+[package.optional-dependencies]
+kokoro = [
+    { name = "kokoro-onnx" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "edge-tts", specifier = ">=6.1" },
+    { name = "huggingface-hub", specifier = ">=1.8.0" },
+    { name = "jieba", specifier = ">=0.42.1" },
+    { name = "kokoro-onnx", marker = "extra == 'kokoro'" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "requests", specifier = ">=2.34.2" },
+    { name = "torch", specifier = ">=2.12.0" },
+    { name = "transformers", specifier = ">=5.10.2" },
+]
+provides-extras = ["kokoro"]
 
 [[package]]
 name = "yarl"
