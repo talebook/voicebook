@@ -1,6 +1,6 @@
 [project]
 name = "voicebook-tool"
-version = "0.3.0"
+version = "0.4.0"
 description = "将 EPUB/TXT 转换为多角色分章节 MP3 的命令行工具"
 requires-python = ">=3.11"
 dependencies = [
