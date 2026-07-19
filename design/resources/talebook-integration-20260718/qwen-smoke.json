@@ -1,0 +1,12 @@
+{
+  "tested_at": "2026-07-19T22:58:00+08:00",
+  "engine": "qwen3tts",
+  "endpoint": "https://qwen3ttsai.com/api/qwen3tts/generate",
+  "voice": "Neil",
+  "text": "这是音色预览可用性测试。",
+  "attempts": 1,
+  "success": false,
+  "http_status": 500,
+  "upstream_code": "Arrearage",
+  "conclusion": "外部 Qwen 账户欠费，未生成且未使用 EdgeTTS 伪装或回退。"
+}

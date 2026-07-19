@@ -1,0 +1,168 @@
+{
+  "format": "voicebook-voice-previews",
+  "generated_at": "2026-07-19T23:01:53+08:00",
+  "scene_count": 10,
+  "version": 1,
+  "voices": [
+    {
+      "audio": "edgetts/zh-CN-XiaoxiaoNeural.mp3",
+      "duration_ms": 54408,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "bd1aaa17710806da2cd2657ef4b54c524d67df517310e95a07c0742fe4afda71",
+      "size_bytes": 435936,
+      "voice_id": "zh-CN-XiaoxiaoNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-XiaoyiNeural.mp3",
+      "duration_ms": 51816,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "77ea35153413da18eb00163a53790b09f102cc89e5938e093e2e6e7c768408f4",
+      "size_bytes": 415198,
+      "voice_id": "zh-CN-XiaoyiNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-YunjianNeural.mp3",
+      "duration_ms": 54312,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "591d18979cb6056e5006bb20e2fcdcad2f6b36748c881941e6ebd6eb3e30b86f",
+      "size_bytes": 435167,
+      "voice_id": "zh-CN-YunjianNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-YunxiNeural.mp3",
+      "duration_ms": 52824,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "3064262e8bd8b43db22cc2aea84f63f7cdf3f069a41a094764a6ed5e62327a3f",
+      "size_bytes": 423261,
+      "voice_id": "zh-CN-YunxiNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-YunxiaNeural.mp3",
+      "duration_ms": 55848,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "8a7a5df5ed2fcad1db27347a39f13131ea662c70f596a7c9a0b6f6e5d4f7e056",
+      "size_bytes": 447454,
+      "voice_id": "zh-CN-YunxiaNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-YunyangNeural.mp3",
+      "duration_ms": 50976,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "70e694b680dd154345acc99db783c5e5de2f14014e152b4185021191ac94f0ce",
+      "size_bytes": 408479,
+      "voice_id": "zh-CN-YunyangNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-liaoning-XiaobeiNeural.mp3",
+      "duration_ms": 56256,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "4ee285f3b6a17e91a2b96ab7662813db93ce51bf6e74df1673929cf696c140ae",
+      "size_bytes": 450728,
+      "voice_id": "zh-CN-liaoning-XiaobeiNeural"
+    },
+    {
+      "audio": "edgetts/zh-CN-shaanxi-XiaoniNeural.mp3",
+      "duration_ms": 57696,
+      "engine": "edgetts",
+      "scenes": [
+        "narration",
+        "daily",
+        "joy",
+        "anger",
+        "sadness",
+        "fear",
+        "whisper",
+        "urgent",
+        "authority",
+        "tenderness"
+      ],
+      "sha256": "4ea0dd9af83ebb11d43aea9f40f988a02248dcc4edaef95a3bb283c4a38a0972",
+      "size_bytes": 462246,
+      "voice_id": "zh-CN-shaanxi-XiaoniNeural"
+    }
+  ]
+}

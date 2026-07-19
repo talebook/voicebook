@@ -63,6 +63,15 @@ voicebook-tool models download csi
 
 > 隐私提示：`qwen3tts` 和 `edgetts` 都是云端服务，生成时会把所选章节正文发送给对应第三方 TTS 服务。
 
+## 音色试听
+
+```bash
+voicebook-tool voices --engine edgetts
+voicebook-tool voices --format json --include-paths
+```
+
+安装包内预置 8 个 EdgeTTS 中文音色的试听 MP3，每个音频依次覆盖旁白、日常、喜悦、愤怒、悲伤、恐惧、低语、急切、威严和温柔 10 种场景。Qwen 目录仍会完整列出 49 个音色，但只有真实生成成功的资产才会标记为可试听；服务失败时不会用其他引擎冒充。
+
 ## book.script
 
 脚本使用中文 YAML front matter、中文角色表和显式正文标签：
