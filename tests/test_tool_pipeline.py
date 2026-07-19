@@ -1,4 +1,5 @@
 import json
+import io
 import shutil
 import subprocess
 import tempfile
@@ -11,6 +12,7 @@ from book2audio.script import (
     parse_voicebook_script, write_voicebook_script,
 )
 from book2audio.tool_pipeline import generate_audio
+from book2audio.machine import GenerationCancelled, ProgressEmitter
 
 
 class FakeSynthesizer:
@@ -51,7 +53,7 @@ class ToolPipelineTests(unittest.TestCase):
         )
         write_voicebook_script(script, path)
 
-    def test_generates_chapter_mp3_manifest_and_reuses_segment_cache(self):
+    def test_generates_v2_manifest_timeline_and_reuses_segment_cache(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             script = root / "book.script"
@@ -60,8 +62,16 @@ class ToolPipelineTests(unittest.TestCase):
             fake = FakeSynthesizer()
             files = generate_audio(script, output, engine="qwen3tts", synthesizer=fake)
             first_call_count = len(fake.calls)
-            generate_audio(script, output, engine="qwen3tts", synthesizer=fake)
-            manifest = json.loads((output / ".voicebook/manifest.json").read_text(encoding="utf-8"))
+            events = io.StringIO()
+            generate_audio(
+                script,
+                output,
+                engine="qwen3tts",
+                synthesizer=fake,
+                progress=ProgressEmitter(events),
+            )
+            manifest = json.loads((output / "manifest.v2.json").read_text(encoding="utf-8"))
+            timeline = json.loads((output / "timelines/0001.json").read_text(encoding="utf-8"))
 
             self.assertEqual(1, len(files))
             self.assertTrue(files[0].is_file())
@@ -74,7 +84,13 @@ class ToolPipelineTests(unittest.TestCase):
             self.assertEqual(("第一章", "测试书", "作者"), (tags["title"], tags["album"], tags["artist"]))
             self.assertEqual(3, first_call_count)  # 标题 + 旁白 + 对白
             self.assertEqual(first_call_count, len(fake.calls))
-            self.assertTrue(all(segment["缓存命中"] for segment in manifest["片段"]))
+            self.assertEqual(("voicebook-project", 2, "completed"), (manifest["format"], manifest["version"], manifest["status"]))
+            self.assertEqual("chapters/0001.mp3", manifest["chapters"][0]["audio"])
+            self.assertEqual(("voicebook-timeline", 1, 2), (timeline["format"], timeline["version"], len(timeline["segments"])))
+            self.assertGreaterEqual(timeline["segments"][0]["start_ms"], 900)
+            event_rows = [json.loads(line) for line in events.getvalue().splitlines()]
+            completed = [row for row in event_rows if row["event"] == "segment_completed"]
+            self.assertTrue(completed and all(row["cache_hit"] for row in completed))
 
     def test_default_engine_is_edgetts(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -85,9 +101,9 @@ class ToolPipelineTests(unittest.TestCase):
             fake = FakeSynthesizer()
 
             generate_audio(script, output, synthesizer=fake)
-            manifest = json.loads((output / ".voicebook/manifest.json").read_text(encoding="utf-8"))
+            manifest = json.loads((output / "manifest.v2.json").read_text(encoding="utf-8"))
 
-            self.assertEqual("edgetts", manifest["引擎"])
+            self.assertEqual("edgetts", manifest["engine"])
             self.assertTrue(fake.calls)
             self.assertTrue(all(call[2] == "edgetts" for call in fake.calls))
 
@@ -129,6 +145,38 @@ class ToolPipelineTests(unittest.TestCase):
             fake = FakeSynthesizer()
             generate_audio(script_path, root / "out", synthesizer=fake)
             self.assertNotIn("。……", [call[0] for call in fake.calls])
+
+    def test_cancel_file_stops_before_synthesis_and_writes_cancelled_manifest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / "book.script"
+            output = root / "out"
+            cancel = root / "cancel"
+            cancel.write_text("1", encoding="utf-8")
+            self._script(script)
+            fake = FakeSynthesizer()
+
+            with self.assertRaises(GenerationCancelled):
+                generate_audio(script, output, synthesizer=fake, cancel_file=cancel)
+
+            manifest = json.loads((output / "manifest.v2.json").read_text(encoding="utf-8"))
+            self.assertEqual("cancelled", manifest["status"])
+            self.assertEqual([], fake.calls)
+
+    def test_resume_skips_verified_completed_chapter(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / "book.script"
+            output = root / "out"
+            self._script(script)
+            first = FakeSynthesizer()
+            generate_audio(script, output, synthesizer=first)
+            second = FakeSynthesizer()
+
+            files = generate_audio(script, output, synthesizer=second, resume=True)
+
+            self.assertEqual([], second.calls)
+            self.assertEqual([(output / "chapters/0001.mp3").resolve()], files)
 
 
 if __name__ == "__main__":

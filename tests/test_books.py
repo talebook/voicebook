@@ -66,6 +66,9 @@ class EpubBookTests(unittest.TestCase):
         self.assertEqual(("测试书", "作者甲"), (book.title, book.author))
         self.assertEqual(["第一章 开始", "第二章 继续"], [chapter.title for chapter in book.chapters])
         self.assertEqual(b"fake-cover", book.cover_data)
+        self.assertEqual("OPS/ch1.xhtml", book.chapters[0].paragraphs[0].locator["href"])
+        self.assertEqual("p[1]", book.chapters[0].paragraphs[0].locator["dom_path"].split("/")[-1])
+        self.assertTrue(book.chapters[0].source_key.startswith("OPS/ch1.xhtml#"))
 
 
 if __name__ == "__main__":

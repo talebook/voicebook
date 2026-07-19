@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-07-19T23:01:53+08:00",
+  "requested_engines": [
+    "edgetts"
+  ],
+  "generated_voice_count": 8,
+  "scene_count_per_voice": 10,
+  "failures": [],
+  "catalog": "/Users/bytedance/github/voicebook/.worktrees/feat-20260718-talebook-integration/src/book2audio/assets/voice-previews/catalog.json"
+}
