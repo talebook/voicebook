@@ -11,6 +11,18 @@ from book2audio.machine import GenerationCancelled
 
 
 class CliTests(unittest.TestCase):
+    def test_version_comes_from_installed_package_metadata(self):
+        stdout = io.StringIO()
+        with (
+            patch("book2audio.cli.package_version", return_value="9.8.7"),
+            redirect_stdout(stdout),
+            self.assertRaises(SystemExit) as raised,
+        ):
+            build_parser().parse_args(["--version"])
+
+        self.assertEqual(0, raised.exception.code)
+        self.assertEqual("voicebook-tool 9.8.7\n", stdout.getvalue())
+
     def test_generate_and_convert_default_to_edgetts(self):
         parser = build_parser()
         generate = parser.parse_args(["generate", "book.script", "-o", "output"])

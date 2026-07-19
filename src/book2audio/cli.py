@@ -6,6 +6,7 @@ import argparse
 import json
 import subprocess
 import sys
+from importlib.metadata import PackageNotFoundError, version as package_version
 from pathlib import Path
 
 from .machine import GenerationCancelled, ProgressEmitter, check_cancelled
@@ -20,12 +21,19 @@ def _existing_csi(value: str | None) -> Path | None:
     return default if default.exists() else None
 
 
+def _installed_version() -> str:
+    try:
+        return package_version("voicebook-tool")
+    except PackageNotFoundError:
+        return "0+unknown"
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="voicebook-tool",
         description="将 EPUB/TXT 转换为多角色分章节 MP3",
     )
-    parser.add_argument("--version", action="version", version="voicebook-tool 0.3.0")
+    parser.add_argument("--version", action="version", version=f"voicebook-tool {_installed_version()}")
     subcommands = parser.add_subparsers(dest="command", required=True)
 
     inspect_parser = subcommands.add_parser("inspect", help="识别书籍并生成可编辑的 book.script")
