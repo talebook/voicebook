@@ -25,6 +25,24 @@ uv tool install .
 voicebook-tool --version
 ```
 
+发布到 PyPI 后，可直接安装：
+
+```bash
+uv tool install voicebook-tool
+voicebook-tool --help
+```
+
+## 发布
+
+本项目使用 Hatchling 构建标准的 Python sdist 与 wheel。发布前在干净的工作区执行：
+
+```bash
+uv build
+uvx twine check dist/*
+```
+
+推送版本标签并在 GitHub 创建对应 Release 后，`.github/workflows/publish.yml` 会通过 PyPI Trusted Publishing 上传构件。首次发布前，需要在 PyPI 为 `voicebook-tool` 配置该仓库的 trusted publisher；仓库尚未声明许可证，请在公开发布前补充适用的 `LICENSE` 文件。
+
 ## 使用
 
 先识别、人工检查脚本，再生成音频：
