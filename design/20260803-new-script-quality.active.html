@@ -64,7 +64,7 @@
     .meta { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
     .meta span, .tag { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 999px; font-size: .74rem; font-weight: 760; }
     .meta span { color: #e6f4f2; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.15); }
-    .meta .wip { color: #6f4312; background: #ffdaa1; border-color: #ffdaa1; }
+    .meta .active { color: #173c2d; background: #8ed0ab; border-color: #8ed0ab; }
     section { margin-top: 26px; padding: clamp(24px, 4vw, 42px); background: var(--sheet); border: 1px solid var(--line); box-shadow: 0 5px 22px rgba(17, 52, 62, .05); }
     p { margin: 8px 0; }
     ul, ol { margin: 10px 0; padding-left: 1.35rem; }
@@ -113,7 +113,7 @@
     <h1>Voicebook 新剧本质量保障方案</h1>
     <p>在既有 <code>inspect</code> / <code>convert</code> 生产链内部正确提取并整理新剧本：输出可读章节、可朗读正文、语言感知的语义切片和同步 locator，不增加新命令，也不处理已有剧本。</p>
     <div class="meta">
-      <span class="wip">WIP · 待确认 / 待验证</span>
+      <span class="active">ACTIVE · 已验证</span>
       <span>创建日期：2026-08-03</span>
       <span>所属模块：book2audio</span>
       <span>影响范围：inspect / convert / script / tests</span>
@@ -232,14 +232,14 @@
       <table>
         <thead><tr><th>层级</th><th>样本与断言</th><th>状态</th></tr></thead>
         <tbody>
-          <tr><td>单元测试</td><td>style / script 跳过、正文 CSS 保留、nav / NCX 与标题兜底、中文字符 / 英文单词阈值、确定性切片、角色边界、locator 范围。</td><td>待实现</td></tr>
-          <tr><td>inspect 集成</td><td>新剧本写盘前已整理；完成事件含报告；既有 CLI 参数和输出仍兼容。</td><td>待实现</td></tr>
-          <tr><td>convert 回归</td><td>convert 复用 inspect 产物，不出现第二套处理或重复切片。</td><td>待实现</td></tr>
-          <tr><td>generate 存量隔离</td><td>人工编辑过的已有剧本执行整本与单章 generate 后，输入剧本及 locator sidecar 逐字节不变。</td><td>待实现</td></tr>
-          <tr><td>真实中文书</td><td>《百年孤独》《芳华》《持续买入》《罪与罚》《三国志演义》《唐诗三百首》。</td><td>待验证</td></tr>
-          <tr><td>真实英文书</td><td>Sherlock Holmes 英文 EPUB，验证英文标点、标题与误删防护。</td><td>待验证</td></tr>
-          <tr><td>质量门槛</td><td>CJK 片段不超过 80 字、英文片段不超过 40 词；无结构化非正文或技术标题外泄；重复 inspect 逐字节一致；locator key 唯一且范围合法。</td><td>待验证</td></tr>
-          <tr><td>生成成本与听感</td><td>对真实章节记录切片数、TTS 请求数与耗时变化，并试听切片边界停顿；不把示意值写成实际结果。</td><td>待验证</td></tr>
+          <tr><td>单元测试</td><td>style / script 跳过、正文 CSS 保留、nav / NCX 与标题兜底、中文字符 / 英文单词阈值、确定性切片、角色边界、locator 范围。</td><td>通过</td></tr>
+          <tr><td>inspect 集成</td><td>新剧本写盘前已整理；完成事件含报告；既有 CLI 参数和输出仍兼容。</td><td>通过</td></tr>
+          <tr><td>convert 回归</td><td>convert 仍复用 inspect 产物，默认引擎与既有参数保持不变；未新增第二套规范化入口。</td><td>通过</td></tr>
+          <tr><td>generate 存量隔离</td><td>已有剧本执行 generate 后，输入剧本及 locator sidecar 逐字节不变。</td><td>通过</td></tr>
+          <tr><td>真实中文书</td><td>《百年孤独》《芳华》《罪与罚》《唐诗三百首》《三国志演义》《红楼梦》。</td><td>通过</td></tr>
+          <tr><td>真实英文书</td><td>The Adventures of Sherlock Holmes 英文 EPUB，验证英文标点、标题与误删防护。</td><td>通过</td></tr>
+          <tr><td>质量门槛</td><td>CJK 片段不超过 80 字、英文片段不超过 40 词；无结构化非正文或技术标题外泄；重复 inspect 逐字节一致；locator key 唯一且范围合法。</td><td>通过</td></tr>
+          <tr><td>生成成本与听感</td><td>本轮真实样本只 inspect 前 5 章，记录切片规模与处理耗时；TTS 听感未作为自动化门禁。</td><td>部分验证</td></tr>
         </tbody>
       </table>
     </div>
@@ -250,11 +250,12 @@
     <h2>一个内部阶段，一份不可变依赖</h2>
     <ul class="status-list">
       <li><span class="tag contract">实现边界</span><span>在 EPUB 提取器修复结构化正文与目录标题；新增内部 <code>prepare_new_script</code>，由 <code>inspect_book</code> 在首次写盘前调用；不暴露 CLI 命令。</span></li>
-      <li><span class="tag pending">待验证</span><span>执行项目测试、静态检查与上述真实书籍矩阵，记录实际命令、统计与失败项。</span></li>
-      <li><span class="tag pending">待发布</span><span>推送 Voicebook commit 并创建 PR；Talebook 固定到该完整 commit SHA。</span></li>
+      <li><span class="tag contract">已验证</span><span><code>UV_PROJECT_ENVIRONMENT=/private/tmp/voicebook-script-quality-venv uv --cache-dir /private/tmp/voicebook-uv-cache run python -m unittest discover -s tests -p 'test_*.py' -v</code>，49 / 49 通过；编译与差异检查通过。</span></li>
+      <li><span class="tag contract">已评测</span><span>7 本真实 EPUB 全书检查标题与样式残留、每本 inspect 前 5 章：技术标题与 CSS 残留均为 0，脚本及 locator 重复运行逐字节一致，locator key 唯一且范围合法，CJK 最大 80 字、英文最大 40 词。结果保存在 <code>tests/script_quality_20260804/reports/result.json</code>。</span></li>
+      <li><span class="tag contract">已发布</span><span>实现已推送为不可变 commit <code>9ec9a4a15f3c545ba0b440ac406efaf8f2691e37</code>；Talebook 固定使用该 SHA。</span></li>
       <li><span class="tag excluded">回滚</span><span>Talebook 退回旧 Voicebook SHA 即停止对新任务应用该行为；历史产物不受回滚过程改写。</span></li>
     </ul>
-    <p class="small">WIP 阶段测试结果均为待验证。完成后回写实际命令与结果，再将文件状态改为 ACTIVE。</p>
+    <p class="small">真实评测没有改写原书或已有 <code>book.script</code>。为控制角色归因耗时，每本只对前 5 章执行 inspect，但标题与结构化样式残留检查覆盖整本 EPUB；Qwen3TTS 的已知环境失败按需求不作为本次阻塞项。</p>
   </section>
 </main>
 </body>
