@@ -178,6 +178,31 @@ class ToolPipelineTests(unittest.TestCase):
             self.assertEqual([], second.calls)
             self.assertEqual([(output / "chapters/0001.mp3").resolve()], files)
 
+    def test_generate_never_rewrites_existing_script_or_locators(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / "book.script"
+            self._script(script, "人工编辑后的长对白。" * 20)
+            parsed = parse_voicebook_script(script)
+            for index, segment in enumerate(parsed.chapters[0].segments):
+                segment.locator = {
+                    "type": "epub-dom-text",
+                    "href": "chapter.xhtml",
+                    "dom_path": f"p[{index + 1}]",
+                    "start_char": 0,
+                    "end_char": len(segment.text),
+                }
+            write_voicebook_script(parsed, script)
+            locator = root / "book.script.locators.json"
+            self.assertTrue(locator.is_file())
+            script_before = script.read_bytes()
+            locator_before = locator.read_bytes()
+
+            generate_audio(script, root / "out", synthesizer=FakeSynthesizer())
+
+            self.assertEqual(script_before, script.read_bytes())
+            self.assertEqual(locator_before, locator.read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()

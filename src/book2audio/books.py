@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import html
+import posixpath
 import re
 import zipfile
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 from typing import Iterable
+from urllib.parse import unquote, urldefrag
 from xml.etree import ElementTree as ET
 
 
@@ -45,11 +47,13 @@ class BookDocument:
     cover_data: bytes | None = None
     cover_suffix: str = ".jpg"
     warnings: list[str] = field(default_factory=list)
+    quality_report: dict[str, int] = field(default_factory=dict)
 
 
 class _HTMLTextExtractor(HTMLParser):
     BLOCKS = {"p", "div", "br", "li", "blockquote", "h1", "h2", "h3", "h4"}
     VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+    NONCONTENT_TAGS = {"head", "script", "style", "template", "noscript", "svg", "canvas", "iframe"}
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -61,6 +65,24 @@ class _HTMLTextExtractor(HTMLParser):
         self._stack: list[tuple[str, str]] = []
         self._sibling_counts: list[dict[str, int]] = [{}]
         self._captures: list[dict[str, object]] = []
+        self._ignored_depth = 0
+        self.ignored_blocks = 0
+
+    @staticmethod
+    def _is_hidden(attributes: dict[str, str | None]) -> bool:
+        if "hidden" in attributes or str(attributes.get("aria-hidden", "")).lower() == "true":
+            return True
+        style = str(attributes.get("style", ""))
+        return bool(re.search(r"(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden)\s*(?:;|$)", style, re.I))
+
+    def _pop_stack(self, tag: str) -> None:
+        if not self._stack:
+            return
+        while self._stack:
+            opened, _ = self._stack.pop()
+            self._sibling_counts.pop()
+            if opened == tag:
+                break
 
     def handle_starttag(self, tag: str, attrs) -> None:
         tag = tag.lower()
@@ -71,6 +93,13 @@ class _HTMLTextExtractor(HTMLParser):
         if tag not in self.VOID_TAGS:
             self._stack.append((tag, f"{tag}[{counts[tag]}]"))
             self._sibling_counts.append({})
+        ignored = self._ignored_depth > 0 or tag in self.NONCONTENT_TAGS or self._is_hidden(attributes)
+        if ignored:
+            if self._ignored_depth == 0:
+                self.ignored_blocks += 1
+            if tag not in self.VOID_TAGS:
+                self._ignored_depth += 1
+            return
         if tag not in self.VOID_TAGS and tag in {"p", "li", "blockquote", "h1", "h2", "h3", "h4"}:
             self._captures.append({"tag": tag, "id": attributes.get("id", ""), "path": path, "parts": []})
         if tag in self.BLOCKS:
@@ -81,6 +110,11 @@ class _HTMLTextExtractor(HTMLParser):
 
     def handle_endtag(self, tag: str) -> None:
         tag = tag.lower()
+        if self._ignored_depth:
+            if tag not in self.VOID_TAGS:
+                self._ignored_depth -= 1
+                self._pop_stack(tag)
+            return
         if tag in self.BLOCKS:
             self.parts.append("\n")
         if tag in self.VOID_TAGS:
@@ -95,12 +129,7 @@ class _HTMLTextExtractor(HTMLParser):
             text = _clean_line("".join(capture["parts"]))
             if text:
                 self.blocks.append((tag, text, str(capture["id"]), str(capture["path"])))
-        if self._stack:
-            while self._stack:
-                opened, _ = self._stack.pop()
-                self._sibling_counts.pop()
-                if opened == tag:
-                    break
+        self._pop_stack(tag)
 
     def handle_startendtag(self, tag: str, attrs) -> None:
         self.handle_starttag(tag, attrs)
@@ -108,6 +137,8 @@ class _HTMLTextExtractor(HTMLParser):
             self.handle_endtag(tag)
 
     def handle_data(self, data: str) -> None:
+        if self._ignored_depth:
+            return
         self.parts.append(data)
         for capture in self._captures:
             capture["parts"].append(data)
@@ -133,13 +164,14 @@ def _decode_text(data: bytes) -> tuple[str, str]:
     raise ValueError("TXT 编码无法识别：仅支持 UTF-8/UTF-8 BOM/GB18030")
 
 
-NUM = r"[0-9０-９一二三四五六七八九十百千万零〇两壹贰叁肆伍陆柒捌玖拾佰仟]+"
+NUM_CHAR = r"[0-9０-９一二三四五六七八九十百千万零〇两壹贰叁肆伍陆柒捌玖拾佰仟]"
+NUM = rf"{NUM_CHAR}(?:\s*{NUM_CHAR})*"
 VOLUME_RE = re.compile(
     rf"^(?:第\s*{NUM}\s*(?:卷|部|篇)|(?:上|中|下|前|后|终)\s*(?:卷|部|篇)|卷\s*{NUM})(?:[　 :：·、-]*.{{0,50}})?$",
     re.I,
 )
 CHAPTER_RE = re.compile(
-    rf"^(?:第\s*{NUM}\s*(?:章|节|回|幕|集)|(?:章|节|回)\s*{NUM})(?:[　 :：·、-]*.{{0,55}})?$",
+    rf"^(?:第\s*{NUM}\s*(?:章|节|回|幕|集)|{NUM}\s*章|(?:章|节|回)\s*{NUM})(?:[　 :：·、-]*.{{0,55}})?$",
     re.I,
 )
 COMBINED_RE = re.compile(
@@ -147,16 +179,22 @@ COMBINED_RE = re.compile(
     re.I,
 )
 SPECIAL_RE = re.compile(
-    r"^(?:序章|序幕|楔子|引子|前言|尾声|终章|后记|番外(?:篇|章)?(?:[一二三四五六七八九十\d]+)?|大结局)(?:[　 :：·、-]*.{0,50})?$",
+    r"^(?:序章|序幕|楔子|引子|前言|尾声|终章|后记|译后记|番外(?:篇|章)?(?:[一二三四五六七八九十\d]+)?|大结局)(?:[　 :：·、-]*.{0,50})?$",
     re.I,
 )
 ENGLISH_CHAPTER_RE = re.compile(r"^chapter\s+[0-9ivxlcdm]+(?:\s*[:.\-]\s*.{0,50})?$", re.I)
 DIRECTIVE_RE = re.compile(r"^#@(?P<kind>chapter|section)\s*:\s*(?P<title>.+)$", re.I)
 BAD_HEADING_PUNCTUATION = re.compile(r"[。！？!?；;，,]$")
+WORK_TITLE_RE = re.compile(r"^《[^》\n]{1,70}》$")
+AUTHOR_LINE_RE = re.compile(r"^作者\s*[:：]")
+
+
+def _heading_text(line: str) -> str:
+    return _clean_line(line).lstrip(">》 ")
 
 
 def _heading_kind(line: str) -> str | None:
-    stripped = _clean_line(line)
+    stripped = _heading_text(line)
     if not stripped or len(stripped) > MAX_HEADING_CHARS:
         return None
     directive = DIRECTIVE_RE.match(stripped)
@@ -171,6 +209,27 @@ def _heading_kind(line: str) -> str | None:
     if CHAPTER_RE.match(stripped) or SPECIAL_RE.match(stripped) or ENGLISH_CHAPTER_RE.match(stripped):
         return "chapter"
     return None
+
+
+def _epub_heading_indices(lines: list[str]) -> list[tuple[int, str]]:
+    indices: list[tuple[int, str]] = []
+    for index, line in enumerate(lines):
+        title = _heading_text(line)
+        if _heading_kind(title) in {"chapter", "combined"}:
+            indices.append((index, title))
+            continue
+        if WORK_TITLE_RE.fullmatch(title) and index + 1 < len(lines) and AUTHOR_LINE_RE.match(lines[index + 1]):
+            indices.append((index, title))
+    return indices
+
+
+def _short_front_title(lines: list[str]) -> str:
+    if not lines:
+        return ""
+    value = _heading_text(lines[0])
+    if not value or len(value) > 40 or BAD_HEADING_PUNCTUATION.search(value):
+        return ""
+    return value
 
 
 def _normalize_txt_body(lines: Iterable[str]) -> str:
@@ -330,24 +389,118 @@ def _first_text(root: ET.Element, local_name: str) -> str:
 
 
 def _resolve(base: str, href: str) -> str:
-    return str(PurePosixPath(base).joinpath(href))
+    path, _ = urldefrag(unquote(href))
+    return posixpath.normpath(posixpath.join(base, path))
 
 
-def _epub_sections(raw_html: bytes, fallback_title: str, href: str) -> list[tuple[str, str, str, list[BookParagraph]]]:
+def _navigation_target(base: str, href: str) -> str:
+    path, fragment = urldefrag(unquote(href))
+    resolved = posixpath.normpath(posixpath.join(base, path))
+    return f"{resolved}#{fragment}" if fragment else resolved
+
+
+def _node_text(node: ET.Element) -> str:
+    return _clean_line("".join(node.itertext()))
+
+
+def _epub_navigation_titles(
+    archive: zipfile.ZipFile,
+    members: dict[str, zipfile.ZipInfo],
+    manifest: dict[str, tuple[str, str, str]],
+    opf_dir: str,
+) -> dict[str, str]:
+    titles: dict[str, str] = {}
+    for href, media_type, properties in manifest.values():
+        if "nav" not in properties.split() and media_type != "application/x-dtbncx+xml":
+            continue
+        item_path = _resolve(opf_dir, href)
+        if item_path not in members:
+            continue
+        try:
+            root = ET.fromstring(archive.read(item_path))
+        except ET.ParseError:
+            continue
+        base = posixpath.dirname(item_path)
+        if "nav" in properties.split():
+            for node in root.iter():
+                if _local_name(node.tag) != "a" or not node.attrib.get("href"):
+                    continue
+                title = _node_text(node)
+                if title:
+                    titles.setdefault(_navigation_target(base, node.attrib["href"]), title)
+            continue
+        for nav_point in root.iter():
+            if _local_name(nav_point.tag) != "navPoint":
+                continue
+            title = next(
+                (_node_text(node) for node in nav_point.iter() if _local_name(node.tag) == "text" and _node_text(node)),
+                "",
+            )
+            source = next(
+                (node.attrib.get("src", "") for node in nav_point.iter() if _local_name(node.tag) == "content"),
+                "",
+            )
+            if title and source:
+                titles.setdefault(_navigation_target(base, source), title)
+    return titles
+
+
+TECHNICAL_EPUB_TITLE = re.compile(
+    r"^(?:titlepage|cover(?:page)?|index(?:_split)?[_-]?\d+|chapter[_-]?\d+|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$",
+    re.I,
+)
+
+
+def _technical_epub_title(value: str) -> bool:
+    return bool(TECHNICAL_EPUB_TITLE.fullmatch(_clean_line(value)))
+
+
+def _navigation_title(titles: dict[str, str], href: str, source_key: str, *, single_section: bool) -> str:
+    if source_key in titles:
+        return titles[source_key]
+    if not single_section:
+        return ""
+    if href in titles:
+        return titles[href]
+    prefix = f"{href}#"
+    return next((title for target, title in titles.items() if target.startswith(prefix)), "")
+
+
+def _epub_sections(
+    raw_html: bytes,
+    fallback_title: str,
+    href: str,
+    quality_report: dict[str, int] | None = None,
+) -> list[tuple[str, str, str, list[BookParagraph]]]:
     parser = _HTMLTextExtractor()
     parser.feed(raw_html.decode("utf-8", errors="replace"))
+    if quality_report is not None:
+        quality_report["removed_noncontent_block_count"] = (
+            quality_report.get("removed_noncontent_block_count", 0) + parser.ignored_blocks
+        )
     text = parser.text()
     if not text:
         return []
     lines = text.splitlines()
-    indices = [(i, line) for i, line in enumerate(lines) if _heading_kind(line) in {"chapter", "combined"}]
+    indices = _epub_heading_indices(lines)
     if len(indices) <= 1:
-        title = indices[0][1] if indices else (parser.headings[0][1] if parser.headings else fallback_title)
+        remove_title_block = False
+        if indices:
+            title = indices[0][1]
+        elif parser.headings:
+            title = _heading_text(parser.headings[0][1])
+        else:
+            title = fallback_title
+            if _technical_epub_title(title):
+                inferred = _short_front_title(lines)
+                if inferred:
+                    title = inferred
+                    remove_title_block = True
         if indices and indices[0][0] == 0:
             text = "\n".join(lines[1:]).strip()
         paragraphs = []
         for tag, block_text, element_id, dom_path in parser.blocks:
-            if tag.startswith("h") and block_text == title:
+            if block_text == title and (tag.startswith("h") or _heading_kind(block_text) or remove_title_block):
                 continue
             paragraphs.append(
                 BookParagraph(
@@ -371,7 +524,13 @@ def _epub_sections(raw_html: bytes, fallback_title: str, href: str) -> list[tupl
     block_headings = [
         (index, block)
         for index, block in enumerate(parser.blocks)
-        if block[0].startswith("h") and _heading_kind(block[1]) in {"chapter", "combined"}
+        if (
+            block[0].startswith("h") and _heading_kind(block[1]) in {"chapter", "combined"}
+        ) or (
+            WORK_TITLE_RE.fullmatch(_heading_text(block[1]))
+            and index + 1 < len(parser.blocks)
+            and AUTHOR_LINE_RE.match(parser.blocks[index + 1][1])
+        )
     ]
     if len(block_headings) == len(indices):
         for pos, (index, heading) in enumerate(block_headings):
@@ -392,7 +551,7 @@ def _epub_sections(raw_html: bytes, fallback_title: str, href: str) -> list[tupl
             body = "\n".join(paragraph.text for paragraph in paragraphs).strip()
             if body:
                 anchor = heading[2] or f"chapter-{pos + 1}"
-                sections.append((heading[1], body, f"{href}#{anchor}", paragraphs))
+                sections.append((_heading_text(heading[1]), body, f"{href}#{anchor}", paragraphs))
         return sections
     for pos, (index, title) in enumerate(indices):
         end = indices[pos + 1][0] if pos + 1 < len(indices) else len(lines)
@@ -442,6 +601,7 @@ def read_epub(path: Path) -> BookDocument:
             (node.attrib.get("idref", ""), node.attrib.get("linear", "yes").lower())
             for node in opf.iter() if _local_name(node.tag) == "itemref"
         ]
+        navigation_titles = _epub_navigation_titles(archive, members, manifest, opf_dir)
 
         cover_item = next((item for item in manifest.values() if "cover-image" in item[2]), None)
         if cover_item is None and cover_id:
@@ -455,6 +615,11 @@ def read_epub(path: Path) -> BookDocument:
                 cover_suffix = Path(cover_item[0]).suffix.lower() or ".jpg"
 
         chapters: list[BookChapter] = []
+        quality_report = {
+            "removed_chapter_count": 0,
+            "renamed_chapter_count": 0,
+            "removed_noncontent_block_count": 0,
+        }
         for idref, linear in spine:
             item = manifest.get(idref)
             if (
@@ -468,9 +633,24 @@ def read_epub(path: Path) -> BookDocument:
             if item_path not in members:
                 continue
             fallback = Path(item[0]).stem
-            for section_title, content, source_key, paragraphs in _epub_sections(
-                archive.read(item_path), fallback, item_path
-            ):
+            sections = _epub_sections(archive.read(item_path), fallback, item_path, quality_report)
+            if not sections:
+                quality_report["removed_chapter_count"] += 1
+                continue
+            for section_title, content, source_key, paragraphs in sections:
+                original_title = section_title
+                navigation_title = _navigation_title(
+                    navigation_titles,
+                    item_path,
+                    source_key,
+                    single_section=len(sections) == 1,
+                )
+                if navigation_title:
+                    section_title = navigation_title
+                if _technical_epub_title(section_title):
+                    section_title = f"未命名章节 {len(chapters) + 1}"
+                if section_title != original_title:
+                    quality_report["renamed_chapter_count"] += 1
                 chapters.append(
                     BookChapter(
                         len(chapters) + 1,
@@ -482,6 +662,8 @@ def read_epub(path: Path) -> BookDocument:
                 )
         if not chapters:
             raise ValueError("EPUB spine 中没有可用正文")
+        quality_report["chapters_before"] = len(chapters) + quality_report["removed_chapter_count"]
+        quality_report["chapters_after"] = len(chapters)
         return BookDocument(
             title=title,
             author=author,
@@ -491,6 +673,7 @@ def read_epub(path: Path) -> BookDocument:
             chapters=chapters,
             cover_data=cover_data,
             cover_suffix=cover_suffix,
+            quality_report=quality_report,
         )
 
 

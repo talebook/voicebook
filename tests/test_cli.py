@@ -47,7 +47,11 @@ class CliTests(unittest.TestCase):
 
     def test_inspect_reports_result(self):
         stdout = io.StringIO()
-        fake_script = type("Result", (), {"chapters": [1, 2], "characters": ["旁白", "甲"]})()
+        fake_script = type(
+            "Result",
+            (),
+            {"chapters": [1, 2], "characters": ["旁白", "甲"], "quality_report": {"version": 1}},
+        )()
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "book.script"
             with patch("book2audio.cli.inspect_book", return_value=fake_script) as inspect, redirect_stdout(stdout):
@@ -55,6 +59,23 @@ class CliTests(unittest.TestCase):
         self.assertEqual(0, status)
         self.assertIn("2 章，1 个角色", stdout.getvalue())
         inspect.assert_called_once()
+
+    def test_machine_inspect_emits_quality_report(self):
+        stdout = io.StringIO()
+        report = {"version": 1, "segments_before": 1, "segments_after": 2}
+        fake_script = type(
+            "Result",
+            (),
+            {"chapters": [1], "characters": ["旁白"], "quality_report": report},
+        )()
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "book.script"
+            with patch("book2audio.cli.inspect_book", return_value=fake_script), redirect_stdout(stdout):
+                status = main(["inspect", "book.txt", "-o", str(output), "--progress-format", "jsonl"])
+
+        events = [json.loads(line) for line in stdout.getvalue().splitlines()]
+        self.assertEqual(0, status)
+        self.assertEqual(report, events[-1]["normalization"])
 
     def test_machine_mode_emits_jsonl_and_uses_cancel_exit_code(self):
         stdout = io.StringIO()
