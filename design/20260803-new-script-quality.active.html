@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voicebook 新剧本质量保障方案</title>
+  <style>
+    :root {
+      --ink: #102630;
+      --muted: #61727b;
+      --paper: #edf4f3;
+      --sheet: #fcfefd;
+      --navy: #123845;
+      --teal: #258d88;
+      --amber: #eea044;
+      --red: #bb5750;
+      --line: #c8d8d8;
+      --pale: #e2f2ef;
+      --warm: #fff1dd;
+      --code: #e6efef;
+      --shadow: 0 16px 42px rgba(17, 52, 62, .10);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: light; background: var(--paper); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 88% 4%, rgba(37,141,136,.10), transparent 25rem),
+        var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.68;
+    }
+    main { width: min(1160px, calc(100% - 36px)); margin: 0 auto; padding: 30px 0 88px; }
+    header {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(30px, 6vw, 68px);
+      color: #f2fbfa;
+      background: var(--navy);
+      box-shadow: var(--shadow);
+    }
+    header::before {
+      content: "NEW OUTPUT ONLY";
+      position: absolute;
+      right: -22px;
+      bottom: 13px;
+      color: rgba(255,255,255,.07);
+      font: 800 clamp(2rem, 7vw, 6rem)/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      white-space: nowrap;
+    }
+    .kicker, .index {
+      margin: 0 0 12px;
+      color: #72d1ca;
+      font: 800 .73rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { margin: 0; line-height: 1.18; }
+    h1 { position: relative; z-index: 1; max-width: 870px; font: 760 clamp(2rem, 5vw, 4.2rem)/1.06 Georgia, "Songti SC", serif; }
+    h2 { margin-bottom: 20px; font: 740 clamp(1.5rem, 3vw, 2.2rem)/1.18 Georgia, "Songti SC", serif; }
+    h3 { margin: 22px 0 9px; font-size: 1.03rem; }
+    header > p:not(.kicker) { position: relative; z-index: 1; max-width: 820px; margin: 22px 0 0; color: rgba(242,251,250,.76); }
+    .meta { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
+    .meta span, .tag { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 999px; font-size: .74rem; font-weight: 760; }
+    .meta span { color: #e6f4f2; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.15); }
+    .meta .active { color: #173c2d; background: #8ed0ab; border-color: #8ed0ab; }
+    section { margin-top: 26px; padding: clamp(24px, 4vw, 42px); background: var(--sheet); border: 1px solid var(--line); box-shadow: 0 5px 22px rgba(17, 52, 62, .05); }
+    p { margin: 8px 0; }
+    ul, ol { margin: 10px 0; padding-left: 1.35rem; }
+    li + li { margin-top: 7px; }
+    code { padding: 2px 6px; color: #17545a; background: var(--code); border-radius: 3px; font: .88em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    pre { overflow: auto; padding: 17px; color: #dff3f1; background: #102d37; border-radius: 4px; }
+    pre code { padding: 0; color: inherit; background: transparent; }
+    .quote { margin: 10px 0; padding: 14px 18px; color: #294b54; background: var(--pale); border-left: 4px solid var(--teal); }
+    .pipeline { display: flex; gap: 10px; align-items: stretch; overflow-x: auto; margin-top: 18px; padding: 18px; background: #f3f8f7; border: 1px solid var(--line); }
+    .node { min-width: 145px; padding: 14px; background: #fff; border: 1px solid var(--line); }
+    .node.owner { color: #fff; background: var(--teal); border-color: var(--teal); }
+    .node strong { display: block; margin-bottom: 5px; }
+    .node small { color: var(--muted); }
+    .node.owner small { color: rgba(255,255,255,.78); }
+    .arrow { align-self: center; color: var(--teal); font-size: 1.5rem; font-weight: 900; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { min-width: 0; padding: 19px; background: #f6f9f8; border: 1px solid var(--line); }
+    .card h3 { margin-top: 0; }
+    .table-wrap { overflow-x: auto; margin-top: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { padding: 12px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { color: #f3f9f8; background: var(--navy); font-size: .73rem; letter-spacing: .05em; }
+    tr:last-child td { border-bottom: 0; }
+    .decision { border-left: 5px solid var(--amber); }
+    .warning { border-left: 5px solid var(--red); }
+    .status-list { list-style: none; padding: 0; }
+    .status-list li { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .status-list li:last-child { border-bottom: 0; }
+    .tag.pending { color: #774a14; background: #ffe3b6; }
+    .tag.contract { color: #175e59; background: #dcefeb; }
+    .tag.excluded { color: #8d3733; background: #f7ddda; }
+    .small { color: var(--muted); font-size: .83rem; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 22px, 1160px); padding-top: 11px; }
+      header, section { padding: 22px 18px; }
+      .grid { grid-template-columns: 1fr; }
+      .status-list li { grid-template-columns: 1fr; gap: 5px; }
+      th, td { min-width: 145px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="kicker">Voicebook output contract / 2026-08-03</p>
+    <h1>Voicebook 新剧本质量保障方案</h1>
+    <p>在既有 <code>inspect</code> / <code>convert</code> 生产链内部正确提取并整理新剧本：输出可读章节、可朗读正文、语言感知的语义切片和同步 locator，不增加新命令，也不处理已有剧本。</p>
+    <div class="meta">
+      <span class="active">ACTIVE · 已验证</span>
+      <span>创建日期：2026-08-03</span>
+      <span>所属模块：book2audio</span>
+      <span>影响范围：inspect / convert / script / tests</span>
+      <span>需求来源：Talebook PR 929 真实体验与边界纠正</span>
+    </div>
+  </header>
+
+  <section class="decision">
+    <p class="index">01 / 原始诉求与确认结论</p>
+    <h2>修生产线，不开修理厂</h2>
+    <div class="quote">“百年孤独出现了很多 index_split_000 这种非正常章节。”</div>
+    <div class="quote">“通常一句为一个切片，如果一句太短，就多句联合，大概五十字。”</div>
+    <div class="quote">“芳华的 titlepage 章节，念了一堆 CSS，非正文。”</div>
+    <div class="quote">“已有的剧本就不用管它了，大家只负责产生新的剧本时能正确就行了。”</div>
+    <ul>
+      <li><strong>目标：</strong>所有此后由 Voicebook 从 EPUB / TXT 新构建的剧本，在写盘前完成章节、正文、切片和定位的一致性处理。</li>
+      <li><strong>入口：</strong>仍然只有现有 <code>inspect</code> 与 <code>convert</code>；后者复用前者的剧本生产链。</li>
+      <li><strong>存量：</strong>不扫描、不迁移、不重写现存 <code>book.script</code>，不提供 normalize 命令；<code>generate</code> 只读输入剧本并生成音频，永不调用新剧本整理逻辑。</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="index">02 / 处理位置</p>
+    <h2>结构问题在提取层解决，切片在首次写盘前完成</h2>
+    <div class="pipeline" aria-label="Voicebook 新剧本生产流程">
+      <div class="node owner"><strong>read_book</strong><small>过滤结构化非正文；读取目录标题与源 locator</small></div>
+      <span class="arrow">→</span>
+      <div class="node"><strong>角色归因</strong><small>生成 ScriptSegment</small></div>
+      <span class="arrow">→</span>
+      <div class="node owner"><strong>prepare_new_script</strong><small>确定性切片；仅处理本次内存产物</small></div>
+      <span class="arrow">→</span>
+      <div class="node"><strong>write_voicebook_script</strong><small>剧本与 locator sidecar</small></div>
+      <span class="arrow">→</span>
+      <div class="node"><strong>completed</strong><small>路径、计数与质量报告</small></div>
+    </div>
+    <p><code>read_book</code> 利用 EPUB 标签、spine、nav / NCX 等结构信息排除非正文并确定章节标题；内部 <code>prepare_new_script</code> 接收本次进程刚构建的 <code>VoicebookScript</code>，只在首次写盘前执行确定性切片。<code>inspect</code> 与调用 inspect 的 <code>convert</code> 共享该链路；读取已有脚本的 <code>generate</code> 不进入这条链路。</p>
+  </section>
+
+  <section>
+    <p class="index">03 / 新剧本质量规则</p>
+    <h2>四条规则共同决定“能不能朗读”</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>技术标题不外泄</h3>
+        <p>标题按 EPUB nav / NCX、正文标题节点、首个可靠正文标题的顺序解析。<code>index_split_000</code>、UUID、纯路径文件名不得作为最终标题；仍无法可靠恢复时显示稳定的“未命名章节 N”，不冒充原书章序。</p>
+      </article>
+      <article class="card">
+        <h3>在 HTML 提取层排除非正文</h3>
+        <p>解析 HTML 时跳过 <code>style</code>、<code>script</code>、隐藏节点及其内容，并利用 spine / nav / cover 结构识别技术资源。正文中的 CSS 代码示例仍作为正文保留；提取后没有正文的 titlepage、cover 不生成章节。</p>
+      </article>
+      <article class="card">
+        <h3>句子优先，语言感知</h3>
+        <p>CJK 主导片段按字符计数，目标 50、软下限 28、硬上限 80；非 CJK 片段按单词计数，目标 25、软下限 14、硬上限 40。先按句末标点切句，超长单句再从自然停顿处分开。</p>
+      </article>
+      <article class="card">
+        <h3>locator 与文本同改</h3>
+        <p>每次拆分依据原片段的源字符范围计算新范围、文本哈希、出现序号与 key；解析层先排除非正文再统一编号，并保留稳定 <code>source_key</code>，确保音文高亮仍可回到正确源文本。</p>
+      </article>
+    </div>
+    <h3>确定性切片顺序</h3>
+    <ol>
+      <li>仅使用静态标点和字符类型规则，不调用模型、随机数、时间或外部服务。</li>
+      <li>按原始顺序切出句子；超长句在不超过硬上限的候选停顿中选择最接近目标的位置，候选同距时选择更靠前者；没有停顿时按字符边界或英文单词边界硬切。</li>
+      <li>只合并同角色、同 locator 基址且源范围连续的相邻短句；贪心选择不超过硬上限且最接近目标的组合，输入顺序决定唯一结果。</li>
+      <li>相同输入必须产生逐字节一致的剧本与 locator sidecar。</li>
+    </ol>
+    <h3>安全优先级</h3>
+    <ol>
+      <li>宁可保留可疑正文，也不以宽泛关键词误删真实内容。</li>
+      <li>只在同角色且源范围连续时合并，避免跨角色改变表演语义。</li>
+      <li>无法可靠映射 locator 的片段保留原范围，并在报告中计数，不伪造精确定位。</li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="index">04 / 输出契约</p>
+    <h2>产物格式兼容，完成事件增加可选报告</h2>
+    <p><code>book.script</code> 的格式版本保持不变；既有 JSONL <code>inspect completed</code> 事件增加可选、仅含有界计数的 <code>normalization</code> 对象。消费者忽略新字段时行为不变；报告不作为是否处理旧剧本的开关。</p>
+    <pre><code>{
+  "event": "completed",
+  "script": "/workspace/book.script",
+  "chapter_count": 24,
+  "character_count": 173204,
+  "normalization": {
+    "version": 1,
+    "chapters_before": 27,
+    "chapters_after": 24,
+    "segments_before": 918,
+    "segments_after": 1260,
+    "removed_chapter_count": 3,
+    "renamed_chapter_count": 8,
+    "removed_noncontent_block_count": 6,
+    "locator_unmapped_count": 0
+  }
+}</code></pre>
+    <p class="small">报告不包含逐章数组或正文，字段名在实现测试中固定；未来增加字段时旧消费者继续只读取已知计数。</p>
+  </section>
+
+  <section class="warning">
+    <p class="index">05 / 明确不做</p>
+    <h2>不增加对外操作面</h2>
+    <ul>
+      <li>不新增 <code>voicebook-tool normalize</code> 或任何同义子命令。</li>
+      <li>不读取并重写用户目录里的已有剧本。</li>
+      <li>不提供旧剧本迁移脚本、批处理任务或兼容性补跑。</li>
+      <li><code>generate</code> 不修改、重切或重编号输入剧本；单章与整本音频返工都保持输入字节不变。</li>
+      <li>不把 Talebook 的版本、发布、备份概念引入 Voicebook；Voicebook 仍是无状态生产工具。</li>
+      <li>不依赖具体 EPUB 厂商文件名来写单书特判。</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="index">06 / 测试矩阵</p>
+    <h2>规则测试与真实书籍一起验收</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>层级</th><th>样本与断言</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>单元测试</td><td>style / script 跳过、正文 CSS 保留、nav / NCX 与标题兜底、中文字符 / 英文单词阈值、确定性切片、角色边界、locator 范围。</td><td>通过</td></tr>
+          <tr><td>inspect 集成</td><td>新剧本写盘前已整理；完成事件含报告；既有 CLI 参数和输出仍兼容。</td><td>通过</td></tr>
+          <tr><td>convert 回归</td><td>convert 仍复用 inspect 产物，默认引擎与既有参数保持不变；未新增第二套规范化入口。</td><td>通过</td></tr>
+          <tr><td>generate 存量隔离</td><td>已有剧本执行 generate 后，输入剧本及 locator sidecar 逐字节不变。</td><td>通过</td></tr>
+          <tr><td>真实中文书</td><td>《百年孤独》《芳华》《罪与罚》《唐诗三百首》《三国志演义》《红楼梦》。</td><td>通过</td></tr>
+          <tr><td>真实英文书</td><td>The Adventures of Sherlock Holmes 英文 EPUB，验证英文标点、标题与误删防护。</td><td>通过</td></tr>
+          <tr><td>质量门槛</td><td>CJK 片段不超过 80 字、英文片段不超过 40 词；无结构化非正文或技术标题外泄；重复 inspect 逐字节一致；locator key 唯一且范围合法。</td><td>通过</td></tr>
+          <tr><td>生成成本与听感</td><td>本轮真实样本只 inspect 前 5 章，记录切片规模与处理耗时；TTS 听感未作为自动化门禁。</td><td>部分验证</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <p class="index">07 / 实施、发布与回滚</p>
+    <h2>一个内部阶段，一份不可变依赖</h2>
+    <ul class="status-list">
+      <li><span class="tag contract">实现边界</span><span>在 EPUB 提取器修复结构化正文与目录标题；新增内部 <code>prepare_new_script</code>，由 <code>inspect_book</code> 在首次写盘前调用；不暴露 CLI 命令。</span></li>
+      <li><span class="tag contract">已验证</span><span><code>UV_PROJECT_ENVIRONMENT=/private/tmp/voicebook-script-quality-venv uv --cache-dir /private/tmp/voicebook-uv-cache run python -m unittest discover -s tests -p 'test_*.py' -v</code>，49 / 49 通过；编译与差异检查通过。</span></li>
+      <li><span class="tag contract">已评测</span><span>7 本真实 EPUB 全书检查标题与样式残留、每本 inspect 前 5 章：技术标题与 CSS 残留均为 0，脚本及 locator 重复运行逐字节一致，locator key 唯一且范围合法，CJK 最大 80 字、英文最大 40 词。结果保存在 <code>tests/script_quality_20260804/reports/result.json</code>。</span></li>
+      <li><span class="tag contract">已发布</span><span>实现已推送为不可变 commit <code>9ec9a4a15f3c545ba0b440ac406efaf8f2691e37</code>；Talebook 固定使用该 SHA。</span></li>
+      <li><span class="tag excluded">回滚</span><span>Talebook 退回旧 Voicebook SHA 即停止对新任务应用该行为；历史产物不受回滚过程改写。</span></li>
+    </ul>
+    <p class="small">真实评测没有改写原书或已有 <code>book.script</code>。为控制角色归因耗时，每本只对前 5 章执行 inspect，但标题与结构化样式残留检查覆盖整本 EPUB；Qwen3TTS 的已知环境失败按需求不作为本次阻塞项。</p>
+  </section>
+</main>
+</body>
+</html>

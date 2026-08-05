@@ -27,6 +27,7 @@ from .script import (
     parse_voicebook_script,
     write_voicebook_script,
 )
+from .script_quality import prepare_new_script
 from .machine import GenerationCancelled, ProgressEmitter, check_cancelled
 from .tts import EdgeEngine, Qwen3TTSAIEngine, VoiceSpec, split_tts_text
 from .voice_casting import DEFAULT_PROTAGONISTS, CastAssignment, assign_cast, enrich_character
@@ -280,6 +281,7 @@ def inspect_book(
         chapters=script_chapters,
         extra_meta={"解析警告": book.warnings} if book.warnings else {},
     )
+    prepare_new_script(script, book.quality_report)
     write_voicebook_script(script, output_script)
     return script
 

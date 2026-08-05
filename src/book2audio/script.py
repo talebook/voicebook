@@ -201,6 +201,7 @@ class VoicebookScript:
     characters: list[ScriptCharacter] = field(default_factory=list)
     chapters: list[ScriptChapter] = field(default_factory=list)
     extra_meta: dict[str, Any] = field(default_factory=dict)
+    quality_report: dict[str, int] = field(default_factory=dict, repr=False, compare=False)
 
     def character_map(self) -> dict[str, ScriptCharacter]:
         return {character.name: character for character in self.characters}

@@ -129,12 +129,14 @@ def main(argv: list[str] | None = None) -> int:
             )
             check_cancelled(args.cancel_file)
             if progress:
-                progress.emit(
-                    "completed",
-                    script=str(args.output),
-                    chapter_count=len(script.chapters),
-                    character_count=len(script.characters) - 1,
-                )
+                payload = {
+                    "script": str(args.output),
+                    "chapter_count": len(script.chapters),
+                    "character_count": len(script.characters) - 1,
+                }
+                if script.quality_report:
+                    payload["normalization"] = script.quality_report
+                progress.emit("completed", **payload)
             human(f"完成：{args.output}（{len(script.chapters)} 章，{len(script.characters) - 1} 个角色）")
             return 0
         if args.command == "generate":
