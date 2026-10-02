@@ -64,6 +64,12 @@ class WorkProgress:
         self.wait_seconds = 0.0
         self.requests_started = 0
         self.budget = None
+        self.request_tokens: set[str] = set()
+
+    def renew_requests(self):
+        """Keep every live request leased, including during coordinator media IO."""
+        if self.budget and self.request_tokens:
+            self.budget.renew(self.request_tokens)
 
     def emit(self, event: str, **payload):
         counts = Counter(self.states.values())
@@ -164,7 +170,7 @@ def render_bounded(
                 error = WaitBudgetExceeded("累计重试/冷却等待预算已耗尽，请显式恢复任务")
                 stop.set()
             if budget:
-                budget.renew(token for _, _, _, token in futures.values() if token)
+                progress.renew_requests()
             if error is not None:
                 for _, indices, _ in pending:
                     for index in indices:
@@ -238,6 +244,8 @@ def render_bounded(
 
                     future = pool.submit(admitted_request)
                     futures[future] = (key, indices, attempt, token)
+                    if token:
+                        progress.request_tokens.add(token)
                     progress.requests_started += 1
                     progress.active_requests = len(futures)
                     for index in indices:
@@ -258,6 +266,8 @@ def render_bounded(
             if not futures and not delayed and not pending:
                 break
             timeout = max(0.001, next_heartbeat - time.monotonic())
+            if budget:
+                timeout = min(timeout, budget.renew_interval)
             if delayed and error is None:
                 timeout = min(timeout, max(0.001, min(job[0] for job in delayed) - time.monotonic()))
             if delayed or (progress.waiting and progress.waiting["reason"] in {"shared_cooldown", "request_budget"}):
@@ -272,6 +282,7 @@ def render_bounded(
                     result = future.result()
                     if budget:
                         budget.finish(token)
+                        progress.request_tokens.discard(token)
                         token = None
                     if steps:
                         operations.pop(key)
@@ -292,6 +303,7 @@ def render_bounded(
                     info = error_info(exc)
                     if budget and token:
                         budget.finish(token, info)
+                        progress.request_tokens.discard(token)
                     if key in generators:
                         generators.pop(key).close()
                     operations.pop(key, None)
@@ -375,3 +387,4 @@ def render_bounded(
                     budget.finish(token, error_info(exc))
                 else:
                     budget.finish(token)
+        progress.request_tokens.clear()

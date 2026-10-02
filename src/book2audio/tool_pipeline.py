@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 import wave
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -318,9 +319,33 @@ def _run_media(
     work: WorkProgress | None = None,
     cancel_file: Path | None = None,
     capture_output: bool = False,
+    stop: Event | None = None,
 ):
-    """Keep assembly observable and stop only the media child we own."""
-    check_cancelled(cancel_file)
+    """Service control and all active leases while waiting for our media child."""
+    poll_seconds = min(0.1, MEDIA_HEARTBEAT_SECONDS)
+    if work and work.budget:
+        poll_seconds = min(poll_seconds, work.budget.renew_interval)
+    next_heartbeat = time.monotonic() + MEDIA_HEARTBEAT_SECONDS
+
+    def service(*, check_control=True):
+        nonlocal next_heartbeat
+        if work:
+            work.renew_requests()
+        if check_control:
+            try:
+                check_cancelled(cancel_file)
+                if stop and stop.is_set():
+                    raise GenerationCancelled("已停止音频处理")
+            except GenerationCancelled:
+                if work and work.status != "cancelling":
+                    work.status = "cancelling"
+                    work.emit("cancel_requested", retryable=True)
+                raise
+        if work and time.monotonic() >= next_heartbeat:
+            work.emit("heartbeat")
+            next_heartbeat = time.monotonic() + MEDIA_HEARTBEAT_SECONDS
+
+    service()
     with subprocess.Popen(
         command,
         stdout=subprocess.PIPE if capture_output else None,
@@ -329,34 +354,41 @@ def _run_media(
     ) as process:
         try:
             while True:
+                service()
                 try:
-                    stdout, stderr = process.communicate(timeout=MEDIA_HEARTBEAT_SECONDS)
+                    stdout, stderr = process.communicate(timeout=poll_seconds)
                     break
                 except subprocess.TimeoutExpired:
-                    check_cancelled(cancel_file)
-                    if work:
-                        work.emit("heartbeat")
+                    continue
         except BaseException:
-            process.terminate()
-            try:
-                process.communicate(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.communicate()
+            if process.poll() is None:
+                process.terminate()
+            deadline = time.monotonic() + 5
+            while True:
+                service(check_control=False)
+                try:
+                    process.communicate(timeout=poll_seconds)
+                    break
+                except subprocess.TimeoutExpired:
+                    if time.monotonic() >= deadline:
+                        process.kill()
             raise
         if process.returncode:
             raise subprocess.CalledProcessError(process.returncode, command, output=stdout, stderr=stderr)
-        check_cancelled(cancel_file)
+        service()
         return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
 
 
-def _normalize_to_wav(source: Path, destination: Path) -> None:
+def _normalize_to_wav(
+    source: Path, destination: Path, *, work: WorkProgress | None = None,
+    cancel_file: Path | None = None, stop: Event | None = None,
+) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = destination.with_name(f".{destination.name}.tmp.wav")
     try:
-        subprocess.run(
+        _run_media(
             ["ffmpeg", "-y", "-loglevel", "error", "-i", str(source), "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", str(temporary)],
-            check=True,
+            work=work, cancel_file=cancel_file, stop=stop,
         )
         temporary.replace(destination)
     finally:
@@ -369,6 +401,7 @@ def _concat_wavs(
     *,
     work: WorkProgress | None = None,
     cancel_file: Path | None = None,
+    stop: Event | None = None,
 ) -> None:
     if not paths:
         raise ValueError("没有可拼接音频")
@@ -404,6 +437,7 @@ def _concat_wavs(
             ],
             work=work,
             cancel_file=cancel_file,
+            stop=stop,
         )
         temporary.replace(output)
     finally:
@@ -443,12 +477,15 @@ def _render_logical_segment(
             normalized = temporary_dir / f"{index:04d}.normalized.wav"
             synthesizer.synthesize(chunk, assignment.voice, engine, raw)
             check_control()
-            _normalize_to_wav(raw, normalized)
+            _normalize_to_wav(raw, normalized, cancel_file=cancel_file, stop=stop)
             smooth_pcm16_wav_edges(normalized)
             chunk_wavs.append(normalized)
         combined = temporary_dir / "combined.wav"
-        _concat_wavs(chunk_wavs, combined)
-        change_pcm16_wav_tempo(combined, min(1.5, max(0.75, speed)))
+        _concat_wavs(chunk_wavs, combined, cancel_file=cancel_file, stop=stop)
+        change_pcm16_wav_tempo(
+            combined, min(1.5, max(0.75, speed)),
+            run_command=lambda command: _run_media(command, cancel_file=cancel_file, stop=stop),
+        )
         check_control()
         combined.replace(cached)
     finally:
@@ -484,12 +521,15 @@ def _render_steps(text, assignment, engine, speed, cache_dir, synthesizer, force
 
             yield request
             check_control()
-            _normalize_to_wav(raw, normalized)
+            _normalize_to_wav(raw, normalized, work=work, cancel_file=cancel_file, stop=stop)
             smooth_pcm16_wav_edges(normalized)
             chunk_wavs.append(normalized)
         combined = temporary_dir / "combined.wav"
-        _concat_wavs(chunk_wavs, combined, work=work, cancel_file=cancel_file)
-        change_pcm16_wav_tempo(combined, min(1.5, max(0.75, speed)))
+        _concat_wavs(chunk_wavs, combined, work=work, cancel_file=cancel_file, stop=stop)
+        change_pcm16_wav_tempo(
+            combined, min(1.5, max(0.75, speed)),
+            run_command=lambda command: _run_media(command, work=work, cancel_file=cancel_file, stop=stop),
+        )
         check_control()
         combined.replace(cached)
         return cached, fingerprint, False

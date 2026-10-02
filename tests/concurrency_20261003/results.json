@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T17:05:46.042854+00:00",
+  "generated_at": "2026-10-02T17:35:34.645599+00:00",
   "engine": "offline synthetic PCM WAV",
   "unit": "speech_segment",
   "units": 10,
@@ -9,9 +9,75 @@
       "case": "serial",
       "concurrency": 1,
       "maximum_requests": 1,
-      "elapsed_seconds": 4.092,
+      "elapsed_seconds": 3.795,
       "provider_calls": 10,
       "status": "completed",
+      "audio_content": [
+        {
+          "chapter": 1,
+          "expected": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "observed": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            500,
+            700,
+            900,
+            1100,
+            1300
+          ],
+          "verified": true
+        },
+        {
+          "chapter": 2,
+          "expected": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "observed": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            1500,
+            1700,
+            1900,
+            2100,
+            2300
+          ],
+          "verified": true
+        }
+      ],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "completed",
@@ -36,16 +102,16 @@
         "chapters_total": 2,
         "chapters_completed": 2,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:32.954002Z"
+        "updated_at": "2026-10-02T17:35:20.690402Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:28.864616Z",
+          "at": "2026-10-02T17:35:16.899223Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -71,16 +137,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:28.864616Z"
+            "updated_at": "2026-10-02T17:35:16.899223Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:28.864919Z",
+          "at": "2026-10-02T17:35:16.899525Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -108,16 +174,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:28.864919Z"
+            "updated_at": "2026-10-02T17:35:16.899525Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:28.865945Z",
+          "at": "2026-10-02T17:35:16.900733Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:title",
           "request_attempt": 1,
           "snapshot": {
@@ -146,16 +212,16 @@
             "active_units": [
               "chapter-1:title"
             ],
-            "updated_at": "2026-10-02T17:05:28.865945Z"
+            "updated_at": "2026-10-02T17:35:16.900733Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:29.582764Z",
+          "at": "2026-10-02T17:35:17.190027Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:title",
           "unit_kind": "title",
           "chapter_number": 1,
@@ -186,16 +252,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:29.582764Z"
+            "updated_at": "2026-10-02T17:35:17.190027Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:29.583177Z",
+          "at": "2026-10-02T17:35:17.190383Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -224,52 +290,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:29.583177Z"
+            "updated_at": "2026-10-02T17:35:17.190383Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
-          "event": "heartbeat",
-          "at": "2026-10-02T17:05:29.865678Z",
-          "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
-          "snapshot": {
-            "schema": "voicebook-progress.v2",
-            "status": "running",
-            "stage": "synthesizing",
-            "unit": "speech_segment",
-            "total": 10,
-            "completed": 1,
-            "active": 1,
-            "retrying": 0,
-            "failed": 0,
-            "cancelled": 0,
-            "pending": 8,
-            "queued": 0,
-            "retries": 0,
-            "requests_started": 2,
-            "wait_seconds": 0.0,
-            "waiting": null,
-            "edge_budget": null,
-            "cache_hits": 0,
-            "active_requests": 1,
-            "concurrency": 1,
-            "chapters_total": 2,
-            "chapters_completed": 0,
-            "active_units": [
-              "chapter-1:segment-0"
-            ],
-            "updated_at": "2026-10-02T17:05:29.865678Z"
-          }
-        },
-        {
-          "schema": "voicebook-progress.v2",
-          "seq": 7,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:30.106956Z",
+          "at": "2026-10-02T17:35:17.709323Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-0",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -300,16 +330,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:30.106956Z"
+            "updated_at": "2026-10-02T17:35:17.709323Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
-          "seq": 8,
+          "seq": 7,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:30.107493Z",
+          "at": "2026-10-02T17:35:17.709670Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -338,16 +368,52 @@
             "active_units": [
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:30.107493Z"
+            "updated_at": "2026-10-02T17:35:17.709670Z"
+          }
+        },
+        {
+          "schema": "voicebook-progress.v2",
+          "seq": 8,
+          "event": "heartbeat",
+          "at": "2026-10-02T17:35:17.900365Z",
+          "task_id": "offline-demo-book",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
+          "snapshot": {
+            "schema": "voicebook-progress.v2",
+            "status": "running",
+            "stage": "synthesizing",
+            "unit": "speech_segment",
+            "total": 10,
+            "completed": 2,
+            "active": 1,
+            "retrying": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "pending": 7,
+            "queued": 0,
+            "retries": 0,
+            "requests_started": 3,
+            "wait_seconds": 0.0,
+            "waiting": null,
+            "edge_budget": null,
+            "cache_hits": 0,
+            "active_requests": 1,
+            "concurrency": 1,
+            "chapters_total": 2,
+            "chapters_completed": 0,
+            "active_units": [
+              "chapter-1:segment-1"
+            ],
+            "updated_at": "2026-10-02T17:35:17.900365Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:30.353187Z",
+          "at": "2026-10-02T17:35:18.035293Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-1",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -378,16 +444,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:30.353187Z"
+            "updated_at": "2026-10-02T17:35:18.035293Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 10,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:30.353610Z",
+          "at": "2026-10-02T17:35:18.035757Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -416,16 +482,16 @@
             "active_units": [
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:30.353610Z"
+            "updated_at": "2026-10-02T17:35:18.035757Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 11,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:30.618387Z",
+          "at": "2026-10-02T17:35:18.290462Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-2",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -456,16 +522,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:30.618387Z"
+            "updated_at": "2026-10-02T17:35:18.290462Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 12,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:30.618815Z",
+          "at": "2026-10-02T17:35:18.290995Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -494,16 +560,16 @@
             "active_units": [
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:30.618815Z"
+            "updated_at": "2026-10-02T17:35:18.290995Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 13,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:30.861925Z",
+          "at": "2026-10-02T17:35:18.580529Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-1:segment-3",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -534,16 +600,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:30.861925Z"
+            "updated_at": "2026-10-02T17:35:18.580529Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 14,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:30.862417Z",
+          "at": "2026-10-02T17:35:18.580996Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "chapter_number": 1,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -569,26 +635,26 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:30.862417Z"
+            "updated_at": "2026-10-02T17:35:18.580996Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 15,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:31.156504Z",
+          "at": "2026-10-02T17:35:18.883569Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "chapter_number": 1,
           "number": 1,
           "source_key": "",
           "title": "标题1",
           "audio": "chapters/0001.mp3",
           "timeline": "timelines/0001.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "e6c31b114759a9d015416e94923a65231c95543377525512f029c4d5d5851327",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "1d8121efa9a6f6334b1830be5fa486c6545c2b5771bb6268bb13160c49a8a8fd",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -614,16 +680,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:31.156504Z"
+            "updated_at": "2026-10-02T17:35:18.883569Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 16,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:31.156905Z",
+          "at": "2026-10-02T17:35:18.884145Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "chapter_number": 2,
           "title": "标题2",
           "total_segments": 4,
@@ -651,16 +717,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:31.156905Z"
+            "updated_at": "2026-10-02T17:35:18.884145Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 17,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:31.158226Z",
+          "at": "2026-10-02T17:35:18.886506Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:title",
           "request_attempt": 1,
           "snapshot": {
@@ -689,16 +755,16 @@
             "active_units": [
               "chapter-2:title"
             ],
-            "updated_at": "2026-10-02T17:05:31.158226Z"
+            "updated_at": "2026-10-02T17:35:18.886506Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 18,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:31.456807Z",
+          "at": "2026-10-02T17:35:19.139334Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:title",
           "unit_kind": "title",
           "chapter_number": 2,
@@ -729,16 +795,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:31.456807Z"
+            "updated_at": "2026-10-02T17:35:19.139334Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 19,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:31.457330Z",
+          "at": "2026-10-02T17:35:19.139698Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -767,16 +833,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:31.457330Z"
+            "updated_at": "2026-10-02T17:35:19.139698Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 20,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:31.928844Z",
+          "at": "2026-10-02T17:35:19.624801Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-0",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -807,16 +873,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:31.928844Z"
+            "updated_at": "2026-10-02T17:35:19.624801Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 21,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:31.929306Z",
+          "at": "2026-10-02T17:35:19.625165Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -845,52 +911,16 @@
             "active_units": [
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:31.929306Z"
+            "updated_at": "2026-10-02T17:35:19.625165Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 22,
-          "event": "heartbeat",
-          "at": "2026-10-02T17:05:32.158034Z",
-          "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
-          "snapshot": {
-            "schema": "voicebook-progress.v2",
-            "status": "running",
-            "stage": "synthesizing",
-            "unit": "speech_segment",
-            "total": 10,
-            "completed": 7,
-            "active": 1,
-            "retrying": 0,
-            "failed": 0,
-            "cancelled": 0,
-            "pending": 2,
-            "queued": 0,
-            "retries": 0,
-            "requests_started": 8,
-            "wait_seconds": 0.0,
-            "waiting": null,
-            "edge_budget": null,
-            "cache_hits": 0,
-            "active_requests": 1,
-            "concurrency": 1,
-            "chapters_total": 2,
-            "chapters_completed": 1,
-            "active_units": [
-              "chapter-2:segment-1"
-            ],
-            "updated_at": "2026-10-02T17:05:32.158034Z"
-          }
-        },
-        {
-          "schema": "voicebook-progress.v2",
-          "seq": 23,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:32.171504Z",
+          "at": "2026-10-02T17:35:19.880430Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-1",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -921,16 +951,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.171504Z"
+            "updated_at": "2026-10-02T17:35:19.880430Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
-          "seq": 24,
+          "seq": 23,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:32.172031Z",
+          "at": "2026-10-02T17:35:19.880802Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -959,16 +989,52 @@
             "active_units": [
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:32.172031Z"
+            "updated_at": "2026-10-02T17:35:19.880802Z"
+          }
+        },
+        {
+          "schema": "voicebook-progress.v2",
+          "seq": 24,
+          "event": "heartbeat",
+          "at": "2026-10-02T17:35:19.885912Z",
+          "task_id": "offline-demo-book",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
+          "snapshot": {
+            "schema": "voicebook-progress.v2",
+            "status": "running",
+            "stage": "synthesizing",
+            "unit": "speech_segment",
+            "total": 10,
+            "completed": 8,
+            "active": 1,
+            "retrying": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "pending": 1,
+            "queued": 0,
+            "retries": 0,
+            "requests_started": 9,
+            "wait_seconds": 0.0,
+            "waiting": null,
+            "edge_budget": null,
+            "cache_hits": 0,
+            "active_requests": 1,
+            "concurrency": 1,
+            "chapters_total": 2,
+            "chapters_completed": 1,
+            "active_units": [
+              "chapter-2:segment-2"
+            ],
+            "updated_at": "2026-10-02T17:35:19.885912Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 25,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:32.416326Z",
+          "at": "2026-10-02T17:35:20.135983Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-2",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -999,16 +1065,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.416326Z"
+            "updated_at": "2026-10-02T17:35:20.135983Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 26,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:32.416856Z",
+          "at": "2026-10-02T17:35:20.136431Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -1037,16 +1103,16 @@
             "active_units": [
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:32.416856Z"
+            "updated_at": "2026-10-02T17:35:20.136431Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 27,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:32.660900Z",
+          "at": "2026-10-02T17:35:20.426177Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "unit_id": "chapter-2:segment-3",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -1077,16 +1143,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.660900Z"
+            "updated_at": "2026-10-02T17:35:20.426177Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 28,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:32.661388Z",
+          "at": "2026-10-02T17:35:20.426611Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "chapter_number": 2,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -1112,26 +1178,26 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.661388Z"
+            "updated_at": "2026-10-02T17:35:20.426611Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 29,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:32.952846Z",
+          "at": "2026-10-02T17:35:20.689755Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "chapter_number": 2,
           "number": 2,
           "source_key": "",
           "title": "标题2",
           "audio": "chapters/0002.mp3",
           "timeline": "timelines/0002.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "3a1a037b5e1672ee18a4e6bd80ec53c0ca9a79efef982d74232f3f1efb2aadbf",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "bad4ef4587861a13bebf5c78b941045f55532ecabfa6e13f0a3ad072ecc251e1",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -1157,16 +1223,16 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.952846Z"
+            "updated_at": "2026-10-02T17:35:20.689755Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 30,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:32.953183Z",
+          "at": "2026-10-02T17:35:20.689993Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -1191,19 +1257,19 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.953183Z"
+            "updated_at": "2026-10-02T17:35:20.689993Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 31,
           "event": "completed",
-          "at": "2026-10-02T17:05:32.954002Z",
+          "at": "2026-10-02T17:35:20.690402Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "9f75815a-3095-4e36-863c-9f3122b58e78",
+          "attempt_id": "52464ea7-b4fa-46ab-b9e3-ccb2b4841542",
           "manifest": "manifest.v2.json",
           "chapter_count": 2,
-          "duration_ms": 5328,
+          "duration_ms": 7200,
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "completed",
@@ -1228,7 +1294,7 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.954002Z"
+            "updated_at": "2026-10-02T17:35:20.690402Z"
           }
         }
       ]
@@ -1237,9 +1303,75 @@
       "case": "parallel",
       "concurrency": 3,
       "maximum_requests": 3,
-      "elapsed_seconds": 2.215,
+      "elapsed_seconds": 2.168,
       "provider_calls": 10,
       "status": "completed",
+      "audio_content": [
+        {
+          "chapter": 1,
+          "expected": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "observed": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            500,
+            700,
+            900,
+            1100,
+            1300
+          ],
+          "verified": true
+        },
+        {
+          "chapter": 2,
+          "expected": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "observed": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            1500,
+            1700,
+            1900,
+            2100,
+            2300
+          ],
+          "verified": true
+        }
+      ],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "completed",
@@ -1264,16 +1396,16 @@
         "chapters_total": 2,
         "chapters_completed": 2,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:35.169928Z"
+        "updated_at": "2026-10-02T17:35:23.051167Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:32.956744Z",
+          "at": "2026-10-02T17:35:20.884672Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -1299,16 +1431,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.956744Z"
+            "updated_at": "2026-10-02T17:35:20.884672Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:32.957003Z",
+          "at": "2026-10-02T17:35:20.884911Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -1336,16 +1468,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:32.957003Z"
+            "updated_at": "2026-10-02T17:35:20.884911Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:32.958075Z",
+          "at": "2026-10-02T17:35:20.885653Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:title",
           "request_attempt": 1,
           "snapshot": {
@@ -1374,16 +1506,16 @@
             "active_units": [
               "chapter-1:title"
             ],
-            "updated_at": "2026-10-02T17:05:32.958075Z"
+            "updated_at": "2026-10-02T17:35:20.885653Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:33.200877Z",
+          "at": "2026-10-02T17:35:21.137938Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:title",
           "unit_kind": "title",
           "chapter_number": 1,
@@ -1414,16 +1546,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:33.200877Z"
+            "updated_at": "2026-10-02T17:35:21.137938Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:33.201239Z",
+          "at": "2026-10-02T17:35:21.138292Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -1452,16 +1584,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:33.201239Z"
+            "updated_at": "2026-10-02T17:35:21.138292Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:33.202176Z",
+          "at": "2026-10-02T17:35:21.139156Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -1491,16 +1623,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:33.202176Z"
+            "updated_at": "2026-10-02T17:35:21.139156Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 7,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:33.202768Z",
+          "at": "2026-10-02T17:35:21.139678Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -1531,16 +1663,16 @@
               "chapter-1:segment-1",
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:33.202768Z"
+            "updated_at": "2026-10-02T17:35:21.139678Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 8,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:33.470283Z",
+          "at": "2026-10-02T17:35:21.469332Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-1",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -1574,16 +1706,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:33.470283Z"
+            "updated_at": "2026-10-02T17:35:21.469332Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:33.470709Z",
+          "at": "2026-10-02T17:35:21.469904Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -1614,16 +1746,16 @@
               "chapter-1:segment-2",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:33.470709Z"
+            "updated_at": "2026-10-02T17:35:21.469904Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 10,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:33.521899Z",
+          "at": "2026-10-02T17:35:21.470500Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-2",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -1657,16 +1789,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:33.521899Z"
+            "updated_at": "2026-10-02T17:35:21.470500Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 11,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:33.675030Z",
+          "at": "2026-10-02T17:35:21.622670Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-0",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -1699,16 +1831,16 @@
             "active_units": [
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:33.675030Z"
+            "updated_at": "2026-10-02T17:35:21.622670Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 12,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:33.715461Z",
+          "at": "2026-10-02T17:35:21.724299Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-1:segment-3",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -1739,16 +1871,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:33.715461Z"
+            "updated_at": "2026-10-02T17:35:21.724299Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 13,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:33.716225Z",
+          "at": "2026-10-02T17:35:21.724843Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "chapter_number": 1,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -1774,26 +1906,26 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:33.716225Z"
+            "updated_at": "2026-10-02T17:35:21.724843Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 14,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:34.016873Z",
+          "at": "2026-10-02T17:35:21.985701Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "chapter_number": 1,
           "number": 1,
           "source_key": "",
           "title": "标题1",
           "audio": "chapters/0001.mp3",
           "timeline": "timelines/0001.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "e6c31b114759a9d015416e94923a65231c95543377525512f029c4d5d5851327",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "1d8121efa9a6f6334b1830be5fa486c6545c2b5771bb6268bb13160c49a8a8fd",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -1819,16 +1951,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:34.016873Z"
+            "updated_at": "2026-10-02T17:35:21.985701Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 15,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:34.017157Z",
+          "at": "2026-10-02T17:35:21.985992Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "chapter_number": 2,
           "title": "标题2",
           "total_segments": 4,
@@ -1856,16 +1988,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:34.017157Z"
+            "updated_at": "2026-10-02T17:35:21.985992Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 16,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:34.018516Z",
+          "at": "2026-10-02T17:35:21.986917Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:title",
           "request_attempt": 1,
           "snapshot": {
@@ -1894,16 +2026,16 @@
             "active_units": [
               "chapter-2:title"
             ],
-            "updated_at": "2026-10-02T17:05:34.018516Z"
+            "updated_at": "2026-10-02T17:35:21.986917Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 17,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:34.310865Z",
+          "at": "2026-10-02T17:35:22.239127Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:title",
           "unit_kind": "title",
           "chapter_number": 2,
@@ -1934,16 +2066,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:34.310865Z"
+            "updated_at": "2026-10-02T17:35:22.239127Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 18,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:34.311357Z",
+          "at": "2026-10-02T17:35:22.239450Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -1972,16 +2104,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:34.311357Z"
+            "updated_at": "2026-10-02T17:35:22.239450Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 19,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:34.312228Z",
+          "at": "2026-10-02T17:35:22.241561Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -2011,16 +2143,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:34.312228Z"
+            "updated_at": "2026-10-02T17:35:22.241561Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 20,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:34.312854Z",
+          "at": "2026-10-02T17:35:22.243223Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -2051,16 +2183,16 @@
               "chapter-2:segment-1",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:34.312854Z"
+            "updated_at": "2026-10-02T17:35:22.243223Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 21,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:34.557819Z",
+          "at": "2026-10-02T17:35:22.534992Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-1",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -2094,16 +2226,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:34.557819Z"
+            "updated_at": "2026-10-02T17:35:22.534992Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 22,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:34.558259Z",
+          "at": "2026-10-02T17:35:22.535362Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -2134,16 +2266,16 @@
               "chapter-2:segment-2",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:34.558259Z"
+            "updated_at": "2026-10-02T17:35:22.535362Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 23,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:34.558908Z",
+          "at": "2026-10-02T17:35:22.535839Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-2",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -2177,16 +2309,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:34.558908Z"
+            "updated_at": "2026-10-02T17:35:22.535839Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 24,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:34.793380Z",
+          "at": "2026-10-02T17:35:22.724230Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-0",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -2219,16 +2351,16 @@
             "active_units": [
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:34.793380Z"
+            "updated_at": "2026-10-02T17:35:22.724230Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 25,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:34.876295Z",
+          "at": "2026-10-02T17:35:22.788125Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "unit_id": "chapter-2:segment-3",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -2259,16 +2391,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:34.876295Z"
+            "updated_at": "2026-10-02T17:35:22.788125Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 26,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:34.876971Z",
+          "at": "2026-10-02T17:35:22.788807Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "chapter_number": 2,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -2294,26 +2426,26 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:34.876971Z"
+            "updated_at": "2026-10-02T17:35:22.788807Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 27,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:35.168844Z",
+          "at": "2026-10-02T17:35:23.050522Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "chapter_number": 2,
           "number": 2,
           "source_key": "",
           "title": "标题2",
           "audio": "chapters/0002.mp3",
           "timeline": "timelines/0002.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "3a1a037b5e1672ee18a4e6bd80ec53c0ca9a79efef982d74232f3f1efb2aadbf",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "bad4ef4587861a13bebf5c78b941045f55532ecabfa6e13f0a3ad072ecc251e1",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -2339,16 +2471,16 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.168844Z"
+            "updated_at": "2026-10-02T17:35:23.050522Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 28,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:35.169136Z",
+          "at": "2026-10-02T17:35:23.050771Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -2373,19 +2505,19 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.169136Z"
+            "updated_at": "2026-10-02T17:35:23.050771Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 29,
           "event": "completed",
-          "at": "2026-10-02T17:05:35.169928Z",
+          "at": "2026-10-02T17:35:23.051167Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a53b4b8e-7c42-4a32-9c67-0f766f44c045",
+          "attempt_id": "92cc59f4-02f9-4e51-960d-781f7cc44b67",
           "manifest": "manifest.v2.json",
           "chapter_count": 2,
-          "duration_ms": 5328,
+          "duration_ms": 7200,
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "completed",
@@ -2410,7 +2542,7 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.169928Z"
+            "updated_at": "2026-10-02T17:35:23.051167Z"
           }
         }
       ]
@@ -2419,9 +2551,75 @@
       "case": "rate_limit_retry",
       "concurrency": 3,
       "maximum_requests": 3,
-      "elapsed_seconds": 2.246,
+      "elapsed_seconds": 2.248,
       "provider_calls": 12,
       "status": "completed",
+      "audio_content": [
+        {
+          "chapter": 1,
+          "expected": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "observed": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            500,
+            700,
+            900,
+            1100,
+            1300
+          ],
+          "verified": true
+        },
+        {
+          "chapter": 2,
+          "expected": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "observed": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            1500,
+            1700,
+            1900,
+            2100,
+            2300
+          ],
+          "verified": true
+        }
+      ],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "completed",
@@ -2437,7 +2635,7 @@
         "queued": 0,
         "retries": 2,
         "requests_started": 12,
-        "wait_seconds": 0.284,
+        "wait_seconds": 0.283,
         "waiting": null,
         "edge_budget": null,
         "cache_hits": 0,
@@ -2446,16 +2644,16 @@
         "chapters_total": 2,
         "chapters_completed": 2,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:37.416273Z"
+        "updated_at": "2026-10-02T17:35:25.526647Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:35.172498Z",
+          "at": "2026-10-02T17:35:23.281310Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -2481,16 +2679,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.172498Z"
+            "updated_at": "2026-10-02T17:35:23.281310Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:35.172703Z",
+          "at": "2026-10-02T17:35:23.281568Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -2518,16 +2716,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.172703Z"
+            "updated_at": "2026-10-02T17:35:23.281568Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:35.173465Z",
+          "at": "2026-10-02T17:35:23.282760Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:title",
           "request_attempt": 1,
           "snapshot": {
@@ -2556,16 +2754,16 @@
             "active_units": [
               "chapter-1:title"
             ],
-            "updated_at": "2026-10-02T17:05:35.173465Z"
+            "updated_at": "2026-10-02T17:35:23.282760Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:35.416292Z",
+          "at": "2026-10-02T17:35:23.608408Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:title",
           "unit_kind": "title",
           "chapter_number": 1,
@@ -2596,16 +2794,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.416292Z"
+            "updated_at": "2026-10-02T17:35:23.608408Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:35.416685Z",
+          "at": "2026-10-02T17:35:23.608774Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -2634,16 +2832,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:35.416685Z"
+            "updated_at": "2026-10-02T17:35:23.608774Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:35.417663Z",
+          "at": "2026-10-02T17:35:23.609483Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -2673,16 +2871,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:35.417663Z"
+            "updated_at": "2026-10-02T17:35:23.609483Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 7,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:35.418260Z",
+          "at": "2026-10-02T17:35:23.610072Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -2713,16 +2911,16 @@
               "chapter-1:segment-1",
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:35.418260Z"
+            "updated_at": "2026-10-02T17:35:23.610072Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 8,
           "event": "unit_retrying",
-          "at": "2026-10-02T17:05:35.538316Z",
+          "at": "2026-10-02T17:35:23.730077Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-1",
           "code": "QwenTTSAPIError",
           "reason": "rate_limited",
@@ -2750,7 +2948,7 @@
               "reason": "rate_limited",
               "unit_id": "chapter-1:segment-1",
               "retry_count": 1,
-              "next_request_at": "2026-10-02T17:05:35.558236Z"
+              "next_request_at": "2026-10-02T17:35:23.750009Z"
             },
             "edge_budget": null,
             "cache_hits": 0,
@@ -2762,16 +2960,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:35.538316Z"
+            "updated_at": "2026-10-02T17:35:23.730077Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:35.539069Z",
+          "at": "2026-10-02T17:35:23.734365Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -2789,7 +2987,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 5,
-            "wait_seconds": 0.122,
+            "wait_seconds": 0.126,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -2802,16 +3000,16 @@
               "chapter-1:segment-2",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:35.539069Z"
+            "updated_at": "2026-10-02T17:35:23.734365Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 10,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:35.739332Z",
+          "at": "2026-10-02T17:35:23.864302Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-2",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -2833,7 +3031,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 5,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -2845,16 +3043,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:35.739332Z"
+            "updated_at": "2026-10-02T17:35:23.864302Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 11,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:35.739848Z",
+          "at": "2026-10-02T17:35:23.864636Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 2,
           "snapshot": {
@@ -2872,7 +3070,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -2885,16 +3083,16 @@
               "chapter-1:segment-1",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:35.739848Z"
+            "updated_at": "2026-10-02T17:35:23.864636Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 12,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:35.799777Z",
+          "at": "2026-10-02T17:35:24.065988Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-3",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -2916,7 +3114,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -2928,16 +3126,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:35.799777Z"
+            "updated_at": "2026-10-02T17:35:24.065988Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 13,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:35.894915Z",
+          "at": "2026-10-02T17:35:24.167564Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-0",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -2959,7 +3157,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -2970,16 +3168,16 @@
             "active_units": [
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:35.894915Z"
+            "updated_at": "2026-10-02T17:35:24.167564Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 14,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:35.980175Z",
+          "at": "2026-10-02T17:35:24.192555Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-1:segment-1",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -3001,7 +3199,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3010,16 +3208,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.980175Z"
+            "updated_at": "2026-10-02T17:35:24.192555Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 15,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:35.980818Z",
+          "at": "2026-10-02T17:35:24.193172Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "chapter_number": 1,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -3036,7 +3234,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3045,26 +3243,26 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:35.980818Z"
+            "updated_at": "2026-10-02T17:35:24.193172Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 16,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:36.273066Z",
+          "at": "2026-10-02T17:35:24.455164Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "chapter_number": 1,
           "number": 1,
           "source_key": "",
           "title": "标题1",
           "audio": "chapters/0001.mp3",
           "timeline": "timelines/0001.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "e6c31b114759a9d015416e94923a65231c95543377525512f029c4d5d5851327",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "1d8121efa9a6f6334b1830be5fa486c6545c2b5771bb6268bb13160c49a8a8fd",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -3081,7 +3279,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3090,16 +3288,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:36.273066Z"
+            "updated_at": "2026-10-02T17:35:24.455164Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 17,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:36.273420Z",
+          "at": "2026-10-02T17:35:24.455413Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "chapter_number": 2,
           "title": "标题2",
           "total_segments": 4,
@@ -3118,7 +3316,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 6,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3127,16 +3325,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:36.273420Z"
+            "updated_at": "2026-10-02T17:35:24.455413Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 18,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:36.274592Z",
+          "at": "2026-10-02T17:35:24.456259Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:title",
           "request_attempt": 1,
           "snapshot": {
@@ -3154,7 +3352,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 7,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3165,16 +3363,16 @@
             "active_units": [
               "chapter-2:title"
             ],
-            "updated_at": "2026-10-02T17:05:36.274592Z"
+            "updated_at": "2026-10-02T17:35:24.456259Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 19,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:36.579057Z",
+          "at": "2026-10-02T17:35:24.744699Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:title",
           "unit_kind": "title",
           "chapter_number": 2,
@@ -3196,7 +3394,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 7,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3205,16 +3403,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:36.579057Z"
+            "updated_at": "2026-10-02T17:35:24.744699Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 20,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:36.579464Z",
+          "at": "2026-10-02T17:35:24.745163Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -3232,7 +3430,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 8,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3243,16 +3441,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:36.579464Z"
+            "updated_at": "2026-10-02T17:35:24.745163Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 21,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:36.580396Z",
+          "at": "2026-10-02T17:35:24.745935Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -3270,7 +3468,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 9,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3282,16 +3480,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:36.580396Z"
+            "updated_at": "2026-10-02T17:35:24.745935Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 22,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:36.581025Z",
+          "at": "2026-10-02T17:35:24.746538Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -3309,7 +3507,7 @@
             "queued": 0,
             "retries": 1,
             "requests_started": 10,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3322,16 +3520,16 @@
               "chapter-2:segment-1",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:36.581025Z"
+            "updated_at": "2026-10-02T17:35:24.746538Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 23,
           "event": "unit_retrying",
-          "at": "2026-10-02T17:05:36.701126Z",
+          "at": "2026-10-02T17:35:24.866529Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-1",
           "code": "QwenTTSAPIError",
           "reason": "rate_limited",
@@ -3354,12 +3552,12 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 10,
-            "wait_seconds": 0.142,
+            "wait_seconds": 0.141,
             "waiting": {
               "reason": "rate_limited",
               "unit_id": "chapter-2:segment-1",
               "retry_count": 1,
-              "next_request_at": "2026-10-02T17:05:36.721067Z"
+              "next_request_at": "2026-10-02T17:35:24.886462Z"
             },
             "edge_budget": null,
             "cache_hits": 0,
@@ -3371,16 +3569,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:36.701126Z"
+            "updated_at": "2026-10-02T17:35:24.866529Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 24,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:36.701755Z",
+          "at": "2026-10-02T17:35:24.869923Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -3398,7 +3596,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 11,
-            "wait_seconds": 0.264,
+            "wait_seconds": 0.266,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3411,16 +3609,16 @@
               "chapter-2:segment-2",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:36.701755Z"
+            "updated_at": "2026-10-02T17:35:24.869923Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 25,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:36.826059Z",
+          "at": "2026-10-02T17:35:24.999928Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-2",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -3442,7 +3640,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 11,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3454,16 +3652,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:36.826059Z"
+            "updated_at": "2026-10-02T17:35:24.999928Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 26,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:36.826574Z",
+          "at": "2026-10-02T17:35:25.000436Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 2,
           "snapshot": {
@@ -3481,7 +3679,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3494,16 +3692,16 @@
               "chapter-2:segment-1",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:36.826574Z"
+            "updated_at": "2026-10-02T17:35:25.000436Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 27,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:36.944308Z",
+          "at": "2026-10-02T17:35:25.160059Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-3",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -3525,7 +3723,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3537,16 +3735,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:36.944308Z"
+            "updated_at": "2026-10-02T17:35:25.160059Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 28,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:37.068262Z",
+          "at": "2026-10-02T17:35:25.256239Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-1",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -3568,7 +3766,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3579,16 +3777,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:37.068262Z"
+            "updated_at": "2026-10-02T17:35:25.256239Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 29,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:37.122292Z",
+          "at": "2026-10-02T17:35:25.264119Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "unit_id": "chapter-2:segment-0",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -3610,7 +3808,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3619,16 +3817,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.122292Z"
+            "updated_at": "2026-10-02T17:35:25.264119Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 30,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:37.122954Z",
+          "at": "2026-10-02T17:35:25.264757Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "chapter_number": 2,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -3645,7 +3843,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3654,26 +3852,26 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.122954Z"
+            "updated_at": "2026-10-02T17:35:25.264757Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 31,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:37.415073Z",
+          "at": "2026-10-02T17:35:25.525684Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "chapter_number": 2,
           "number": 2,
           "source_key": "",
           "title": "标题2",
           "audio": "chapters/0002.mp3",
           "timeline": "timelines/0002.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "3a1a037b5e1672ee18a4e6bd80ec53c0ca9a79efef982d74232f3f1efb2aadbf",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "bad4ef4587861a13bebf5c78b941045f55532ecabfa6e13f0a3ad072ecc251e1",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -3690,7 +3888,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3699,16 +3897,16 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.415073Z"
+            "updated_at": "2026-10-02T17:35:25.525684Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 32,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:37.415414Z",
+          "at": "2026-10-02T17:35:25.526062Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -3724,7 +3922,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3733,19 +3931,19 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.415414Z"
+            "updated_at": "2026-10-02T17:35:25.526062Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 33,
           "event": "completed",
-          "at": "2026-10-02T17:05:37.416273Z",
+          "at": "2026-10-02T17:35:25.526647Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "14c81c92-601b-46d3-b51f-a0bc5fa22e81",
+          "attempt_id": "b1c32cf7-bdd3-4065-81fa-3b307bf01c10",
           "manifest": "manifest.v2.json",
           "chapter_count": 2,
-          "duration_ms": 5328,
+          "duration_ms": 7200,
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "completed",
@@ -3761,7 +3959,7 @@
             "queued": 0,
             "retries": 2,
             "requests_started": 12,
-            "wait_seconds": 0.284,
+            "wait_seconds": 0.283,
             "waiting": null,
             "edge_budget": null,
             "cache_hits": 0,
@@ -3770,7 +3968,7 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.416273Z"
+            "updated_at": "2026-10-02T17:35:25.526647Z"
           }
         }
       ]
@@ -3779,9 +3977,10 @@
       "case": "cancel",
       "concurrency": 3,
       "maximum_requests": 3,
-      "elapsed_seconds": 0.599,
+      "elapsed_seconds": 0.612,
       "provider_calls": 4,
       "status": "cancelled",
+      "audio_content": [],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "cancelled",
@@ -3806,16 +4005,16 @@
         "chapters_total": 2,
         "chapters_completed": 0,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:38.016097Z"
+        "updated_at": "2026-10-02T17:35:26.357777Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:37.420059Z",
+          "at": "2026-10-02T17:35:25.748498Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -3841,16 +4040,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.420059Z"
+            "updated_at": "2026-10-02T17:35:25.748498Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:37.420331Z",
+          "at": "2026-10-02T17:35:25.748828Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -3878,16 +4077,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.420331Z"
+            "updated_at": "2026-10-02T17:35:25.748828Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:37.421338Z",
+          "at": "2026-10-02T17:35:25.749751Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "unit_id": "chapter-1:title",
           "request_attempt": 1,
           "snapshot": {
@@ -3916,16 +4115,16 @@
             "active_units": [
               "chapter-1:title"
             ],
-            "updated_at": "2026-10-02T17:05:37.421338Z"
+            "updated_at": "2026-10-02T17:35:25.749751Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:37.664150Z",
+          "at": "2026-10-02T17:35:26.003023Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "unit_id": "chapter-1:title",
           "unit_kind": "title",
           "chapter_number": 1,
@@ -3956,16 +4155,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:37.664150Z"
+            "updated_at": "2026-10-02T17:35:26.003023Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:37.664548Z",
+          "at": "2026-10-02T17:35:26.003398Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "unit_id": "chapter-1:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -3994,16 +4193,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:37.664548Z"
+            "updated_at": "2026-10-02T17:35:26.003398Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:37.668781Z",
+          "at": "2026-10-02T17:35:26.004375Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -4033,16 +4232,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:37.668781Z"
+            "updated_at": "2026-10-02T17:35:26.004375Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 7,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:37.669400Z",
+          "at": "2026-10-02T17:35:26.004876Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "unit_id": "chapter-1:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -4073,16 +4272,16 @@
               "chapter-1:segment-1",
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:37.669400Z"
+            "updated_at": "2026-10-02T17:35:26.004876Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 8,
           "event": "cancel_requested",
-          "at": "2026-10-02T17:05:37.789669Z",
+          "at": "2026-10-02T17:35:26.131790Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "retryable": true,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -4109,18 +4308,18 @@
             "chapters_completed": 0,
             "active_units": [
               "chapter-1:segment-0",
-              "chapter-1:segment-2"
+              "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:37.789669Z"
+            "updated_at": "2026-10-02T17:35:26.131790Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "cancelled",
-          "at": "2026-10-02T17:05:38.016097Z",
+          "at": "2026-10-02T17:35:26.357777Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "a1f9f592-20bd-4ab7-a290-8eff6acbe1f8",
+          "attempt_id": "a61daf47-c727-432f-936f-35ff48a5d540",
           "retryable": true,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -4146,7 +4345,7 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:38.016097Z"
+            "updated_at": "2026-10-02T17:35:26.357777Z"
           }
         }
       ]
@@ -4155,9 +4354,43 @@
       "case": "partial_failure",
       "concurrency": 3,
       "maximum_requests": 3,
-      "elapsed_seconds": 1.686,
+      "elapsed_seconds": 1.674,
       "provider_calls": 9,
       "status": "failed",
+      "audio_content": [
+        {
+          "chapter": 1,
+          "expected": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "observed": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            500,
+            700,
+            900,
+            1100,
+            1300
+          ],
+          "verified": true
+        }
+      ],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "failed",
@@ -4182,16 +4415,16 @@
         "chapters_total": 2,
         "chapters_completed": 1,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:39.702111Z"
+        "updated_at": "2026-10-02T17:35:28.032566Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:38.018361Z",
+          "at": "2026-10-02T17:35:26.360825Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -4217,16 +4450,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:38.018361Z"
+            "updated_at": "2026-10-02T17:35:26.360825Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:38.018625Z",
+          "at": "2026-10-02T17:35:26.361077Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -4254,16 +4487,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:38.018625Z"
+            "updated_at": "2026-10-02T17:35:26.361077Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:38.019452Z",
+          "at": "2026-10-02T17:35:26.362354Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:title",
           "request_attempt": 1,
           "snapshot": {
@@ -4292,16 +4525,16 @@
             "active_units": [
               "chapter-1:title"
             ],
-            "updated_at": "2026-10-02T17:05:38.019452Z"
+            "updated_at": "2026-10-02T17:35:26.362354Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:38.312650Z",
+          "at": "2026-10-02T17:35:26.616896Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:title",
           "unit_kind": "title",
           "chapter_number": 1,
@@ -4332,16 +4565,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:38.312650Z"
+            "updated_at": "2026-10-02T17:35:26.616896Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:38.313070Z",
+          "at": "2026-10-02T17:35:26.617218Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -4370,16 +4603,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:38.313070Z"
+            "updated_at": "2026-10-02T17:35:26.617218Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:38.313892Z",
+          "at": "2026-10-02T17:35:26.618079Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -4409,16 +4642,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:38.313892Z"
+            "updated_at": "2026-10-02T17:35:26.618079Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 7,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:38.314483Z",
+          "at": "2026-10-02T17:35:26.618645Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -4449,22 +4682,22 @@
               "chapter-1:segment-1",
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:38.314483Z"
+            "updated_at": "2026-10-02T17:35:26.618645Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 8,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:38.556748Z",
+          "at": "2026-10-02T17:35:26.912321Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
-          "unit_id": "chapter-1:segment-1",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
+          "unit_id": "chapter-1:segment-2",
           "unit_kind": "body",
           "chapter_number": 1,
-          "segment_index": 1,
+          "segment_index": 2,
           "cache_hit": false,
-          "fingerprint": "cb3664bf66dcf4fd6148b4a8cd83cf8ec59a4276225f478a84a21daac46559df",
+          "fingerprint": "4d2f11fce08e6370e402d1b0b27ca1221eec16e7fe66a78321e36bd857f15aa1",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -4490,18 +4723,18 @@
             "chapters_completed": 0,
             "active_units": [
               "chapter-1:segment-0",
-              "chapter-1:segment-2"
+              "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:38.556748Z"
+            "updated_at": "2026-10-02T17:35:26.912321Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:38.557124Z",
+          "at": "2026-10-02T17:35:26.912782Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -4529,25 +4762,25 @@
             "chapters_completed": 0,
             "active_units": [
               "chapter-1:segment-0",
-              "chapter-1:segment-2",
+              "chapter-1:segment-1",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:38.557124Z"
+            "updated_at": "2026-10-02T17:35:26.912782Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 10,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:38.606986Z",
+          "at": "2026-10-02T17:35:26.949223Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
-          "unit_id": "chapter-1:segment-2",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
+          "unit_id": "chapter-1:segment-1",
           "unit_kind": "body",
           "chapter_number": 1,
-          "segment_index": 2,
+          "segment_index": 1,
           "cache_hit": false,
-          "fingerprint": "4d2f11fce08e6370e402d1b0b27ca1221eec16e7fe66a78321e36bd857f15aa1",
+          "fingerprint": "cb3664bf66dcf4fd6148b4a8cd83cf8ec59a4276225f478a84a21daac46559df",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -4575,16 +4808,16 @@
               "chapter-1:segment-0",
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:38.606986Z"
+            "updated_at": "2026-10-02T17:35:26.949223Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 11,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:38.785553Z",
+          "at": "2026-10-02T17:35:27.101744Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:segment-0",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -4617,16 +4850,16 @@
             "active_units": [
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:38.785553Z"
+            "updated_at": "2026-10-02T17:35:27.101744Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 12,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:38.799670Z",
+          "at": "2026-10-02T17:35:27.165048Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-1:segment-3",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -4657,16 +4890,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:38.799670Z"
+            "updated_at": "2026-10-02T17:35:27.165048Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 13,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:38.800214Z",
+          "at": "2026-10-02T17:35:27.165571Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "chapter_number": 1,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -4692,26 +4925,26 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:38.800214Z"
+            "updated_at": "2026-10-02T17:35:27.165571Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 14,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:39.089337Z",
+          "at": "2026-10-02T17:35:27.425479Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "chapter_number": 1,
           "number": 1,
           "source_key": "",
           "title": "标题1",
           "audio": "chapters/0001.mp3",
           "timeline": "timelines/0001.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "e6c31b114759a9d015416e94923a65231c95543377525512f029c4d5d5851327",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "1d8121efa9a6f6334b1830be5fa486c6545c2b5771bb6268bb13160c49a8a8fd",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -4737,16 +4970,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.089337Z"
+            "updated_at": "2026-10-02T17:35:27.425479Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 15,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:39.089678Z",
+          "at": "2026-10-02T17:35:27.425693Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "chapter_number": 2,
           "title": "标题2",
           "total_segments": 4,
@@ -4774,16 +5007,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.089678Z"
+            "updated_at": "2026-10-02T17:35:27.425693Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 16,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:39.090763Z",
+          "at": "2026-10-02T17:35:27.426502Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-2:title",
           "request_attempt": 1,
           "snapshot": {
@@ -4812,16 +5045,16 @@
             "active_units": [
               "chapter-2:title"
             ],
-            "updated_at": "2026-10-02T17:05:39.090763Z"
+            "updated_at": "2026-10-02T17:35:27.426502Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 17,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:39.350026Z",
+          "at": "2026-10-02T17:35:27.678416Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-2:title",
           "unit_kind": "title",
           "chapter_number": 2,
@@ -4852,16 +5085,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.350026Z"
+            "updated_at": "2026-10-02T17:35:27.678416Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 18,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:39.350442Z",
+          "at": "2026-10-02T17:35:27.678865Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-2:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -4890,16 +5123,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:39.350442Z"
+            "updated_at": "2026-10-02T17:35:27.678865Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 19,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:39.351208Z",
+          "at": "2026-10-02T17:35:27.679658Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -4929,16 +5162,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:39.351208Z"
+            "updated_at": "2026-10-02T17:35:27.679658Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 20,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:39.351775Z",
+          "at": "2026-10-02T17:35:27.680274Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-2:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -4969,16 +5202,16 @@
               "chapter-2:segment-1",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:39.351775Z"
+            "updated_at": "2026-10-02T17:35:27.680274Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 21,
           "event": "unit_failed",
-          "at": "2026-10-02T17:05:39.471804Z",
+          "at": "2026-10-02T17:35:27.800208Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "unit_id": "chapter-2:segment-1",
           "code": "QwenTTSAPIError",
           "reason": "provider_error",
@@ -5011,16 +5244,16 @@
               "chapter-2:segment-0",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:39.471804Z"
+            "updated_at": "2026-10-02T17:35:27.800208Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 22,
           "event": "failed",
-          "at": "2026-10-02T17:05:39.702111Z",
+          "at": "2026-10-02T17:35:28.032566Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "d78fa7ed-4942-4cd3-82b2-42404cfbefb3",
+          "attempt_id": "2d95f2c6-555c-4dd0-b45d-42a9a0f4242c",
           "code": "QwenTTSAPIError",
           "message": "生成失败（HTTP 403，provider_error）",
           "retryable": false,
@@ -5049,7 +5282,7 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.702111Z"
+            "updated_at": "2026-10-02T17:35:28.032566Z"
           }
         }
       ]
@@ -5058,9 +5291,75 @@
       "case": "resume",
       "concurrency": 3,
       "maximum_requests": 3,
-      "elapsed_seconds": 1.187,
+      "elapsed_seconds": 1.083,
       "provider_calls": 4,
       "status": "completed",
+      "audio_content": [
+        {
+          "chapter": 1,
+          "expected": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "observed": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            500,
+            700,
+            900,
+            1100,
+            1300
+          ],
+          "verified": true
+        },
+        {
+          "chapter": 2,
+          "expected": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "observed": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            1500,
+            1700,
+            1900,
+            2100,
+            2300
+          ],
+          "verified": true
+        }
+      ],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "completed",
@@ -5085,16 +5384,16 @@
         "chapters_total": 2,
         "chapters_completed": 2,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:40.889896Z"
+        "updated_at": "2026-10-02T17:35:29.209021Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:39.705474Z",
+          "at": "2026-10-02T17:35:28.128137Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -5120,22 +5419,22 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.705474Z"
+            "updated_at": "2026-10-02T17:35:28.128137Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:39.706293Z",
+          "at": "2026-10-02T17:35:28.128817Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "chapter_number": 1,
           "audio": "chapters/0001.mp3",
           "timeline": "timelines/0001.json",
-          "duration_ms": 2664,
-          "size_bytes": 21634,
-          "sha256": "e6c31b114759a9d015416e94923a65231c95543377525512f029c4d5d5851327",
+          "duration_ms": 3600,
+          "size_bytes": 29122,
+          "sha256": "1d8121efa9a6f6334b1830be5fa486c6545c2b5771bb6268bb13160c49a8a8fd",
           "segment_count": 4,
           "resumed": true,
           "snapshot": {
@@ -5162,16 +5461,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.706293Z"
+            "updated_at": "2026-10-02T17:35:28.128817Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:39.706563Z",
+          "at": "2026-10-02T17:35:28.129026Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "chapter_number": 2,
           "title": "标题2",
           "total_segments": 4,
@@ -5199,16 +5498,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.706563Z"
+            "updated_at": "2026-10-02T17:35:28.129026Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:39.707041Z",
+          "at": "2026-10-02T17:35:28.129266Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:title",
           "unit_kind": "title",
           "chapter_number": 2,
@@ -5239,16 +5538,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:39.707041Z"
+            "updated_at": "2026-10-02T17:35:28.129266Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:39.707836Z",
+          "at": "2026-10-02T17:35:28.129961Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -5277,16 +5576,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:39.707836Z"
+            "updated_at": "2026-10-02T17:35:28.129961Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:40.251683Z",
+          "at": "2026-10-02T17:35:28.612088Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:segment-0",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -5317,16 +5616,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.251683Z"
+            "updated_at": "2026-10-02T17:35:28.612088Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 7,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:40.252085Z",
+          "at": "2026-10-02T17:35:28.612421Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -5355,16 +5654,16 @@
             "active_units": [
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:40.252085Z"
+            "updated_at": "2026-10-02T17:35:28.612421Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 8,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:40.253127Z",
+          "at": "2026-10-02T17:35:28.613125Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -5394,16 +5693,16 @@
               "chapter-2:segment-1",
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:40.253127Z"
+            "updated_at": "2026-10-02T17:35:28.613125Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:40.253778Z",
+          "at": "2026-10-02T17:35:28.613668Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -5434,22 +5733,22 @@
               "chapter-2:segment-2",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:40.253778Z"
+            "updated_at": "2026-10-02T17:35:28.613668Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 10,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:40.577642Z",
+          "at": "2026-10-02T17:35:28.909318Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
-          "unit_id": "chapter-2:segment-2",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
+          "unit_id": "chapter-2:segment-1",
           "unit_kind": "body",
           "chapter_number": 2,
-          "segment_index": 2,
+          "segment_index": 1,
           "cache_hit": false,
-          "fingerprint": "7f146ec355cf9fc21bbcf489cafa6f6ed5a47c7d49f9a30f9ecad83c07bfe06a",
+          "fingerprint": "39f98c16701443e409853a84250dad38d12c47e6fb7681844725cb371e9bb886",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -5474,19 +5773,19 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [
-              "chapter-2:segment-1",
+              "chapter-2:segment-2",
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:40.577642Z"
+            "updated_at": "2026-10-02T17:35:28.909318Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 11,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:40.580668Z",
+          "at": "2026-10-02T17:35:28.909968Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "unit_id": "chapter-2:segment-3",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -5517,24 +5816,24 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [
-              "chapter-2:segment-1"
+              "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:40.580668Z"
+            "updated_at": "2026-10-02T17:35:28.909968Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 12,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:40.581161Z",
+          "at": "2026-10-02T17:35:28.947280Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
-          "unit_id": "chapter-2:segment-1",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
+          "unit_id": "chapter-2:segment-2",
           "unit_kind": "body",
           "chapter_number": 2,
-          "segment_index": 1,
+          "segment_index": 2,
           "cache_hit": false,
-          "fingerprint": "39f98c16701443e409853a84250dad38d12c47e6fb7681844725cb371e9bb886",
+          "fingerprint": "7f146ec355cf9fc21bbcf489cafa6f6ed5a47c7d49f9a30f9ecad83c07bfe06a",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -5559,16 +5858,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.581161Z"
+            "updated_at": "2026-10-02T17:35:28.947280Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 13,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:40.582001Z",
+          "at": "2026-10-02T17:35:28.947862Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "chapter_number": 2,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -5594,26 +5893,26 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.582001Z"
+            "updated_at": "2026-10-02T17:35:28.947862Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 14,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:40.888699Z",
+          "at": "2026-10-02T17:35:29.208131Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "chapter_number": 2,
           "number": 2,
           "source_key": "",
           "title": "标题2",
           "audio": "chapters/0002.mp3",
           "timeline": "timelines/0002.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "3a1a037b5e1672ee18a4e6bd80ec53c0ca9a79efef982d74232f3f1efb2aadbf",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "bad4ef4587861a13bebf5c78b941045f55532ecabfa6e13f0a3ad072ecc251e1",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -5639,16 +5938,16 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.888699Z"
+            "updated_at": "2026-10-02T17:35:29.208131Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 15,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:40.889003Z",
+          "at": "2026-10-02T17:35:29.208433Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -5673,19 +5972,19 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.889003Z"
+            "updated_at": "2026-10-02T17:35:29.208433Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 16,
           "event": "completed",
-          "at": "2026-10-02T17:05:40.889896Z",
+          "at": "2026-10-02T17:35:29.209021Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c392e8af-db31-4430-a8da-40bde34e14dd",
+          "attempt_id": "a5a33818-88a1-4a56-9161-26291eee7882",
           "manifest": "manifest.v2.json",
           "chapter_count": 2,
-          "duration_ms": 5328,
+          "duration_ms": 7200,
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "completed",
@@ -5710,7 +6009,7 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.889896Z"
+            "updated_at": "2026-10-02T17:35:29.209021Z"
           }
         }
       ]
@@ -5719,9 +6018,75 @@
       "case": "edge_shared_limit",
       "concurrency": 3,
       "maximum_requests": 1,
-      "elapsed_seconds": 4.048,
+      "elapsed_seconds": 3.933,
       "provider_calls": 10,
       "status": "completed",
+      "audio_content": [
+        {
+          "chapter": 1,
+          "expected": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "observed": [
+            "标题1",
+            "章1段0",
+            "章1段1",
+            "章1段2",
+            "章1段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            500,
+            700,
+            900,
+            1100,
+            1300
+          ],
+          "verified": true
+        },
+        {
+          "chapter": 2,
+          "expected": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "observed": [
+            "标题2",
+            "章2段0",
+            "章2段1",
+            "章2段2",
+            "章2段3"
+          ],
+          "marker_seconds": [
+            0.24,
+            0.24,
+            0.22,
+            0.24,
+            0.22
+          ],
+          "frequencies_hz": [
+            1500,
+            1700,
+            1900,
+            2100,
+            2300
+          ],
+          "verified": true
+        }
+      ],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "completed",
@@ -5752,16 +6117,16 @@
         "chapters_total": 2,
         "chapters_completed": 2,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:44.956191Z"
+        "updated_at": "2026-10-02T17:35:33.389979Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:40.910645Z",
+          "at": "2026-10-02T17:35:29.459899Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -5793,16 +6158,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.910645Z"
+            "updated_at": "2026-10-02T17:35:29.459899Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:40.911269Z",
+          "at": "2026-10-02T17:35:29.460376Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -5836,16 +6201,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:40.911269Z"
+            "updated_at": "2026-10-02T17:35:29.460376Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:40.918311Z",
+          "at": "2026-10-02T17:35:29.466099Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:title",
           "request_attempt": 1,
           "snapshot": {
@@ -5880,16 +6245,16 @@
             "active_units": [
               "chapter-1:title"
             ],
-            "updated_at": "2026-10-02T17:05:40.918311Z"
+            "updated_at": "2026-10-02T17:35:29.466099Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:41.238121Z",
+          "at": "2026-10-02T17:35:29.764558Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:title",
           "unit_kind": "title",
           "chapter_number": 1,
@@ -5926,16 +6291,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:41.238121Z"
+            "updated_at": "2026-10-02T17:35:29.764558Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:41.251477Z",
+          "at": "2026-10-02T17:35:29.771050Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -5970,16 +6335,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:41.251477Z"
+            "updated_at": "2026-10-02T17:35:29.771050Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "waiting",
-          "at": "2026-10-02T17:05:41.264937Z",
+          "at": "2026-10-02T17:35:29.778451Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "rate_queued",
@@ -6017,16 +6382,16 @@
             "active_units": [
               "chapter-1:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:41.264937Z"
+            "updated_at": "2026-10-02T17:35:29.778451Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 7,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:41.753733Z",
+          "at": "2026-10-02T17:35:30.261928Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-0",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -6063,16 +6428,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:41.753733Z"
+            "updated_at": "2026-10-02T17:35:30.261928Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 8,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:41.761587Z",
+          "at": "2026-10-02T17:35:30.266526Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -6107,16 +6472,16 @@
             "active_units": [
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:41.761587Z"
+            "updated_at": "2026-10-02T17:35:30.266526Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 9,
           "event": "waiting",
-          "at": "2026-10-02T17:05:41.768614Z",
+          "at": "2026-10-02T17:35:30.278633Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "rate_queued",
@@ -6134,7 +6499,7 @@
             "requests_started": 3,
             "wait_seconds": 0.0,
             "waiting": {
-              "reason": "starting_request",
+              "reason": "global_concurrency",
               "unit_id": "chapter-1:segment-2",
               "retry_count": 0,
               "next_request_at": null
@@ -6154,16 +6519,16 @@
             "active_units": [
               "chapter-1:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:41.768614Z"
+            "updated_at": "2026-10-02T17:35:30.278633Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 10,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:42.104902Z",
+          "at": "2026-10-02T17:35:30.527770Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-1",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -6200,16 +6565,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:42.104902Z"
+            "updated_at": "2026-10-02T17:35:30.527770Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 11,
           "event": "heartbeat",
-          "at": "2026-10-02T17:05:42.106029Z",
+          "at": "2026-10-02T17:35:30.528540Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -6240,16 +6605,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:42.106029Z"
+            "updated_at": "2026-10-02T17:35:30.528540Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 12,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:42.111706Z",
+          "at": "2026-10-02T17:35:30.534968Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -6284,16 +6649,16 @@
             "active_units": [
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:42.111706Z"
+            "updated_at": "2026-10-02T17:35:30.534968Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 13,
           "event": "waiting",
-          "at": "2026-10-02T17:05:42.119290Z",
+          "at": "2026-10-02T17:35:30.541760Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "rate_queued",
@@ -6311,7 +6676,7 @@
             "requests_started": 4,
             "wait_seconds": 0.0,
             "waiting": {
-              "reason": "starting_request",
+              "reason": "global_concurrency",
               "unit_id": "chapter-1:segment-3",
               "retry_count": 0,
               "next_request_at": null
@@ -6331,16 +6696,16 @@
             "active_units": [
               "chapter-1:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:42.119290Z"
+            "updated_at": "2026-10-02T17:35:30.541760Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 14,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:42.449364Z",
+          "at": "2026-10-02T17:35:30.796002Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-2",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -6377,16 +6742,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:42.449364Z"
+            "updated_at": "2026-10-02T17:35:30.796002Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 15,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:42.458621Z",
+          "at": "2026-10-02T17:35:30.801238Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -6421,16 +6786,16 @@
             "active_units": [
               "chapter-1:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:42.458621Z"
+            "updated_at": "2026-10-02T17:35:30.801238Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 16,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:42.724096Z",
+          "at": "2026-10-02T17:35:31.063215Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-1:segment-3",
           "unit_kind": "body",
           "chapter_number": 1,
@@ -6467,16 +6832,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:42.724096Z"
+            "updated_at": "2026-10-02T17:35:31.063215Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 17,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:42.724914Z",
+          "at": "2026-10-02T17:35:31.064098Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "chapter_number": 1,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -6508,26 +6873,26 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:42.724914Z"
+            "updated_at": "2026-10-02T17:35:31.064098Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 18,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:43.022301Z",
+          "at": "2026-10-02T17:35:31.335212Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "chapter_number": 1,
           "number": 1,
           "source_key": "",
           "title": "标题1",
           "audio": "chapters/0001.mp3",
           "timeline": "timelines/0001.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "e6c31b114759a9d015416e94923a65231c95543377525512f029c4d5d5851327",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "1d8121efa9a6f6334b1830be5fa486c6545c2b5771bb6268bb13160c49a8a8fd",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -6559,16 +6924,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:43.022301Z"
+            "updated_at": "2026-10-02T17:35:31.335212Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 19,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:43.022901Z",
+          "at": "2026-10-02T17:35:31.335776Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "chapter_number": 2,
           "title": "标题2",
           "total_segments": 4,
@@ -6602,16 +6967,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:43.022901Z"
+            "updated_at": "2026-10-02T17:35:31.335776Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 20,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:43.029824Z",
+          "at": "2026-10-02T17:35:31.344687Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:title",
           "request_attempt": 1,
           "snapshot": {
@@ -6646,16 +7011,16 @@
             "active_units": [
               "chapter-2:title"
             ],
-            "updated_at": "2026-10-02T17:05:43.029824Z"
+            "updated_at": "2026-10-02T17:35:31.344687Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 21,
           "event": "unit_completed",
-          "at": "2026-10-02T17:05:43.329845Z",
+          "at": "2026-10-02T17:35:31.637675Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:title",
           "unit_kind": "title",
           "chapter_number": 2,
@@ -6692,16 +7057,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:43.329845Z"
+            "updated_at": "2026-10-02T17:35:31.637675Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 22,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:43.336452Z",
+          "at": "2026-10-02T17:35:31.644480Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-0",
           "request_attempt": 1,
           "snapshot": {
@@ -6736,16 +7101,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:43.336452Z"
+            "updated_at": "2026-10-02T17:35:31.644480Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 23,
           "event": "waiting",
-          "at": "2026-10-02T17:05:43.349415Z",
+          "at": "2026-10-02T17:35:31.651866Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "rate_queued",
@@ -6783,16 +7148,16 @@
             "active_units": [
               "chapter-2:segment-0"
             ],
-            "updated_at": "2026-10-02T17:05:43.349415Z"
+            "updated_at": "2026-10-02T17:35:31.651866Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 24,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:43.843897Z",
+          "at": "2026-10-02T17:35:32.135526Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-0",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -6829,16 +7194,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:43.843897Z"
+            "updated_at": "2026-10-02T17:35:32.135526Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 25,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:43.849519Z",
+          "at": "2026-10-02T17:35:32.140489Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-1",
           "request_attempt": 1,
           "snapshot": {
@@ -6873,16 +7238,16 @@
             "active_units": [
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:43.849519Z"
+            "updated_at": "2026-10-02T17:35:32.140489Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 26,
           "event": "waiting",
-          "at": "2026-10-02T17:05:43.863261Z",
+          "at": "2026-10-02T17:35:32.152947Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "rate_queued",
@@ -6920,16 +7285,16 @@
             "active_units": [
               "chapter-2:segment-1"
             ],
-            "updated_at": "2026-10-02T17:05:43.863261Z"
+            "updated_at": "2026-10-02T17:35:32.152947Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 27,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:44.101243Z",
+          "at": "2026-10-02T17:35:32.474779Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-1",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -6966,16 +7331,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.101243Z"
+            "updated_at": "2026-10-02T17:35:32.474779Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 28,
           "event": "heartbeat",
-          "at": "2026-10-02T17:05:44.101874Z",
+          "at": "2026-10-02T17:35:32.475281Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -7006,16 +7371,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.101874Z"
+            "updated_at": "2026-10-02T17:35:32.475281Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 29,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:44.107957Z",
+          "at": "2026-10-02T17:35:32.480418Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-2",
           "request_attempt": 1,
           "snapshot": {
@@ -7050,16 +7415,16 @@
             "active_units": [
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:44.107957Z"
+            "updated_at": "2026-10-02T17:35:32.480418Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 30,
           "event": "waiting",
-          "at": "2026-10-02T17:05:44.116194Z",
+          "at": "2026-10-02T17:35:32.488051Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "rate_queued",
@@ -7097,16 +7462,16 @@
             "active_units": [
               "chapter-2:segment-2"
             ],
-            "updated_at": "2026-10-02T17:05:44.116194Z"
+            "updated_at": "2026-10-02T17:35:32.488051Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 31,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:44.368236Z",
+          "at": "2026-10-02T17:35:32.779535Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-2",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -7143,16 +7508,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.368236Z"
+            "updated_at": "2026-10-02T17:35:32.779535Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 32,
           "event": "unit_started",
-          "at": "2026-10-02T17:05:44.375049Z",
+          "at": "2026-10-02T17:35:32.785159Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-3",
           "request_attempt": 1,
           "snapshot": {
@@ -7187,16 +7552,16 @@
             "active_units": [
               "chapter-2:segment-3"
             ],
-            "updated_at": "2026-10-02T17:05:44.375049Z"
+            "updated_at": "2026-10-02T17:35:32.785159Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 33,
           "event": "segment_completed",
-          "at": "2026-10-02T17:05:44.635315Z",
+          "at": "2026-10-02T17:35:33.119057Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "unit_id": "chapter-2:segment-3",
           "unit_kind": "body",
           "chapter_number": 2,
@@ -7233,16 +7598,16 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.635315Z"
+            "updated_at": "2026-10-02T17:35:33.119057Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 34,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:44.637337Z",
+          "at": "2026-10-02T17:35:33.119978Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "chapter_number": 2,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -7274,26 +7639,26 @@
             "chapters_total": 2,
             "chapters_completed": 1,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.637337Z"
+            "updated_at": "2026-10-02T17:35:33.119978Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 35,
           "event": "chapter_completed",
-          "at": "2026-10-02T17:05:44.954818Z",
+          "at": "2026-10-02T17:35:33.388632Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "chapter_number": 2,
           "number": 2,
           "source_key": "",
           "title": "标题2",
           "audio": "chapters/0002.mp3",
           "timeline": "timelines/0002.json",
-          "duration_ms": 2664,
-          "timeline_duration_ms": 2600,
-          "size_bytes": 21634,
-          "sha256": "3a1a037b5e1672ee18a4e6bd80ec53c0ca9a79efef982d74232f3f1efb2aadbf",
+          "duration_ms": 3600,
+          "timeline_duration_ms": 3550,
+          "size_bytes": 29122,
+          "sha256": "bad4ef4587861a13bebf5c78b941045f55532ecabfa6e13f0a3ad072ecc251e1",
           "segment_count": 4,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -7325,16 +7690,16 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.954818Z"
+            "updated_at": "2026-10-02T17:35:33.388632Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 36,
           "event": "stage_changed",
-          "at": "2026-10-02T17:05:44.955414Z",
+          "at": "2026-10-02T17:35:33.389168Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "running",
@@ -7365,19 +7730,19 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.955414Z"
+            "updated_at": "2026-10-02T17:35:33.389168Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 37,
           "event": "completed",
-          "at": "2026-10-02T17:05:44.956191Z",
+          "at": "2026-10-02T17:35:33.389979Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c338aead-3ed5-4240-8fde-41ef6894922e",
+          "attempt_id": "db2adbc0-c4c0-4171-9456-a73979fbd357",
           "manifest": "manifest.v2.json",
           "chapter_count": 2,
-          "duration_ms": 5328,
+          "duration_ms": 7200,
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "completed",
@@ -7408,7 +7773,7 @@
             "chapters_total": 2,
             "chapters_completed": 2,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.956191Z"
+            "updated_at": "2026-10-02T17:35:33.389979Z"
           }
         }
       ]
@@ -7417,9 +7782,10 @@
       "case": "edge_cooldown_cancel",
       "concurrency": 3,
       "maximum_requests": 0,
-      "elapsed_seconds": 1.013,
+      "elapsed_seconds": 1.011,
       "provider_calls": 0,
       "status": "cancelled",
+      "audio_content": [],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "cancelled",
@@ -7442,7 +7808,7 @@
           "rate_limits": 1,
           "retries": 0,
           "cooldowns": 0,
-          "cooldown_until": 1790960804.967708
+          "cooldown_until": 1790962593.5860937
         },
         "cache_hits": 0,
         "active_requests": 0,
@@ -7450,16 +7816,16 @@
         "chapters_total": 2,
         "chapters_completed": 0,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:45.984332Z"
+        "updated_at": "2026-10-02T17:35:34.600597Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:44.974285Z",
+          "at": "2026-10-02T17:35:33.592150Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "bd8ae8fa-217f-44f8-8364-29cd91ae0322",
+          "attempt_id": "f20fc507-e2ae-4600-91fa-e5b57c35a662",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -7483,7 +7849,7 @@
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7491,16 +7857,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.974285Z"
+            "updated_at": "2026-10-02T17:35:33.592150Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:44.975044Z",
+          "at": "2026-10-02T17:35:33.592641Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "bd8ae8fa-217f-44f8-8364-29cd91ae0322",
+          "attempt_id": "f20fc507-e2ae-4600-91fa-e5b57c35a662",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -7526,7 +7892,7 @@
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7534,16 +7900,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.975044Z"
+            "updated_at": "2026-10-02T17:35:33.592641Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "waiting",
-          "at": "2026-10-02T17:05:44.981087Z",
+          "at": "2026-10-02T17:35:33.597504Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "bd8ae8fa-217f-44f8-8364-29cd91ae0322",
+          "attempt_id": "f20fc507-e2ae-4600-91fa-e5b57c35a662",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "cooling_down",
@@ -7564,14 +7930,14 @@
               "reason": "shared_cooldown",
               "unit_id": "chapter-1:title",
               "retry_count": 0,
-              "next_request_at": "2026-10-02T17:06:44.967708Z"
+              "next_request_at": "2026-10-02T17:36:33.586094Z"
             },
             "edge_budget": {
               "requests": 11,
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7579,16 +7945,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:44.981087Z"
+            "updated_at": "2026-10-02T17:35:33.597504Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "heartbeat",
-          "at": "2026-10-02T17:05:45.976347Z",
+          "at": "2026-10-02T17:35:34.593665Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "bd8ae8fa-217f-44f8-8364-29cd91ae0322",
+          "attempt_id": "f20fc507-e2ae-4600-91fa-e5b57c35a662",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "cooling_down",
@@ -7609,14 +7975,14 @@
               "reason": "shared_cooldown",
               "unit_id": "chapter-1:title",
               "retry_count": 0,
-              "next_request_at": "2026-10-02T17:06:44.967708Z"
+              "next_request_at": "2026-10-02T17:36:33.586094Z"
             },
             "edge_budget": {
               "requests": 11,
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7624,16 +7990,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:45.976347Z"
+            "updated_at": "2026-10-02T17:35:34.593665Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 5,
           "event": "cancel_requested",
-          "at": "2026-10-02T17:05:45.977070Z",
+          "at": "2026-10-02T17:35:34.594328Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "bd8ae8fa-217f-44f8-8364-29cd91ae0322",
+          "attempt_id": "f20fc507-e2ae-4600-91fa-e5b57c35a662",
           "retryable": true,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -7655,14 +8021,14 @@
               "reason": "shared_cooldown",
               "unit_id": "chapter-1:title",
               "retry_count": 0,
-              "next_request_at": "2026-10-02T17:06:44.967708Z"
+              "next_request_at": "2026-10-02T17:36:33.586094Z"
             },
             "edge_budget": {
               "requests": 11,
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7670,16 +8036,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:45.977070Z"
+            "updated_at": "2026-10-02T17:35:34.594328Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 6,
           "event": "cancelled",
-          "at": "2026-10-02T17:05:45.984332Z",
+          "at": "2026-10-02T17:35:34.600597Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "bd8ae8fa-217f-44f8-8364-29cd91ae0322",
+          "attempt_id": "f20fc507-e2ae-4600-91fa-e5b57c35a662",
           "retryable": true,
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -7703,7 +8069,7 @@
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7711,7 +8077,7 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:45.984332Z"
+            "updated_at": "2026-10-02T17:35:34.600597Z"
           }
         }
       ]
@@ -7720,9 +8086,10 @@
       "case": "edge_wait_budget_exhausted",
       "concurrency": 3,
       "maximum_requests": 0,
-      "elapsed_seconds": 0.052,
+      "elapsed_seconds": 0.042,
       "provider_calls": 0,
       "status": "failed",
+      "audio_content": [],
       "final_snapshot": {
         "schema": "voicebook-progress.v2",
         "status": "failed",
@@ -7738,14 +8105,14 @@
         "queued": 0,
         "retries": 0,
         "requests_started": 0,
-        "wait_seconds": 0.038,
+        "wait_seconds": 0.035,
         "waiting": null,
         "edge_budget": {
           "requests": 11,
           "rate_limits": 1,
           "retries": 0,
           "cooldowns": 0,
-          "cooldown_until": 1790960804.967708
+          "cooldown_until": 1790962593.5860937
         },
         "cache_hits": 0,
         "active_requests": 0,
@@ -7753,16 +8120,16 @@
         "chapters_total": 2,
         "chapters_completed": 0,
         "active_units": [],
-        "updated_at": "2026-10-02T17:05:46.036355Z"
+        "updated_at": "2026-10-02T17:35:34.643030Z"
       },
       "events": [
         {
           "schema": "voicebook-progress.v2",
           "seq": 1,
           "event": "phase_started",
-          "at": "2026-10-02T17:05:45.988814Z",
+          "at": "2026-10-02T17:35:34.603259Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c583b8e8-f92e-4e55-bc96-629c03173c8c",
+          "attempt_id": "2347e8aa-89c6-4591-bd5f-fd7bae6d3381",
           "job_phase": "GENERATING",
           "snapshot": {
             "schema": "voicebook-progress.v2",
@@ -7786,7 +8153,7 @@
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7794,16 +8161,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:45.988814Z"
+            "updated_at": "2026-10-02T17:35:34.603259Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 2,
           "event": "chapter_started",
-          "at": "2026-10-02T17:05:45.990061Z",
+          "at": "2026-10-02T17:35:34.603674Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c583b8e8-f92e-4e55-bc96-629c03173c8c",
+          "attempt_id": "2347e8aa-89c6-4591-bd5f-fd7bae6d3381",
           "chapter_number": 1,
           "title": "标题1",
           "total_segments": 4,
@@ -7829,7 +8196,7 @@
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7837,16 +8204,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:45.990061Z"
+            "updated_at": "2026-10-02T17:35:34.603674Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 3,
           "event": "waiting",
-          "at": "2026-10-02T17:05:45.998538Z",
+          "at": "2026-10-02T17:35:34.608602Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c583b8e8-f92e-4e55-bc96-629c03173c8c",
+          "attempt_id": "2347e8aa-89c6-4591-bd5f-fd7bae6d3381",
           "snapshot": {
             "schema": "voicebook-progress.v2",
             "status": "cooling_down",
@@ -7867,14 +8234,14 @@
               "reason": "shared_cooldown",
               "unit_id": "chapter-1:title",
               "retry_count": 0,
-              "next_request_at": "2026-10-02T17:06:44.967708Z"
+              "next_request_at": "2026-10-02T17:36:33.586094Z"
             },
             "edge_budget": {
               "requests": 11,
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7882,16 +8249,16 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:45.998538Z"
+            "updated_at": "2026-10-02T17:35:34.608602Z"
           }
         },
         {
           "schema": "voicebook-progress.v2",
           "seq": 4,
           "event": "failed",
-          "at": "2026-10-02T17:05:46.036355Z",
+          "at": "2026-10-02T17:35:34.643030Z",
           "task_id": "offline-demo-book",
-          "attempt_id": "c583b8e8-f92e-4e55-bc96-629c03173c8c",
+          "attempt_id": "2347e8aa-89c6-4591-bd5f-fd7bae6d3381",
           "code": "WaitBudgetExceeded",
           "message": "生成失败（WaitBudgetExceeded，retry_wait_budget）",
           "retryable": true,
@@ -7911,14 +8278,14 @@
             "queued": 0,
             "retries": 0,
             "requests_started": 0,
-            "wait_seconds": 0.038,
+            "wait_seconds": 0.035,
             "waiting": null,
             "edge_budget": {
               "requests": 11,
               "rate_limits": 1,
               "retries": 0,
               "cooldowns": 0,
-              "cooldown_until": 1790960804.967708
+              "cooldown_until": 1790962593.5860937
             },
             "cache_hits": 0,
             "active_requests": 0,
@@ -7926,7 +8293,7 @@
             "chapters_total": 2,
             "chapters_completed": 0,
             "active_units": [],
-            "updated_at": "2026-10-02T17:05:46.036355Z"
+            "updated_at": "2026-10-02T17:35:34.643030Z"
           }
         }
       ]

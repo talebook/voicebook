@@ -8,9 +8,10 @@ import json
 import tempfile
 import threading
 import time
-import wave
 from datetime import datetime, timezone
 from pathlib import Path
+
+from audio_markers import validate_audio_content, write_marker
 
 from book2audio.edge_budget import EdgeBudget
 from book2audio.machine import GenerationCancelled, ProgressEmitter
@@ -55,11 +56,7 @@ class SimulatedEngine:
                 raise QwenTTSAPIError("模拟 HTTP 403", retryable=False, http_status=403)
             if self.cancel and text == "章1段1":
                 self.cancel.touch()
-            with wave.open(str(output), "wb") as wav:
-                wav.setnchannels(1)
-                wav.setsampwidth(2)
-                wav.setframerate(24_000)
-                wav.writeframes(b"\x10\x00" * 1200)
+            write_marker(text, output)
         finally:
             with self.lock:
                 self.active -= 1
@@ -113,6 +110,13 @@ def run_case(
         assert value["total"] == sum(
             value[key] for key in ("completed", "pending", "active", "retrying", "failed", "cancelled", "queued")
         )
+    audio_content = [
+        {"chapter": record["number"], **validate_audio_content(
+            output / record["audio"],
+            [f"标题{record['number']}", *(f"章{record['number']}段{i}" for i in range(4))],
+        )}
+        for record in manifest["chapters"]
+    ]
     if status == "completed":
         assert [path.name for path in files] == ["0001.mp3", "0002.mp3"]
         assert manifest["status"] == "completed" and latest["snapshot"]["completed"] == 10
@@ -129,6 +133,7 @@ def run_case(
         "elapsed_seconds": elapsed,
         "provider_calls": len(synth.calls),
         "status": status,
+        "audio_content": audio_content,
         "final_snapshot": latest["snapshot"],
         "events": rows,
     }
@@ -195,6 +200,13 @@ def main():
             + "".join(rows)
             + "</tbody></table></div></details>"
         )
+    audio_checks = "".join(
+        f"<tr><td>{case['case']}</td><td>{check['chapter']}</td>"
+        f"<td>{html.escape(' → '.join(check['observed']))}</td>"
+        f"<td>{html.escape(str(check['frequencies_hz']))}</td>"
+        f"<td>{html.escape(str(check['marker_seconds']))}</td></tr>"
+        for case in results for check in case["audio_content"]
+    )
     report = (
         """<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TB-234 单本并发与真实进度模拟验证</title><style>body{font:16px/1.65 system-ui,sans-serif;max-width:1100px;margin:32px auto;padding:0 20px;color:#243447;background:#f4f7fb}
@@ -205,6 +217,10 @@ table{border-collapse:collapse;background:white;width:100%;font-size:14px}td,th{
         + summaries
         + """</tbody></table></div>
 <p>所有成功场景已校验章节顺序、时间轴正文顺序、10 个单元无遗漏、快照分区计数和持久化文件。失败与取消场景没有 completed 事件；恢复尝试从 0 开始重新计数并复用经过校验的章节和缓存。</p>
+<h2>最终 MP3 内容顺序</h2><p>每个标题/正文片段使用唯一的 500–2300Hz 音调，长 240ms。独立解码最终 MP3，以 20ms 帧的 Goertzel 能量识别实际音调序列，并检查每次出现的时长，覆盖相邻重复。判定不读取时间轴文字或缓存文件名；部分失败后保留的章节和恢复后的全部章节同样验证。</p>
+<div class='scroll'><table><thead><tr><th>场景</th><th>章节</th><th>解码得到的内容顺序</th><th>音调 Hz</th><th>各片段秒数</th></tr></thead><tbody>"""
+        + audio_checks
+        + """</tbody></table></div>
 <p><strong>完成片段达到 10/10 时仍可处于 assembling/finalizing。</strong>只有最终 manifest 写入成功后才完成。Talebook 页面接入和全链路 QA 尚待后续任务。</p>
 <h2>完整事件演示</h2><p>展开场景查看乱序返回、计数变化、阶段切换、429 退避、取消、部分失败、新尝试恢复、Edge 共享队列、冷却取消与等待预算耗尽。这里展示工作量，不生成虚假的耗时百分比。</p>"""
         + "".join(traces)

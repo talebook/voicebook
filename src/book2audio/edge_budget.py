@@ -131,6 +131,10 @@ class EdgeBudget:
                 "UPDATE active SET expires=? WHERE token=?", [(time.time() + LEASE_SECONDS, token) for token in tokens]
             )
 
+    @property
+    def renew_interval(self) -> float:
+        return min(1.0, LEASE_SECONDS / 3)
+
     def abandon(self, token: str):
         with self.connect() as db:
             db.execute("DELETE FROM queue WHERE token=?", (token,))
