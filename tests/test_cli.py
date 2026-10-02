@@ -104,6 +104,73 @@ class CliTests(unittest.TestCase):
         self.assertEqual("voicebook-progress.v1", events[-1]["schema"])
         self.assertNotIn("提示", stdout.getvalue())
 
+    def test_v2_identity_and_generation_limits_are_forwarded(self):
+        for command, source in (("generate", "book.script"), ("convert", "book.txt")):
+            with (
+                self.subTest(command=command),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                stdout = io.StringIO()
+                with (
+                    patch(
+                        f"book2audio.cli.{command}_audio" if command == "generate" else "book2audio.cli.convert_book",
+                        return_value=[],
+                    ) as generate,
+                    redirect_stdout(stdout),
+                ):
+                    status = main(
+                        [
+                            command,
+                            source,
+                            "-o",
+                            directory,
+                            "--progress-format",
+                            "jsonl",
+                            "--progress-version",
+                            "2",
+                            "--task-id",
+                            "job-123",
+                            "--attempt-id",
+                            "try-456",
+                            "--concurrency",
+                            "1",
+                            "--max-retries",
+                            "0",
+                            "--retry-backoff",
+                            "0.5",
+                        ]
+                    )
+                self.assertEqual(0, status)
+                options = generate.call_args.kwargs
+                self.assertEqual(
+                    (1, 0, 0.5),
+                    (
+                        options["concurrency"],
+                        options["max_retries"],
+                        options["retry_backoff"],
+                    ),
+                )
+                emitter = options["progress"]
+                self.assertEqual(
+                    (2, "job-123", "try-456"),
+                    (emitter.version, emitter.task_id, emitter.attempt_id),
+                )
+                self.assertEqual("", stdout.getvalue())
+
+    def test_human_mode_preserves_identity_for_persisted_progress(self):
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            redirect_stdout(io.StringIO()),
+            patch("book2audio.cli.generate_audio", return_value=[]) as generate,
+        ):
+            self.assertEqual(
+                0,
+                main(["generate", "book.script", "-o", directory, "--task-id", "job-123"]),
+            )
+            emitter = generate.call_args.kwargs["progress"]
+            self.assertEqual("job-123", emitter.task_id)
+            self.assertIsNone(emitter.stream)
+
 
 if __name__ == "__main__":
     unittest.main()

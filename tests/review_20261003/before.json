@@ -1,0 +1,20 @@
+[
+  {
+    "case": "normalization_cancel_gap",
+    "events_during_2_2s_normalization": [],
+    "cancel_latency_seconds": 2.258,
+    "terminal_event": "cancelled"
+  },
+  {
+    "case": "lease_during_local_media",
+    "configured_connection_limit": 2,
+    "original_network_request_still_active": true,
+    "other_book_admissions": [
+      true,
+      true
+    ],
+    "actual_simulated_connections": 3,
+    "heartbeats": 68,
+    "maximum_simulated_connections": 3
+  }
+]

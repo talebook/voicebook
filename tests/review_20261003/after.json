@@ -1,0 +1,72 @@
+[
+  {
+    "case": "lease_during_local_media",
+    "configured_connection_limit": 2,
+    "original_network_request_still_active": true,
+    "other_book_admissions": [
+      true,
+      false
+    ],
+    "actual_simulated_connections": 2,
+    "heartbeats": 57,
+    "maximum_simulated_connections": 2
+  },
+  {
+    "case": "edgetts_normalize_cancel",
+    "simulated_child_seconds": 30,
+    "events_before_cancel_during_media": [
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat"
+    ],
+    "cancel_latency_seconds": 0.021,
+    "all_children_reaped": true,
+    "terminal_event": "cancelled"
+  },
+  {
+    "case": "edgetts_tempo_cancel",
+    "simulated_child_seconds": 30,
+    "events_before_cancel_during_media": [
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat"
+    ],
+    "cancel_latency_seconds": 0.011,
+    "all_children_reaped": true,
+    "terminal_event": "cancelled"
+  },
+  {
+    "case": "qwen3tts_normalize_cancel",
+    "simulated_child_seconds": 30,
+    "events_before_cancel_during_media": [
+      "unit_started",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat"
+    ],
+    "cancel_latency_seconds": 0.004,
+    "all_children_reaped": true,
+    "terminal_event": "cancelled"
+  },
+  {
+    "case": "qwen3tts_tempo_cancel",
+    "simulated_child_seconds": 30,
+    "events_before_cancel_during_media": [
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat",
+      "heartbeat"
+    ],
+    "cancel_latency_seconds": 0.004,
+    "all_children_reaped": true,
+    "terminal_event": "cancelled"
+  }
+]
