@@ -3,6 +3,7 @@ import io
 import json
 import multiprocessing
 import tempfile
+import threading
 import time
 import unittest
 from datetime import datetime, timezone
@@ -321,6 +322,40 @@ class WaitingProgressTests(unittest.TestCase):
                 )
                 if value["status"] == "rate_queued":
                     self.assertEqual(0, value["active_requests"])
+
+    def test_peer_failure_while_preparing_next_generator_keeps_failure_identity(self):
+        started = threading.Event()
+        release = threading.Event()
+        calls = []
+        stream = io.StringIO()
+
+        def steps(index, stop):
+            if index == 3:
+                release.set()
+                self.assertTrue(stop.wait(3))
+                raise GenerationCancelled("peer stopped preparation")
+
+            def request():
+                calls.append(index)
+                if index == 1:
+                    self.assertTrue(started.wait(3))
+                elif index == 2:
+                    started.set()
+                    self.assertTrue(release.wait(3))
+                    raise ValueError("original provider failure")
+
+            yield request
+            return Path(str(index)), str(index), False
+
+        with tempfile.TemporaryDirectory() as directory:
+            budget = EdgeBudget(Path(directory) / "budget.sqlite", interval=0, concurrency=2)
+            with self.assertRaisesRegex(ValueError, "original provider failure"):
+                self.run_steps(budget, steps, count=4, stream=stream)
+        self.assertEqual({0, 1, 2}, set(calls))
+        rows = [json.loads(line) for line in stream.getvalue().splitlines()]
+        self.assertEqual(1, sum(row["event"] == "unit_failed" for row in rows))
+        self.assertFalse(any(row["event"] == "cancel_requested" for row in rows))
+        self.assertEqual(1, rows[-1]["snapshot"]["failed"])
 
     def test_shared_cooldown_is_visible_persisted_and_cancelled_without_worker(self):
         with tempfile.TemporaryDirectory() as directory:

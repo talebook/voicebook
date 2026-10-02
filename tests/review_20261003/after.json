@@ -8,7 +8,7 @@
       false
     ],
     "actual_simulated_connections": 2,
-    "heartbeats": 61,
+    "heartbeats": 57,
     "maximum_simulated_connections": 2
   },
   {
@@ -21,7 +21,7 @@
       "heartbeat",
       "heartbeat"
     ],
-    "cancel_latency_seconds": 0.011,
+    "cancel_latency_seconds": 0.021,
     "all_children_reaped": true,
     "terminal_event": "cancelled"
   },
@@ -35,7 +35,7 @@
       "heartbeat",
       "heartbeat"
     ],
-    "cancel_latency_seconds": 0.012,
+    "cancel_latency_seconds": 0.011,
     "all_children_reaped": true,
     "terminal_event": "cancelled"
   },
@@ -65,7 +65,7 @@
       "heartbeat",
       "heartbeat"
     ],
-    "cancel_latency_seconds": 0.003,
+    "cancel_latency_seconds": 0.004,
     "all_children_reaped": true,
     "terminal_event": "cancelled"
   }

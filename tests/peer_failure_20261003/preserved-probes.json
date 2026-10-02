@@ -1,0 +1,111 @@
+{
+  "source_sha256": {
+    "src/book2audio/tool_pipeline.py": "c287bcabcd91382ca090075108dc2f3ae014d46a753a20ecfae5aa9e7e36f53e",
+    "src/book2audio/work.py": "5b799ef4528f43243057b4fa09b53c8cf71b92e09758086d004f198b86240e05"
+  },
+  "positive_cases": [
+    {
+      "case": "lease_during_local_media",
+      "configured_connection_limit": 2,
+      "original_network_request_still_active": true,
+      "other_book_admissions": [
+        true,
+        false
+      ],
+      "actual_simulated_connections": 2,
+      "heartbeats": 57,
+      "maximum_simulated_connections": 2
+    },
+    {
+      "case": "edgetts_normalize_cancel",
+      "simulated_child_seconds": 30,
+      "events_before_cancel_during_media": [
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat"
+      ],
+      "cancel_latency_seconds": 0.021,
+      "all_children_reaped": true,
+      "terminal_event": "cancelled"
+    },
+    {
+      "case": "edgetts_tempo_cancel",
+      "simulated_child_seconds": 30,
+      "events_before_cancel_during_media": [
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat"
+      ],
+      "cancel_latency_seconds": 0.011,
+      "all_children_reaped": true,
+      "terminal_event": "cancelled"
+    },
+    {
+      "case": "qwen3tts_normalize_cancel",
+      "simulated_child_seconds": 30,
+      "events_before_cancel_during_media": [
+        "unit_started",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat"
+      ],
+      "cancel_latency_seconds": 0.004,
+      "all_children_reaped": true,
+      "terminal_event": "cancelled"
+    },
+    {
+      "case": "qwen3tts_tempo_cancel",
+      "simulated_child_seconds": 30,
+      "events_before_cancel_during_media": [
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat",
+        "heartbeat"
+      ],
+      "cancel_latency_seconds": 0.004,
+      "all_children_reaped": true,
+      "terminal_event": "cancelled"
+    }
+  ],
+  "fault_injection_cases": [
+    {
+      "case": "edgetts_normalize_cancel_disabled",
+      "probe_rejected_fault": true,
+      "observed_latency_seconds": 1.259,
+      "ffmpeg_output_was_produced": true
+    },
+    {
+      "case": "edgetts_tempo_cancel_disabled",
+      "probe_rejected_fault": true,
+      "observed_latency_seconds": 1.085,
+      "ffmpeg_output_was_produced": true
+    },
+    {
+      "case": "qwen3tts_normalize_cancel_disabled",
+      "probe_rejected_fault": true,
+      "observed_latency_seconds": 1.209,
+      "ffmpeg_output_was_produced": true
+    },
+    {
+      "case": "qwen3tts_tempo_cancel_disabled",
+      "probe_rejected_fault": true,
+      "observed_latency_seconds": 1.083,
+      "ffmpeg_output_was_produced": true
+    },
+    {
+      "case": "renewal_disabled",
+      "probe_rejected_fault": true,
+      "configured_limit": 2,
+      "observed_maximum": 3
+    }
+  ],
+  "all_checks_passed": true
+}

@@ -171,6 +171,40 @@ class BoundedRenderingTests(unittest.TestCase):
             self.run_jobs(render)
         self.assertEqual([0], calls)
 
+    def test_failure_completed_between_results_is_drained_before_next_submission(self):
+        for failure in (ValueError("peer failed"), QwenTTSAPIError("budget exhausted", retryable=True)):
+            with self.subTest(failure=type(failure).__name__):
+                started = threading.Event()
+                release = threading.Event()
+                calls = []
+                control = None
+
+                def render(index, stop):
+                    nonlocal control
+                    control = stop
+                    calls.append(index)
+                    if index == 1:
+                        self.assertTrue(started.wait(3))
+                    elif index == 2:
+                        started.set()
+                        self.assertTrue(release.wait(3))
+                        raise failure
+                    return Path(str(index)), str(index), False
+
+                def observe(row):
+                    if row["event"] == "segment_completed" and row["unit_id"] == "1":
+                        release.set()
+                        # The failure becomes observable after one result was handled,
+                        # while the coordinator is still inside its completion callback.
+                        self.assertTrue(control.wait(3))
+
+                stream = ObservedStream(observe)
+                with self.assertRaises(type(failure)):
+                    self.run_jobs(render, count=4, max_retries=0, stream=stream)
+                self.assertEqual({0, 1, 2}, set(calls))
+                self.assertEqual(1, stream.rows[-1]["snapshot"]["failed"])
+                self.assert_counts(stream.rows)
+
     def test_retry_budget_exhaustion_has_no_completed_increase(self):
         calls = []
         stream = ObservedStream()

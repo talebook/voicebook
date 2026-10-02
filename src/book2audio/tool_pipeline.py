@@ -330,14 +330,14 @@ def _run_media(
     def service(*, check_control=True):
         nonlocal next_heartbeat
         if work:
-            work.renew_requests()
+            work.service_requests()
         if check_control:
             try:
                 check_cancelled(cancel_file)
                 if stop and stop.is_set():
                     raise GenerationCancelled("已停止音频处理")
             except GenerationCancelled:
-                if work and work.status != "cancelling":
+                if work and work.status != "cancelling" and cancel_file and cancel_file.exists():
                     work.status = "cancelling"
                     work.emit("cancel_requested", retryable=True)
                 raise

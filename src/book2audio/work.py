@@ -34,7 +34,9 @@ class WaitBudgetExceeded(RuntimeError):
 def _utc(timestamp):
     try:
         return (
-            datetime.fromtimestamp(timestamp, timezone.utc).isoformat().replace("+00:00", "Z")
+            datetime.fromtimestamp(timestamp, timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
             if timestamp is not None
             else None
         )
@@ -65,11 +67,17 @@ class WorkProgress:
         self.requests_started = 0
         self.budget = None
         self.request_tokens: set[str] = set()
+        self.request_service: Callable[[], None] | None = None
 
     def renew_requests(self):
         """Keep every live request leased, including during coordinator media IO."""
         if self.budget and self.request_tokens:
             self.budget.renew(self.request_tokens)
+
+    def service_requests(self):
+        self.renew_requests()
+        if self.request_service:
+            self.request_service()
 
     def emit(self, event: str, **payload):
         counts = Counter(self.states.values())
@@ -101,7 +109,9 @@ class WorkProgress:
             "concurrency": self.concurrency,
             "chapters_total": self.chapters_total,
             "chapters_completed": self.chapters_completed,
-            "active_units": [key for key, state in self.states.items() if state == "active"][:32],
+            "active_units": [
+                key for key, state in self.states.items() if state == "active"
+            ][:32],
         }
         return self.emitter.emit(event, **payload)
 
@@ -150,15 +160,65 @@ def render_bounded(
     tickets = {}
     stop = Event()
     error = None
+    failed_future = None
     probe_ok = False
     progress.budget = budget
     next_heartbeat = time.monotonic() + HEARTBEAT_SECONDS
     previous_tick = time.monotonic()
     pool = ThreadPoolExecutor(max_workers=progress.concurrency)
+
+    def fatal_exception(future, attempt):
+        if not future.done() or future.cancelled():
+            return None
+        exc = future.exception()
+        if exc is not None and not (
+            error_info(exc).retryable and attempt < max_retries
+        ):
+            return exc
+        return None
+
+    def check_peer_failures():
+        """Observe failures without recursively advancing another media generator."""
+        nonlocal error, failed_future
+        if error is not None:
+            return
+        failures = [
+            (future, job, fatal_exception(future, job[2]))
+            for future, job in futures.items()
+        ]
+        failures = [item for item in failures if item[2] is not None]
+        # A cooperative stop must not hide the provider failure that caused it.
+        failures.sort(key=lambda item: isinstance(item[2], GenerationCancelled))
+        if not failures:
+            return
+        failed_future, (_, indices, _, _), error = failures[0]
+        stop.set()
+        cancelled = isinstance(error, GenerationCancelled)
+        for index in indices:
+            progress.states[unit_ids[index]] = "cancelled" if cancelled else "failed"
+        if cancelled:
+            progress.status = "cancelling"
+            progress.emit("cancel_requested", retryable=True)
+        else:
+            info = error_info(error)
+            progress.emit(
+                "unit_failed",
+                unit_id=unit_ids[indices[0]],
+                code=type(error).__name__,
+                reason=info.reason,
+                http_status=info.http_status,
+                retryable=info.retryable,
+            )
+
+    previous_service = progress.request_service
+    progress.request_service = check_peer_failures
     try:
         while pending or delayed or futures:
             now = time.monotonic()
-            if delayed or (progress.waiting and progress.waiting["reason"] in {"shared_cooldown", "request_budget"}):
+            if delayed or (
+                progress.waiting
+                and progress.waiting["reason"] in {"shared_cooldown", "request_budget"}
+            ):
                 progress.wait_seconds += now - previous_tick
             previous_tick = now
             if error is None and cancel_file and cancel_file.exists():
@@ -167,10 +227,119 @@ def render_bounded(
                 progress.status = "cancelling"
                 progress.emit("cancel_requested", retryable=True)
             if error is None and progress.wait_seconds > max_wait_seconds:
-                error = WaitBudgetExceeded("累计重试/冷却等待预算已耗尽，请显式恢复任务")
+                error = WaitBudgetExceeded(
+                    "累计重试/冷却等待预算已耗尽，请显式恢复任务"
+                )
                 stop.set()
-            if budget:
-                progress.renew_requests()
+            progress.service_requests()
+            for future in [future for future in futures if future.done()]:
+                key, indices, attempt, token = futures.pop(future)
+                progress.active_requests = len(futures)
+                try:
+                    result = future.result()
+                    if budget:
+                        budget.finish(token)
+                        progress.request_tokens.discard(token)
+                        token = None
+                    if steps:
+                        operations.pop(key)
+                        if error is not None:
+                            generators.pop(key).close()
+                            for index in indices:
+                                progress.states[unit_ids[index]] = "cancelled"
+                            continue
+                        try:
+                            operations[key] = next(generators[key])
+                        except StopIteration as done:
+                            result = done.value
+                            generators.pop(key)
+                        else:
+                            pending.append((key, indices, attempt))
+                            continue
+                except Exception as exc:
+                    check_peer_failures()
+                    info = error_info(exc)
+                    if budget and token:
+                        budget.finish(token, info)
+                        progress.request_tokens.discard(token)
+                    if key in generators:
+                        generators.pop(key).close()
+                    operations.pop(key, None)
+                    if error is None and info.retryable and attempt < max_retries:
+                        delay = (
+                            info.retry_after
+                            if info.retry_after is not None
+                            else random.uniform(
+                                min(60.0, retry_backoff * 2**attempt),
+                                min(60.0, retry_backoff * 2**attempt) * 1.5,
+                            )
+                        )
+                        delay = max(0.0, delay)
+                        delayed.append(
+                            (
+                                time.monotonic() + delay,
+                                key,
+                                indices,
+                                attempt + 1,
+                                info.reason,
+                            )
+                        )
+                        for index in indices:
+                            progress.states[unit_ids[index]] = "retrying"
+                        progress.retries += 1
+                        progress.status = (
+                            "rate_limit_retry"
+                            if info.reason == "rate_limited"
+                            else "retrying"
+                        )
+                        progress.waiting = {
+                            "reason": info.reason,
+                            "unit_id": unit_ids[indices[0]],
+                            "retry_count": attempt + 1,
+                            "next_request_at": _utc(time.time() + delay),
+                        }
+                        progress.emit(
+                            "unit_retrying",
+                            unit_id=unit_ids[indices[0]],
+                            code=type(exc).__name__,
+                            reason=info.reason,
+                            http_status=info.http_status,
+                            retryable=True,
+                            request_attempt=attempt + 1,
+                            retry_in_seconds=delay,
+                        )
+                    else:
+                        for index in indices:
+                            progress.states[unit_ids[index]] = (
+                                "cancelled"
+                                if (error is not None and future is not failed_future)
+                                or isinstance(exc, GenerationCancelled)
+                                else "failed"
+                            )
+                        if error is None:
+                            error = exc
+                            stop.set()
+                            if isinstance(exc, GenerationCancelled):
+                                progress.status = "cancelling"
+                                progress.emit("cancel_requested", retryable=True)
+                            else:
+                                progress.emit(
+                                    "unit_failed",
+                                    unit_id=unit_ids[indices[0]],
+                                    code=type(exc).__name__,
+                                    reason=info.reason,
+                                    http_status=info.http_status,
+                                    retryable=info.retryable,
+                                )
+                else:
+                    probe_ok = True
+                    if error is None:
+                        progress.status = "retrying" if delayed else "running"
+                        if not delayed:
+                            progress.waiting = None
+                    for index in indices:
+                        rendered[index] = result
+                        complete(index, result)
             if error is not None:
                 for _, indices, _ in pending:
                     for index in indices:
@@ -197,13 +366,27 @@ def render_bounded(
                 progress.waiting = None
                 limit = progress.concurrency if probe_ok else 1
                 while pending and len(futures) < limit:
+                    # Drain completed results before admission, including retryable failures.
+                    if (
+                        stop.is_set()
+                        or (cancel_file and cancel_file.exists())
+                        or any(future.done() for future in futures)
+                    ):
+                        break
                     key, indices, attempt = pending[0]
                     if not probe_ok and delayed:
                         break
                     if steps and key not in operations:
                         try:
-                            generator = generators.setdefault(key, steps(indices[0], stop))
+                            generator = generators.setdefault(
+                                key, steps(indices[0], stop)
+                            )
                             operations[key] = next(generator)
+                        except GenerationCancelled:
+                            check_peer_failures()
+                            if error is not None:
+                                break
+                            raise
                         except StopIteration as done:
                             generators.pop(key, None)
                             pending.popleft()
@@ -224,7 +407,11 @@ def render_bounded(
                                 "retry_count": attempt,
                                 "next_request_at": _utc(admission.next_at),
                             }
-                            progress.status = "cooling_down" if admission.reason == "shared_cooldown" else "rate_queued"
+                            progress.status = (
+                                "cooling_down"
+                                if admission.reason == "shared_cooldown"
+                                else "rate_queued"
+                            )
                             break
                         tickets.pop(key)
                     else:
@@ -238,6 +425,8 @@ def render_bounded(
                             return render(index, stop)
 
                     def admitted_request(operation=operation, token=token):
+                        if stop.is_set():
+                            raise GenerationCancelled("已停止提交生成请求")
                         if budget:
                             budget.start(token)
                         return operation()
@@ -246,126 +435,66 @@ def render_bounded(
                     futures[future] = (key, indices, attempt, token)
                     if token:
                         progress.request_tokens.add(token)
+                    # Workers only signal stop; the coordinator owns errors and events.
+                    future.add_done_callback(
+                        lambda finished, attempt=attempt: (
+                            stop.set()
+                            if fatal_exception(finished, attempt) is not None
+                            else None
+                        )
+                    )
                     progress.requests_started += 1
                     progress.active_requests = len(futures)
                     for index in indices:
                         progress.states[unit_ids[index]] = "active"
                     progress.status = "running"
-                    progress.emit("unit_started", unit_id=unit_ids[indices[0]], request_attempt=attempt + 1)
+                    progress.emit(
+                        "unit_started",
+                        unit_id=unit_ids[indices[0]],
+                        request_attempt=attempt + 1,
+                    )
                 if progress.waiting:
                     progress.emit("waiting")
                 elif delayed:
-                    due, _, indices, attempt, reason = min(delayed, key=lambda item: item[0])
-                    progress.status = "rate_limit_retry" if reason == "rate_limited" else "retrying"
+                    due, _, indices, attempt, reason = min(
+                        delayed, key=lambda item: item[0]
+                    )
+                    progress.status = (
+                        "rate_limit_retry" if reason == "rate_limited" else "retrying"
+                    )
                     progress.waiting = {
                         "reason": reason,
                         "unit_id": unit_ids[indices[0]],
                         "retry_count": attempt,
-                        "next_request_at": _utc(time.time() + max(0, due - time.monotonic())),
+                        "next_request_at": _utc(
+                            time.time() + max(0, due - time.monotonic())
+                        ),
                     }
             if not futures and not delayed and not pending:
                 break
+            # Event consumers may request cancellation while a result is emitted.
+            if error is None and (
+                stop.is_set() or (cancel_file and cancel_file.exists())
+            ):
+                continue
             timeout = max(0.001, next_heartbeat - time.monotonic())
             if budget:
                 timeout = min(timeout, budget.renew_interval)
             if delayed and error is None:
-                timeout = min(timeout, max(0.001, min(job[0] for job in delayed) - time.monotonic()))
-            if delayed or (progress.waiting and progress.waiting["reason"] in {"shared_cooldown", "request_budget"}):
-                timeout = min(timeout, max(0.001, max_wait_seconds - progress.wait_seconds))
-            done, _ = wait(futures, timeout=timeout, return_when=FIRST_COMPLETED)
+                timeout = min(
+                    timeout,
+                    max(0.001, min(job[0] for job in delayed) - time.monotonic()),
+                )
+            if delayed or (
+                progress.waiting
+                and progress.waiting["reason"] in {"shared_cooldown", "request_budget"}
+            ):
+                timeout = min(
+                    timeout, max(0.001, max_wait_seconds - progress.wait_seconds)
+                )
+            wait(futures, timeout=timeout, return_when=FIRST_COMPLETED)
             if not futures:
                 stop.wait(timeout)
-            for future in done:
-                key, indices, attempt, token = futures.pop(future)
-                progress.active_requests = len(futures)
-                try:
-                    result = future.result()
-                    if budget:
-                        budget.finish(token)
-                        progress.request_tokens.discard(token)
-                        token = None
-                    if steps:
-                        operations.pop(key)
-                        if error is not None:
-                            generators.pop(key).close()
-                            for index in indices:
-                                progress.states[unit_ids[index]] = "cancelled"
-                            continue
-                        try:
-                            operations[key] = next(generators[key])
-                        except StopIteration as done:
-                            result = done.value
-                            generators.pop(key)
-                        else:
-                            pending.append((key, indices, attempt))
-                            continue
-                except Exception as exc:
-                    info = error_info(exc)
-                    if budget and token:
-                        budget.finish(token, info)
-                        progress.request_tokens.discard(token)
-                    if key in generators:
-                        generators.pop(key).close()
-                    operations.pop(key, None)
-                    if error is None and info.retryable and attempt < max_retries:
-                        delay = (
-                            info.retry_after
-                            if info.retry_after is not None
-                            else random.uniform(
-                                min(60.0, retry_backoff * 2**attempt), min(60.0, retry_backoff * 2**attempt) * 1.5
-                            )
-                        )
-                        delay = max(0.0, delay)
-                        delayed.append((time.monotonic() + delay, key, indices, attempt + 1, info.reason))
-                        for index in indices:
-                            progress.states[unit_ids[index]] = "retrying"
-                        progress.retries += 1
-                        progress.status = "rate_limit_retry" if info.reason == "rate_limited" else "retrying"
-                        progress.waiting = {
-                            "reason": info.reason,
-                            "unit_id": unit_ids[indices[0]],
-                            "retry_count": attempt + 1,
-                            "next_request_at": _utc(time.time() + delay),
-                        }
-                        progress.emit(
-                            "unit_retrying",
-                            unit_id=unit_ids[indices[0]],
-                            code=type(exc).__name__,
-                            reason=info.reason,
-                            http_status=info.http_status,
-                            retryable=True,
-                            request_attempt=attempt + 1,
-                            retry_in_seconds=delay,
-                        )
-                    else:
-                        for index in indices:
-                            progress.states[unit_ids[index]] = (
-                                "cancelled" if error or isinstance(exc, GenerationCancelled) else "failed"
-                            )
-                        if error is None:
-                            error = exc
-                            stop.set()
-                            if isinstance(exc, GenerationCancelled):
-                                progress.status = "cancelling"
-                                progress.emit("cancel_requested", retryable=True)
-                            else:
-                                progress.emit(
-                                    "unit_failed",
-                                    unit_id=unit_ids[indices[0]],
-                                    code=type(exc).__name__,
-                                    reason=info.reason,
-                                    http_status=info.http_status,
-                                    retryable=info.retryable,
-                                )
-                else:
-                    probe_ok = True
-                    if error is None:
-                        progress.status = "retrying" if delayed else "running"
-                        if not delayed:
-                            progress.waiting = None
-                    for index in indices:
-                        rendered[index] = result
-                        complete(index, result)
             if time.monotonic() >= next_heartbeat:
                 progress.emit("heartbeat")
                 next_heartbeat = time.monotonic() + HEARTBEAT_SECONDS
@@ -388,3 +517,4 @@ def render_bounded(
                 else:
                     budget.finish(token)
         progress.request_tokens.clear()
+        progress.request_service = previous_service

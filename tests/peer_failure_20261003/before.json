@@ -1,0 +1,24 @@
+{
+  "revision": "f3109d00d191066d887b3a76c19d60460bc5b253",
+  "case": "edge_peer_failure_while_coordinator_is_in_media",
+  "edge_concurrency": 2,
+  "cancel_file": false,
+  "simulated_media_seconds": 2,
+  "failure_reporting_delay_seconds": 2.201,
+  "child_exit_codes": [
+    0
+  ],
+  "all_children_reaped": true,
+  "subsequent_requests_after_peer_failure": [
+    "未提交"
+  ],
+  "calls": [
+    "标题",
+    "失败",
+    "慢媒体",
+    "未提交"
+  ],
+  "terminal_event": "failed",
+  "completed_units": 2,
+  "peer_media_was_terminated": false
+}
