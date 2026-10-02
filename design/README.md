@@ -8,6 +8,7 @@
 
 | 状态 | 文档 | 内容 | 相关资源 |
 |---|---|---|---|
+| ACTIVE | [单本并发与真实生成进度](./20261003-single-book-progress.active.html) | v2 绝对快照、尝试标识、Edge 共享限速/冷却、有限重试与取消 | [接口契约](../docs/progress-v2.md) · [离线事件演示](../tests/concurrency_20261003/report.html) |
 | ACTIVE | [voicebook-tool 首版命令行工具方案](./20260716-voicebook-tool.active.html) | EPUB/TXT → 可编辑角色脚本 → 自动选声 → 分章 MP3；片段缓存、ID3/封面和整书合并 | [三部公版小说完整两回试听](./20260716-voicebook-tool.active.html#full-book-demos) · [评测数据](./resources/voicebook-tool/evaluation-20260716/evaluation.json) · [复现说明](./resources/voicebook-tool/evaluation-20260716/README.md) |
 | ACTIVE | [Qwen 标题留白与多小说选角试听](./20260716-qwen-title-pause-and-casting-demos.active.html) | 标题后 900ms 留白；3 部小说 × 2 套角色音色阵容 A/B 对比 | [6 个试听播放器](./20260716-qwen-title-pause-and-casting-demos.active.html#playback) · [媒体评测](./resources/qwen-title-pause-and-casting-demos/demo_evaluation.json) |
 | ACTIVE | [Design 文档与资源目录整理方案](./20260716-design-resources-layout.active.html) | 10xdev 文档生命周期、目录布局与资源管理约束 | — |
