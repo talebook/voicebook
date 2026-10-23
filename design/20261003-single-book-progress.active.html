@@ -1,0 +1,28 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>单本并发与真实生成进度</title><style>body{font:16px/1.7 system-ui,sans-serif;max-width:940px;margin:36px auto;padding:0 20px;color:#243447;background:#f4f7fb}h1,h2{color:#183e68}table{border-collapse:collapse;width:100%;background:white}td,th{padding:10px;text-align:left;border-bottom:1px solid #dce4ed}code{background:#e4edf7;padding:2px 4px}pre{overflow:auto;padding:16px;background:#e4edf7}.meta{color:#566c82}.scroll{overflow:auto}</style></head><body>
+<h1>单本并发与真实生成进度</h1><p class="meta">创建：2026-10-03 · 模块：Voicebook 生成侧 · 状态：ACTIVE · 来源：TB-234</p>
+<h2>原始诉求与目标</h2><p>同一本书内的语音工作单元有限并发，持续上报后端真实完成量，解决长时间卡在进度条的问题。Voicebook 负责接口契约与生成实现；Talebook 页面接入和 QA 全链路回归由 Mika 后续安排。本方案只修改 Voicebook，不部署、发布版本或调用真实付费供应商。</p>
+<h2>核对结果与根因</h2><p>Talebook 当前固定依赖 voicebook-tool v0.7.1，经 CLI JSONL 接收 voicebook-progress.v1。生成侧已有固定 Edge=4 / Qwen=2 的片段线程池，但在整章渲染全部结束后才批量发 segment_completed；正文总量逐章获知，没有可配置的串行路径、尝试标识和完整绝对计数。Talebook 又将阶段固定权重合成 overall_percent，因此生成阶段的长等待与写入完成难以准确解释。</p>
+<h2>方案与契约</h2><div class="scroll"><table><tr><th>项目</th><th>决定</th></tr>
+<tr><td>并发边界</td><td>每本每次 CLI 调用最多 N 个唯一片段渲染请求，1–32 可配置；默认 Edge=1 / Qwen=2；Edge 所有任务共用 SQLite FIFO、连接上限和 5 秒启动间隔。首个未缓存片段先探测。章节顺序处理，片段并发生成。</td></tr>
+<tr><td>输出与去重</td><td>指纹合并相同请求；渲染临时目录独立、缓存原子替换；按原索引构建时间轴并拼接音频。工作线程不写进度或 manifest。</td></tr>
+<tr><td>版本</td><td>CLI 默认保持 v1 schema 和正文事件；v2 显式选择。新增 task_id、attempt_id、全书 snapshot。详细契约见 docs/progress-v2.md。</td></tr>
+<tr><td>Edge 配置和部署</td><td>默认共享并发 1、启动间隔 5 秒，来自开发者建议的保守起点，不是官方额度。所有分段、API 文本块和重试获准后才提交线程；队列等待不占连接或非必要线程。多进程共用同一个 SQLite 文件与配置；多容器需共享本地挂载，多主机需集中调度。</td></tr>
+<tr><td>计数</td><td>一个标题或可朗读正文逻辑片段是一单位；提前确定本次全书总量。绝对计数可覆盖、事件 seq 在尝试内去重；每个单元最多完成一次。</td></tr>
+<tr><td>阶段</td><td>preparing → synthesizing ↔ assembling → finalizing → completed。片段比例仅表示工作量，不表示时间或整体完成。</td></tr>
+<tr><td>失败与重试</td><td>429、5xx、网络超时和连接失败有限抖动指数退避。Retry-After 支持秒数和 HTTP 日期，有效等待不截短；连续 3 个瞬时失败共享冷却，默认冷却 30 秒，累计退避/冷却/配额等待上限 300 秒。已知欠费、参数和本地处理失败立即结束。锁定 edge-tts 7.2.8，403 校时后返回共享队列，禁止 SDK 内直接重连。</td></tr>
+<tr><td>取消与可观察性</td><td>慢请求、退避、规范化、变速及媒体合成均约每秒心跳。媒体等待及子进程终止回收期间按租约时长约束的间隔续期全部活动请求，120 秒租约保持不变。取消或其他单元致命失败停止后续媒体处理；同步网络调用仍等返回或超时再回收。</td></tr>
+<tr><td>等待契约</td><td>rate_queued / rate_limit_retry / cooling_down 区分队列、明确 429 与共享冷却，waiting 包含原因、当前重试数和 UTC 计划请求时间。未知可用连接时间为空；等待期间完成量保持不变。请求、429、重试与冷却累计计数单独记录，不作为书籍进度。</td></tr>
+<tr><td>恢复</td><td>原子保存完整最新事件到 .voicebook/progress.v2.json；新调用使用新 attempt_id、计数从 0 开始。恢复的章节及缓存重新验证后计入当前尝试。</td></tr>
+<tr><td>完成条件</td><td>全部单元和章节完成，MP3 通过 ffprobe，时间轴与最终 manifest 写入成功，再发 completed 并退出 0。Talebook 还要完成自身入库发布才能显示总任务 100%。</td></tr></table></div>
+<h2>验证结果</h2><ul>
+<li><code>uv sync --locked --offline</code>：依赖与锁文件一致，voicebook-tool 0.8.0 安装通过；本 PR 不发布版本或部署。</li>
+<li><code>uv run --locked --offline python -m unittest discover -s tests -p 'test_*.py'</code>：97 项通过，包含独立多进程共享预算、FIFO、请求频率、重试预算、秒数/日期 Retry-After、抖动、冷却、取消、崩溃租约、SDK 403 适配、正文分块、乱序完成、缓存/重试计数与失败不误报完成；慢媒体租约续期、Edge/Qwen 规范化及变速取消、同伴失败时媒体回收和停止新请求、提交边界竞态、仍可重试的同伴错误，以及音频检测的乱序/遗漏/重复负例。</li>
+<li><code>uvx ruff check --select E4,E7,E9,F,I</code>：本次修改的 Python 文件检查通过；<code>git diff --check</code> 通过。</li>
+<li><code>uv run --locked python tests/concurrency_20261003/run_evaluation.py</code>：9 个离线场景通过，原始结果与完整事件演示位于 <code>tests/concurrency_20261003/</code>。使用两章书、10 个单位，本地模拟 WAV 和真实 ffmpeg；无第三方语音调用。</li>
+<li><code>uv build</code>：0.8.0 sdist 与 wheel 构建通过，wheel 包含进度/共享预算模块和预置试听资产，sdist 包含完整契约文档。</li>
+</ul><p>本机串行上限 1：4.484 秒；并发上限 3：2.362 秒；实测最大请求数分别为 1 和 3，两侧均为 10 次模拟调用。每个标题/正文生成独有的 500–2300Hz、240ms 音调；独立解码最终 MP3 后实际内容序列与预期一致，各次出现的时长也通过，包含重试、部分失败保留章节和恢复结果；判断不依赖时间轴文字或缓存文件名。Edge 共享上限为 1 的场景即使单本配置 3，实测仍为 1；冷却中取消和等待预算耗尽均没有发起语音调用。耗时随负载变化，不外推真实供应商加速倍数。</p>
+<h2>QA finding 修复复核</h2><p>复现附件原样保存并在旧提交执行：模拟连接上限 2 时峰值达到 3，2.2 秒慢规范化期间无事件，取消延迟 2.258 秒。修复后保持 150ms 租约与 600ms 媒体夹具，峰值为 2，竞争任务只获准一个请求，原网络请求仍活跃且心跳持续。规范化/变速改为可取消的 Popen；最新四条 Edge/Qwen 慢子进程路径的取消延迟为 4–21ms，子进程全部回收、无误报完成。计时使用加速心跳，不能当作生产延迟承诺。<a href="../tests/review_20261003/README.md">附件复核方法和前后数据</a>、<a href="../tests/concurrency_20261003/report.html">最新音频内容与事件演示</a>。契约 schema、字段、CLI 参数和默认值均保持不变，仅补充媒体控制及续租保障说明。</p>
+<p>残余 Edge 同伴失败已用 QA 新附件复现并修复：旧 f3109d0 在无取消文件、并发 2 时，2.201 秒后才报告失败，媒体自然退出并调用“未提交”；现在 22ms 内报告原始失败，媒体子进程终止并回收，无后续请求，终态 failed、完成量保留为真实的 1。媒体轮询检查同伴失败；工作线程只发停止信号，协调线程处理错误和事件；提交之前先消费完成的 future，保留原失败而不误报用户取消。新增 Edge/Qwen 规范化与变速同伴失败、提交边界的致命/重试耗尽错误、准备生成器时的竞态，以及仍有额度的 429 可正常完成回归。原 5 个取消/续租正例及 5 个故障注入检查继续通过；全部 11 份音频内容检查保留。<a href="../tests/peer_failure_20261003/README.md">新附件、前后数据及故障注入复核</a>。本次修复未改变接口契约，独立 QA 复审和 Talebook 全链路验收仍待后续安排。</p>
+<h2>交接与限制</h2><p>Talebook 接入须升级固定依赖、登记当前 attempt_id、按 seq 保存绝对快照、页面刷新恢复该快照，并区分连接中断和服务器端阶段。旧版本回退保留旧参数，明确详细进度不可用。未修改 Talebook，页面截图和全链路回归仍待相应成员完成。</p>
+<p>其他引擎并发按每次调用控制，账户总额度和多本调度由宿主管理；Edge 在同一共享预算文件范围内控制跨进程总额度。SDK 升级需重验受控单请求适配器。正在执行的同步语音请求无法强制撤回，取消受供应商超时约束。输出目录必须由一个有效任务租约拥有。本机计时不能外推真实服务的加速倍数。</p>
+</body></html>

@@ -17,7 +17,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
+import aiohttp
 import requests
+
+from .provider_errors import error_info, parse_retry_after
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -30,31 +33,76 @@ class VoiceSpec:
     pitch: str = "+0Hz"
 
 
+class EdgeClockSkewError(RuntimeError):
+    retryable = True
+    http_status = 403
+    reason = "clock_skew_adjustment"
+
+    def __init__(self, retry_after=None):
+        super().__init__("Edge 已按服务器 Date 校时，等待共享预算后重试")
+        self.retry_after = retry_after
+
+
 class EdgeEngine:
     name = "edge"
     CONCURRENCY = 4
     MAX_RETRIES = 3
 
-    def __init__(self):
+    def __init__(self, max_attempts: int = 3, single_request: bool = False):
+        self.max_attempts = max(1, max_attempts)
+        self.single_request = single_request
         self._sem = asyncio.Semaphore(self.CONCURRENCY)
 
     async def synth(self, text: str, spec: VoiceSpec, out_path: Path):
         import edge_tts
+
+        communicator = edge_tts.Communicate
+        if self.single_request:
+            class SingleRequestCommunicate(edge_tts.Communicate):
+                async def stream(self):
+                    # Pinned SDK 7.2.8 otherwise retries 403 inside stream(), bypassing admission.
+                    chunks = list(self.texts)
+                    if len(chunks) != 1:
+                        raise ValueError("Edge 受控请求必须只有一个 SDK 文本块")
+                    if self.state["stream_was_called"]:
+                        raise RuntimeError("stream can only be called once")
+                    self.state["stream_was_called"] = True
+                    self.state["partial_text"] = chunks[0]
+                    self.state["chunk_audio_bytes"] = 0
+                    try:
+                        async for message in self._Communicate__stream():
+                            yield message
+                    except aiohttp.ClientResponseError as error:
+                        if error.status == 403:
+                            from edge_tts.drm import DRM
+                            try:
+                                DRM.handle_client_response_error(error)
+                            except Exception:
+                                raise error
+                            raise EdgeClockSkewError(parse_retry_after(error.headers.get("Retry-After"))) from error
+                        raise
+            communicator = SingleRequestCommunicate
         async with self._sem:
-            for attempt in range(1, self.MAX_RETRIES + 1):
+            for attempt in range(1, self.max_attempts + 1):
                 try:
-                    await edge_tts.Communicate(text, spec.voice, rate=spec.rate,
-                                               pitch=spec.pitch).save(str(out_path))
+                    await communicator(text, spec.voice, rate=spec.rate, pitch=spec.pitch).save(str(out_path))
                     if out_path.stat().st_size > 0:
                         return
                 except Exception as e:
-                    if attempt == self.MAX_RETRIES:
-                        raise RuntimeError(f"edge-tts failed: {text[:30]}...") from e
+                    if attempt == self.max_attempts:
+                        raise RuntimeError("Edge 语音请求失败") from e
                     await asyncio.sleep(2 * attempt)
 
 
 class QwenTTSAPIError(RuntimeError):
-    """qwen3ttsai.com 返回了不能用于合成的响应。"""
+    """Provider error with machine-readable retry information."""
+
+    def __init__(self, message: str, *, retryable: bool = False, retry_after: float | None = None, http_status: int | None = None, reason: str | None = None):
+        super().__init__(message)
+        self.retryable = retryable
+        self.retry_after = retry_after
+        self.http_status = http_status
+        self.reason = reason or ("rate_limited" if http_status == 429 else "provider_error")
 
 
 class QwenTTSClient:
@@ -121,7 +169,7 @@ class QwenTTSClient:
                 last_error = exc
                 if attempt + 1 == self.max_attempts:
                     break
-                self.sleeper(2 ** attempt)
+                self.sleeper(2**attempt)
                 continue
 
             if response.status_code == 200:
@@ -135,19 +183,37 @@ class QwenTTSClient:
                 return audio
 
             preview = response.text[:200] if hasattr(response, "text") else ""
-            last_error = QwenTTSAPIError(f"Qwen HTTP {response.status_code}: {preview}")
-            retryable = response.status_code == 429 or 500 <= response.status_code < 600
+            retryable = (
+                response.status_code == 429 or 500 <= response.status_code < 600
+            ) and "arrearage" not in preview.lower()
+            retry_delay = parse_retry_after(response.headers.get("retry-after"))
+            last_error = QwenTTSAPIError(
+                f"Qwen HTTP {response.status_code}: {preview}",
+                retryable=retryable,
+                retry_after=retry_delay,
+                http_status=response.status_code,
+                reason="billing_error" if "arrearage" in preview.lower() else None,
+            )
             if not retryable or attempt + 1 == self.max_attempts:
                 break
             retry_after = response.headers.get("retry-after")
             try:
-                delay = float(retry_after) if retry_after else 2 ** attempt
+                delay = float(retry_after) if retry_after else 2**attempt
             except ValueError:
-                delay = 2 ** attempt
+                delay = 2**attempt
             self.sleeper(min(max(delay, 0.0), 30.0))
 
         detail = f"：{last_error}" if last_error else ""
-        raise QwenTTSAPIError(f"Qwen 合成失败（已尝试 {attempts} 次）{detail}") from last_error
+        retryable = isinstance(last_error, (requests.Timeout, requests.ConnectionError)) or bool(
+            getattr(last_error, "retryable", False)
+        )
+        raise QwenTTSAPIError(
+            f"Qwen 合成失败（已尝试 {attempts} 次）{detail}",
+            retryable=retryable,
+            retry_after=getattr(last_error, "retry_after", None),
+            http_status=getattr(last_error, "http_status", None),
+            reason=error_info(last_error).reason if last_error is not None else None,
+        ) from last_error
 
     def synth_to_file(self, text: str, voice: str, out_path: Path) -> Path:
         audio = self.generate(text, voice)
@@ -183,14 +249,16 @@ class Qwen3TTSAIEngine:
     name = "qwen"
     CONCURRENCY = 2
 
-    def __init__(self, base_url: str | None = None):
+    def __init__(self, base_url: str | None = None, max_attempts: int = 3):
         self.base_url = base_url
+        self.max_attempts = max_attempts
         self._sem = asyncio.Semaphore(self.CONCURRENCY)
 
     async def synth(self, text: str, spec: VoiceSpec, out_path: Path):
         async with self._sem:
+
             def generate():
-                with QwenTTSClient(base_url=self.base_url) as client:
+                with QwenTTSClient(base_url=self.base_url, max_attempts=self.max_attempts) as client:
                     return client.synth_to_file(text, spec.voice, out_path)
 
             await asyncio.to_thread(generate)

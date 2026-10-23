@@ -8,9 +8,12 @@ import sys
 import wave
 from array import array
 from pathlib import Path
+from typing import Callable
 
 
-def change_pcm16_wav_tempo(path: Path, tempo: float) -> Path:
+def change_pcm16_wav_tempo(
+    path: Path, tempo: float, *, run_command: Callable[[list[str]], object] | None = None
+) -> Path:
     """Change PCM16 WAV tempo with ffmpeg while preserving pitch."""
     if tempo <= 0:
         raise ValueError("tempo must be greater than zero")
@@ -24,13 +27,14 @@ def change_pcm16_wav_tempo(path: Path, tempo: float) -> Path:
 
     temporary = path.with_name(f".{path.stem}.tempo.tmp.wav")
     try:
-        subprocess.run(
-            [
-                "ffmpeg", "-y", "-loglevel", "error", "-i", str(path),
-                "-filter:a", f"atempo={tempo:.6f}", "-c:a", "pcm_s16le", str(temporary),
-            ],
-            check=True,
-        )
+        command = [
+            "ffmpeg", "-y", "-loglevel", "error", "-i", str(path),
+            "-filter:a", f"atempo={tempo:.6f}", "-c:a", "pcm_s16le", str(temporary),
+        ]
+        if run_command is None:
+            subprocess.run(command, check=True)
+        else:
+            run_command(command)
         temporary.replace(path)
     finally:
         temporary.unlink(missing_ok=True)

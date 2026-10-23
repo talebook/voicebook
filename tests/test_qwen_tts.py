@@ -4,16 +4,15 @@ from pathlib import Path
 from unittest.mock import patch
 
 from book2audio.casting import (
-    CharacterProfile,
     QWEN_DEFAULT_TEMPO,
     QWEN_OLD_AGE_TEMPO,
     QWEN_SYSTEM_VOICES,
+    CharacterProfile,
     assign_qwen_voices,
     build_profiles,
 )
-from book2audio.tts import QwenTTSClient, split_tts_text
 from book2audio.pipeline import run_from_script
-
+from book2audio.tts import QwenTTSAPIError, QwenTTSClient, split_tts_text
 
 FAKE_WAV = b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(32)
 
@@ -139,6 +138,25 @@ class QwenTTSClientTests(unittest.TestCase):
 
         self.assertEqual(text, "".join(chunks))
         self.assertTrue(all(0 < len(chunk) <= 1000 for chunk in chunks))
+
+    def test_one_attempt_exposes_rate_limit_metadata_to_coordinator(self):
+        session = FakeSession([FakeResponse(429, b"", {"retry-after": "7"}, "busy")])
+        client = QwenTTSClient(session=session, max_attempts=1)
+        with self.assertRaises(QwenTTSAPIError) as raised:
+            client.generate("模拟", "Andre")
+        self.assertTrue(raised.exception.retryable)
+        self.assertEqual(7, raised.exception.retry_after)
+        self.assertEqual(1, len(session.calls))
+
+    def test_billing_failure_is_not_retried_even_with_http_500(self):
+        session = FakeSession([FakeResponse(500, b"", text="Arrearage")])
+        delays = []
+        client = QwenTTSClient(session=session, sleeper=delays.append)
+        with self.assertRaises(QwenTTSAPIError) as raised:
+            client.generate("模拟", "Andre")
+        self.assertFalse(raised.exception.retryable)
+        self.assertEqual(1, len(session.calls))
+        self.assertEqual([], delays)
 
 
 if __name__ == "__main__":

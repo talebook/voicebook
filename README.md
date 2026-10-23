@@ -8,6 +8,7 @@
 - [voicebook-tool 首版方案与完整两章试听](design/20260716-voicebook-tool.active.html#full-book-demos)
 - [Qwen 标题留白与多小说 A/B 选角试听](design/20260716-qwen-title-pause-and-casting-demos.active.html#playback)
 - [Qwen3TTSAI 接入与性能报告](design/20260716-qwen3ttsai-integration.active.html)
+- [Voicebook → Talebook 生成进度契约 v2](docs/progress-v2.md)
 
 ## 安装
 
@@ -80,6 +81,37 @@ voicebook-tool models download csi
 `convert` 会在输出目录保留 `book.script`。默认恢复 `.voicebook/cache/` 中已完成的片段；修改一句对白后，只重新生成受影响的片段。任一引擎失败时命令都会明确报错，不会静默切换到另一引擎。
 
 > 隐私提示：`qwen3tts` 和 `edgetts` 都是云端服务，生成时会把所选章节正文发送给对应第三方 TTS 服务。
+
+## 单本并发与真实进度
+
+同一章的语音片段可并发生成，结果按原章节和片段顺序合成。`--concurrency` 配置本次单本请求上限（1–32），
+默认 Edge 为 1、Qwen 为 2；设为 1 可使用串行路径。Edge 多本、文本块与重试共享连接上限、5 秒启动间隔和冷却预算；其他引擎的总配额由宿主控制。
+首个未缓存片段先探测服务，成功后再并发；瞬时错误默认额外重试 2 次，可用 `--max-retries 0` 关闭。
+
+```bash
+voicebook-tool generate book.script -o output/ --engine qwen3tts --concurrency 3 --resume \
+  --progress-format jsonl --progress-version 2 --task-id book-job-123 \
+  --cancel-file output/cancel
+```
+
+JSONL 在片段真正完成时立即上报，包含阶段、整本绝对工作量、活动请求、失败/重试/取消及更新时间。
+一单位为一个章节标题或可朗读正文逻辑片段；片段比例表示工作量，不表示耗时。
+音频合成、时间轴和 manifest 写入成功后才报告完成。最新事件同时原子保存到
+`output/.voicebook/progress.v2.json`，human 模式也保存；每次调用默认产生新 `attempt_id`。
+Edge 共享预算使用 `--edge-budget-path` 或 `VOICEBOOK_EDGE_BUDGET` 指定同一个 SQLite 文件；多 worker 必须共用文件和配置。
+默认额外重试 2 次、累计退避/冷却等待预算 300 秒；有效 Retry-After 支持秒数及 HTTP 日期，等待不截短。
+`rate_queued`、`rate_limit_retry`、`cooling_down` 带原因和计划请求时间；这些默认值不是官方配额或封禁时长。
+创建 cancel-file 会停止提交新片段，正在执行的语音调用在返回或超时后停止后续文本块；重试前移除旧取消文件。
+
+默认 JSONL schema 仍为 v1，新增字段和事件可被旧消费者忽略。宿主接入、尝试去重、完成条件与旧版本回退见
+[进度契约](docs/progress-v2.md)。离线对照与事件演示可运行：
+
+```bash
+uv run python -m unittest discover -s tests -p 'test_*.py'
+uv run python tests/concurrency_20261003/run_evaluation.py
+```
+
+评测仅使用本地模拟引擎和 ffmpeg；[报告](tests/concurrency_20261003/report.html) 展示串行、并发、限流重试、取消、失败和恢复。
 
 ## 音色试听
 
