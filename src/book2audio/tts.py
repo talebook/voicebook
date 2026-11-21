@@ -60,7 +60,7 @@ class EdgeEngine:
         if self.single_request:
             class SingleRequestCommunicate(edge_tts.Communicate):
                 async def stream(self):
-                    # Pinned SDK 7.2.8 otherwise retries 403 inside stream(), bypassing admission.
+                    # The pinned SDK retries 403 inside stream(), bypassing admission.
                     chunks = list(self.texts)
                     if len(chunks) != 1:
                         raise ValueError("Edge 受控请求必须只有一个 SDK 文本块")
